@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en" ng-app="app">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Аналитичсекий центр</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/font-awesome.css">
+
+    <!--uiSelect-->
+    <link rel="stylesheet" href="css/ui-select/select2.css">
+    <link rel="stylesheet" href="css/ui-select/selectize.default.css">
+    <link rel="stylesheet" href="css/ui-select/select.min.css">
+    <!--uiSelect-->
+
+    <script src="Scripts/angular.min.js"></script>
+    <script src="Scripts/ui-bootstrap.js"></script>
+    <script src="controllers/index.js"></script>
+    <script src="Scripts/jquery-2.2.1.js"></script>
+
+    <script src="Scripts/angular-sanitize.js"></script>
+    <script src="Scripts/angular-route.js"></script>
+
+    <!--uiSelect-->
+    <script src="Scripts/ui-select/select.min.js"></script>
+    <!--uiSelect-->
+
+
+    <!--FileSaver-->
+    <script src="Scripts/FileSaver.js"></script>
+
+
+    <script src="Scripts/zingchart.min.js"></script>
+
+    <script src="Scripts/ui-grid.min.js"></script>
+
+
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">
+        (function (m, e, t, r, i, k, a) {
+            m[i] = m[i] || function () {
+                (m[i].a = m[i].a || []).push(arguments)
+            };
+            m[i].l = 1 * new Date();
+            k = e.createElement(t), a = e.getElementsByTagName(t)[0], k.async = 1, k.src = r, a.parentNode.insertBefore(k, a)
+        })
+        (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+        ym(55812115, "init", {
+            clickmap: true,
+            trackLinks: true,
+            accurateTrackBounce: true,
+            webvisor: true
+        });
+    </script>
+    <noscript>
+        <div><img src="https://mc.yandex.ru/watch/55812115" style="position:absolute; left:-9999px;" alt=""/></div>
+    </noscript>
+    <!-- /Yandex.Metrika counter -->
+
+    <script type="text/javascript" src="https://vk.com/js/api/share.js?95" charset="windows-1251"></script>
+
+
+</head>
+<body ng-controller="mainCtrl">
+
+
+<div class="container-fluid main">
+    <div class="row">
+        <h2 class="text-center title" style="display: none;">ПРОВЕРКА ПРИГОВОРА</h2>
+        <div class="col-sm-12">
+            <div class="form">
+                <form>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="col-sm-12" style="padding: 15px; text-align: center">
+                                <p class="title">Статистические срезы</p>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="col-sm-6">
+                                <div class="col-sm-4" style="color: #fff !important;">
+
+                                    <label>Дата начала отчета <span
+                                            class="required">*</span></label>
+                                    <input class="form-control" data-format="dd.MM.yyyy" ng-model="item.dateFrom" type="date"
+                                           style="width: max-content" required>
+                                    <br>
+
+
+                                </div>
+                                <div class="col-sm-4">
+                                    <label>Дата окончания отчета <span
+                                            class="required">*</span></label>
+                                    <input class="form-control" data-format="dd.MM.yyyy" ng-model="item.dateFrom"
+                                           type="date"
+                                           style="width: max-content" required>
+                                    <br>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label>Статсрез на № <span
+                                            class="required">*</span></label>
+                                    <input type="number" class="form-control">
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <input ng-model="item.soft" id="box1" type="checkbox"/>
+                                    <label class="block" for="box1">Удаленное формирование</label>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <button style="float: right;" class="btn btn-primary">Сформировать</button>
+                                </div>
+                            </div>
+
+
+                            <div class="col-sm-6">
+
+                                <div class="pull-right">
+                                    <input ng-model="item.soft" id="box1" type="checkbox"/>
+                                    <label class="block" for="box1">О преступности/правонарушениях</label>
+
+                                    <input ng-model="item.heavy" id="box2" type="checkbox"/>
+                                    <label class="block" for="box2">О работе органа уг.преследования</label>
+
+                                    <input ng-model="item.heavy" id="box3" type="checkbox"/>
+                                    <label class="block" for="box2">О работе прокурора</label>
+
+                                    <input ng-model="item.heavy" id="box4" type="checkbox"/>
+                                    <label class="block" for="box2">О работе суда</label>
+
+                                    <input ng-model="item.heavy" id="box5" type="checkbox"/>
+                                    <label class="block" for="box2">Сведения "Зандылык"</label>
+
+                                    <input ng-model="item.heavy" id="box6" type="checkbox"/>
+                                    <label class="block" for="box2">О дорожно-транспортных проишествиях</label>
+
+                                    <input ng-model="item.heavy" id="box7" type="checkbox"/>
+                                    <label class="block" for="box2">О рассмотрении заявлений</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-sm-12">
+
+                        </div>
+                    </div>
+
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="js/getYandexMetric.js"></script>
+<script src="js/bootstrap.min.js"></script>
+</body>
+</html>

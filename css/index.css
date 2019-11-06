@@ -3,6 +3,10 @@
 @import "https://fonts.googleapis.com/css?family=Varela+Round";
 
 
+.selector-for-some-widget {
+    box-sizing: content-box;
+}
+
 body {
     overflow: auto;
 }
@@ -44,13 +48,7 @@ img.logo {
     height: 100px;
 }
 
-.main {
-    background-image: url("../img/original.jpg");
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
-    height: 100%;
-}
+
 
 .form {
     /*max-width: 710px;*/
@@ -565,9 +563,6 @@ tbody tr{
 @media only screen  and (min-width : 1824px) {
     /* Styles */
     .main {
-        /*background-image: url("../img/background.jpg");*/
-        /*background-image: url("../img/1.jpg");*/
-        /*background-image: url("../img/2.png");*/
         background-image: url("../img/3.jpg");
         background-position: center;
         background-size: cover;
@@ -575,24 +570,65 @@ tbody tr{
         height: 100vh;
     }
 
+}
 
-    .form {
-        /* margin: 100px 0; */
-        max-width: 710px;
-        width: 100%;
-        /* height: 700px; */
-        min-height: 662px;
+@media only screen  and (min-width : 425px) {
+    /* Styles */
+    .main {
+        background-image: url("../img/3.jpg");
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
         height: 100%;
-        /* opacity: 0.8; */
-        padding: 5px 20px;
-        border-radius: 5px;
-        margin: 110px auto 40px auto !important;
-        /*background-color: rgb(4, 4, 4, 0.9);*/
-        background-color: black;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     }
 
 }
+
+@media only screen  and (min-width : 320px) {
+    /* Styles */
+    .main {
+        background-image: url("../img/3.jpg");
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        height: 100%;
+    }
+
+}
+
+@media only screen  and (min-width : 1440px) {
+    /* Styles */
+    .main {
+        background-image: url("../img/3.jpg");
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        height: 100%;
+    }
+
+}
+
+@media only screen  and (min-width : 1024px) {
+    /* Styles */
+    .main {
+        background-image: url("../img/3.jpg");
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        height: 100vh;
+    }
+
+}
+
+/*
+.main {
+    background-image: url("../img/3.jpg");
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 100vh;
+}
+*/
 
 
 #myChart{
@@ -690,7 +726,7 @@ zing-grid[loading] {
 
 .grid {
     width: 100%;
-    height: 400px;
+    height: 350px;
 }
 
 
@@ -705,3 +741,10 @@ zing-grid[loading] {
 .grid {
     width: 100%;
 }
+
+
+.ui-grid-viewport .ng-isolate-scope{
+    height: 389px;
+}
+
+

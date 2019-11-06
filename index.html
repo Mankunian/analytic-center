@@ -1,271 +1,22 @@
-<!--
+
+
+
 <!doctype html>
-<html lang="en" ng-app="app">
+<html lang="eng" ng-app="app">
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Аналитичсекий центр</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="css/index.css" type="text/css">
+    <link rel="stylesheet" href="css/font-awesome.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://ui-grid.info/release/ui-grid.css" type="text/css">
 
-    &lt;!&ndash; Bootstrap &ndash;&gt;
-
-    <link rel="stylesheet" href="css/index.css">
-
-
-
-
+    <link rel="stylesheet" href="css/ui-select/select.min.css">
+    <link rel="stylesheet" href="css/ui-select/select2.css">
+    <link rel="stylesheet" href="css/ui-select/selectize.default.css">
 
 
-
-    <script src="Scripts/angular.min.js"></script>
-
-    <script src="Scripts/ui-bootstrap.js"></script>
-    <script src="controllers/index.js"></script>
-
-
-    <script src="Scripts/angular-sanitize.js"></script>
-    <script src="Scripts/angular-route.js"></script>
-
-    uiSelect
-    <script src="Scripts/ui-select/select.min.js"></script>
-    uiSelect
-
-
-    FileSaver
-    <script src="Scripts/FileSaver.js"></script>
-
-
-    <script src="Scripts/zingchart.min.js"></script>
-
-    <script src="Scripts/ui-grid.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-grid/4.8.1/ui-grid.min.css">
-
-
-
-</head>
-<body ng-controller="mainCtrl">
-
-
-<div class="container-fluid main">
-    <div class="row">
-        <h2 class="text-center title" style="display: none;">ПРОВЕРКА ПРИГОВОРА</h2>
-        <div class="col-sm-12">
-            <div class="form">
-                <form>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="col-sm-12" style="padding: 15px; text-align: center">
-                                <p class="title">Статистические срезы</p>
-                            </div>
-
-
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="col-sm-6">
-                                <div class="col-sm-4" style="color: #fff !important;">
-
-                                    <label>Дата начала отчета <span
-                                            class="required">*</span></label>
-                                    <input class="form-control" data-format="dd.MM.yyyy" ng-model="item.dateFrom"
-                                           type="date"
-                                           required>
-                                    <br>
-
-
-                                </div>
-                                <div class="col-sm-4">
-                                    <label>Дата окончания отчета <span
-                                            class="required">*</span></label>
-                                    <input class="form-control" data-format="dd.MM.yyyy" ng-model="item.dateTo"
-                                           type="date"
-                                           required>
-                                    <br>
-                                </div>
-                                <div class="col-sm-4">
-                                    <label>Статсрез на № <span
-                                            class="required">*</span></label>
-                                    <input ng-model="item.statsrez" type="number" class="form-control">
-                                </div>
-
-                                <div class="col-sm-6">
-                                    <input ng-model="item.remote" id="box1" type="checkbox"/>
-                                    <label class="block" for="box1">Удаленное формирование</label>
-                                </div>
-
-                                <div class="col-sm-6">
-                                    <button ng-click="getDatas(item)" style="float: right;" class="btn btn-primary">
-                                        Сформировать
-                                    </button>
-                                </div>
-                                <br>
-
-                                <div class="col-sm-6">
-                                    <a href="#" class="btn btn-primary btn-md">
-                                        <span class="glyphicon glyphicon-refresh"></span>
-                                    </a>
-
-                                    <a href="#" class="btn btn-success btn-md">
-                                        <span class="glyphicon glyphicon-check"></span>
-                                    </a>
-
-                                    <a href="#" class="btn btn-warning btn-md">
-                                        <span class="glyphicon glyphicon-check second"></span>
-                                    </a>
-
-                                    <a href="#" class="btn btn-danger btn-md">
-                                        <span class="glyphicon glyphicon-remove-circle cancel"></span>
-                                    </a>
-
-
-                                </div>
-                                <br>
-                                <div class="col-sm-6">
-                                    <div class="pull-right">
-                                        <input ng-model="item.showRemote" id="box2" type="checkbox"/>
-                                        <label class="block" for="box2">Показывать удаленные</label>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div class="col-sm-6">
-
-                                <div class="pull-right">
-                                    <input ng-model="item.type1" id="box3" type="checkbox"/>
-                                    <label class="block" for="box3">О преступности/правонарушениях</label>
-
-                                    <input ng-model="item.type2" id="box4" type="checkbox"/>
-                                    <label class="block" for="box4">О работе органа уг.преследования</label>
-
-                                    <input ng-model="item.type3" id="box5" type="checkbox"/>
-                                    <label class="block" for="box5">О работе прокурора</label>
-
-                                    <input ng-model="item.type4" id="box6" type="checkbox"/>
-                                    <label class="block" for="box6">О работе суда</label>
-
-                                    <input ng-model="item.type5" id="box7" type="checkbox"/>
-                                    <label class="block" for="box7">Сведения "Зандылык"</label>
-
-                                    <input ng-model="item.type6" id="box8" type="checkbox"/>
-                                    <label class="block" for="box8">О дорожно-транспортных проишествиях</label>
-
-                                    <input ng-model="item.type7" id="box9" type="checkbox"/>
-                                    <label class="block" for="box9">О рассмотрении заявлений</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="grid" ui-grid="gridOptions" style="height: 100%; border: none;"></div>
-                           &lt;!&ndash; <div class="table-responsive">
-                                <table class="table">
-                                    <thead style="background: #337ab7 ">
-                                    <tr style="color: #fff">
-                                        <th>Номер среза</th>
-                                        <th>Период</th>
-                                        <th>Срез по региону</th>
-                                        <th>№ в БД</th>
-                                        <th>Сформирован</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td>№ 9313</td>
-                                        <td>01.01.2019 - 04.11.2019</td>
-                                        <td>19</td>
-                                        <td>136264842</td>
-                                        <td>04.11.2019 08:30</td>
-                                    </tr>
-
-                                    <tr>
-                                        <td>№ 9313</td>
-                                        <td>01.01.2019 - 04.11.2019</td>
-                                        <td>19</td>
-                                        <td>136264842</td>
-                                        <td>04.11.2019 08:30</td>
-                                    </tr>
-                                    <tr>
-                                        <td>№ 9313</td>
-                                        <td>01.01.2019 - 04.11.2019</td>
-                                        <td>19</td>
-                                        <td>136264842</td>
-                                        <td>04.11.2019 08:30</td>
-                                    </tr>
-                                    <tr>
-                                        <td>№ 9313</td>
-                                        <td>01.01.2019 - 04.11.2019</td>
-                                        <td>19</td>
-                                        <td>136264842</td>
-                                        <td>04.11.2019 08:30</td>
-                                    </tr>
-                                    <tr>
-                                        <td>№ 9313</td>
-                                        <td>01.01.2019 - 04.11.2019</td>
-                                        <td>19</td>
-                                        <td>136264842</td>
-                                        <td>04.11.2019 08:30</td>
-                                    </tr>
-                                    <tr>
-                                        <td>№ 9313</td>
-                                        <td>01.01.2019 - 04.11.2019</td>
-                                        <td>19</td>
-                                        <td>136264842</td>
-                                        <td>04.11.2019 08:30</td>
-                                    </tr>
-                                    <tr>
-                                        <td>№ 9313</td>
-                                        <td>01.01.2019 - 04.11.2019</td>
-                                        <td>19</td>
-                                        <td>136264842</td>
-                                        <td>04.11.2019 08:30</td>
-                                    </tr>
-                                    <tr>
-                                        <td>№ 9313</td>
-                                        <td>01.01.2019 - 04.11.2019</td>
-                                        <td>19</td>
-                                        <td>136264842</td>
-                                        <td>04.11.2019 08:30</td>
-                                    </tr>
-                                    <tr>
-                                        <td>№ 9313</td>
-                                        <td>01.01.2019 - 04.11.2019</td>
-                                        <td>19</td>
-                                        <td>136264842</td>
-                                        <td>04.11.2019 08:30</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>&ndash;&gt;
-                        </div>
-                    </div>
-
-
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-</body>
-</html>
-
-
--->
-
-
-
-<!doctype html>
-<html ng-app="app">
-<head>
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.7.0/angular.js"></script>
+    <script src="js/angular.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.7.0/angular-touch.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.7.0/angular-animate.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.7.0/angular-aria.js"></script>
@@ -276,32 +27,179 @@
     <script src="http://ui-grid.info/docs/grunt-scripts/jszip.min.js"></script>
     <script src="http://ui-grid.info/docs/grunt-scripts/excel-builder.dist.js"></script>
     <script src="http://ui-grid.info/release/ui-grid.js"></script>
+    <script src="Scripts/ui-bootstrap.js"></script>
+
+    <script src="Scripts/ui-select/select.min.js"></script>
+
+
     <script src="Scripts/jquery-2.2.1.js"></script>
 
+    <!--    <script src="Scripts/angular-sanitize.js"></script>-->
+    <script src="Scripts/angular-route.js"></script>
 
 
-
-    <link rel="stylesheet" href="http://ui-grid.info/release/ui-grid.css" type="text/css">
-    <link rel="stylesheet" href="css/index.css" type="text/css">
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/font-awesome.css">
 </head>
 <body>
 
 <div ng-controller="MainCtrl">
-    <div class="container">
+    <div class="container-fluid main">
         <div class="row">
-            <div class="col-sm-12" style="margin-top: 50px">
-                <button id="expandAll" type="button" class="btn btn-success" ng-click="expandAll()">Expand All</button>
-                <button id="toggleFirstRow" type="button" class="btn btn-success" ng-click="toggleRow(0)">Toggle First Row</button>
-                <button id="toggleSecondRow" type="button" class="btn btn-success" ng-click="toggleRow(1)">Toggle Second Row</button>
-                <button id="changeGrouping" type="button" class="btn btn-success" ng-click="changeGrouping()">Change Grouping</button>
-                <button id="getAggregates" type="button" class="btn btn-success" ng-click="getAggregates()">Get Aggregates</button>
-                <br>
-                <div style="height: 500px; margin-top: 50px" id="grid1" ui-grid="gridOptions" ui-grid-grouping class="grid"></div>
+            <div class="col-sm-12">
+                <div>
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-12" style="padding: 15px; text-align: center">
+                                    <p class="title">Статистические срезы</p>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-6">
+                                    <div class="col-md-4" style="color: #fff !important;">
+
+                                        <label>Дата начала отчета <span
+                                                class="required">*</span></label>
+                                        <input  class="form-control" data-format="dd.MM.yyyy" ng-model="item.dateFrom"
+                                               type="date"
+                                               required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Дата окончания отчета <span
+                                                class="required">*</span></label>
+                                        <input  class="form-control" data-format="dd.MM.yyyy" ng-model="item.dateTo"
+                                               type="date"
+                                               required>
+                                        <br>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label>Статсрез на № <span
+                                                class="required">*</span></label>
+                                        <input  ng-model="item.statsrez" type="number" class="form-control">
+                                    </div>
+
+                                    <div class="col-md-6 col-xs-6">
+                                        <input ng-model="item.remote" id="box1" type="checkbox"/>
+                                        <label class="block" for="box1">Удаленное формирование</label>
+                                    </div>
+
+                                    <div class="col-md-6 col-xs-6">
+                                        <div class="pull-right">
+                                            <input ng-model="item.showRemote" id="box2" type="checkbox"/>
+                                            <label class="block" for="box2">Показать удаленные</label>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="col-md-7 col-sm-7 col-xs-8">
+                                        <a href="#" class="btn btn-primary btn-md">
+                                            <span class="glyphicon glyphicon-refresh"></span>
+                                        </a>
+
+                                        <a href="#" class="btn btn-success btn-md">
+                                            <span class="glyphicon glyphicon-check"></span>
+                                        </a>
+
+                                        <a href="#" class="btn btn-warning btn-md">
+                                            <span class="glyphicon glyphicon-check second"></span>
+                                        </a>
+
+                                        <a href="#" class="btn btn-danger btn-md">
+                                            <span class="glyphicon glyphicon-remove-circle cancel"></span>
+                                        </a>
+
+
+                                    </div>
+
+                                    <div class="col-md-5 col-sm-5 col-xs-4">
+                                        <button ng-click="getDatas(item)" style="float: right;" class="btn btn-success">
+                                            Заказать
+                                        </button>
+                                    </div>
+                                    <br>
+
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="pull-right">
+                                        <input ng-model="item.type1" id="box3" type="checkbox"/>
+                                        <label class="block" for="box3">О преступности/правонарушениях</label>
+
+                                        <input ng-model="item.type2" id="box4" type="checkbox"/>
+                                        <label class="block" for="box4">О работе органа уг.преследования</label>
+
+                                        <input ng-model="item.type3" id="box5" type="checkbox"/>
+                                        <label class="block" for="box5">О работе прокурора</label>
+
+                                        <input ng-model="item.type4" id="box6" type="checkbox"/>
+                                        <label class="block" for="box6">О работе суда</label>
+
+                                        <input ng-model="item.type5" id="box7" type="checkbox"/>
+                                        <label class="block" for="box7">Сведения "Зандылык"</label>
+
+                                        <input ng-model="item.type6" id="box8" type="checkbox"/>
+                                        <label class="block" for="box8">О дорожно-транспортных проишествиях</label>
+
+                                        <input ng-model="item.type7" id="box9" type="checkbox"/>
+                                        <label class="block" for="box9">О рассмотрении заявлений</label>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div  id="grid1" ui-grid="gridOptions" ui-grid-grouping
+                                      class="grid"></div>
+                            </div>
+                        </div>
+
+
+
+
+                        <!--<div class="row">
+                            <div class="col-md-12">
+                                <button id="expandAll" type="button" class="btn btn-success" ng-click="expandAll()">
+                                    Expand All
+                                </button>
+                                <button id="toggleFirstRow" type="button" class="btn btn-success"
+                                        ng-click="toggleRow(0)">Toggle First
+                                    Row
+                                </button>
+                                <button id="toggleSecondRow" type="button" class="btn btn-success"
+                                        ng-click="toggleRow(1)">Toggle Second
+                                    Row
+                                </button>
+                                <button id="changeGrouping" type="button" class="btn btn-success"
+                                        ng-click="changeGrouping()">Change
+                                    Grouping
+                                </button>
+                                <button id="getAggregates" type="button" class="btn btn-success"
+                                        ng-click="getAggregates()">Get
+                                    Aggregates
+                                </button>
+                                <br>
+
+                            </div>
+                        </div>-->
+
+
+                    </form>
+                </div>
             </div>
         </div>
     </div>
+
 </div>
 
 

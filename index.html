@@ -65,33 +65,42 @@
 
                                         <label>Дата начала отчета <span
                                                 class="required">*</span></label>
-                                        <input  class="form-control" data-format="dd.MM.yyyy" ng-model="item.dateFrom"
+                                        <input  class="form-control" data-format="dd.MM.yyyy" ng-model="dateFrom"
                                                type="date"
                                                required>
                                     </div>
                                     <div class="col-md-4">
                                         <label>Дата окончания отчета <span
                                                 class="required">*</span></label>
-                                        <input  class="form-control" data-format="dd.MM.yyyy" ng-model="item.dateTo"
+                                        <input  class="form-control" data-format="dd.MM.yyyy" ng-model="dateTo"
                                                type="date"
                                                required>
                                         <br>
                                     </div>
 
-                                    <div class="col-md-4">
+                                    <div class="col-md-3 col-xs-11">
                                         <label>Статсрез на № <span
                                                 class="required">*</span></label>
-                                        <input  ng-model="item.statsrez" type="number" class="form-control">
+                                        <input ng-model="statsrez" type="text" class="form-control">
+
+                                    </div>
+                                    <div class="col-md-1 col-xs-1">
+                                        <label> <span
+                                                class="required" style="color: transparent">*</span></label>
+                                        <a ng-click="getStatSrez()" style="padding: 2px 5px" class="btn btn-warning btn-sm refresh">
+
+                                            <span title="Обновить статсрез" class="glyphicon glyphicon-refresh"></span>
+                                        </a>
                                     </div>
 
                                     <div class="col-md-6 col-xs-6">
-                                        <input ng-model="item.remote" id="box1" type="checkbox"/>
+                                        <input ng-model="remote" id="box1" type="checkbox"/>
                                         <label class="block" for="box1">Удаленное формирование</label>
                                     </div>
 
                                     <div class="col-md-6 col-xs-6">
                                         <div class="pull-right">
-                                            <input ng-model="item.showRemote" id="box2" type="checkbox"/>
+                                            <input ng-model="showRemote" id="box2" type="checkbox"/>
                                             <label class="block" for="box2">Показать удаленные</label>
                                         </div>
                                     </div>
@@ -127,7 +136,7 @@
 
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="pull-right">
+                                    <div class="pull-right box">
                                         <input ng-model="item.type1" id="box3" type="checkbox"/>
                                         <label class="block" for="box3">О преступности/правонарушениях</label>
 
@@ -158,11 +167,12 @@
 
 
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-12" style="padding-bottom: 25px">
                                 <div  id="grid1" ui-grid="gridOptions" ui-grid-grouping
                                       class="grid"></div>
                             </div>
                         </div>
+
 
 
 

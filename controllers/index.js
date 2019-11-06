@@ -29,20 +29,47 @@ angular.module("app").controller("mainCtrl", function ($scope) {
 */
 
 
-var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid', 'ui.grid.grouping' ]);
+var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid', 'ui.grid.grouping']);
 
-app.controller('MainCtrl', ['$scope', '$http', '$interval', 'uiGridGroupingConstants', function ($scope, $http, $interval, uiGridGroupingConstants ) {
+app.controller('MainCtrl', ['$scope', '$http', '$interval', 'uiGridGroupingConstants', function ($scope, $http, $interval, uiGridGroupingConstants) {
+
+    $scope.getDatas = function () {
+      console.log($scope.item.statsrez)
+    };
+
+    $scope.getStatSrez = function () {
+        $scope.statsrez = '12345689';
+        $scope.dateFrom = new Date();
+        $scope.dateTo = new Date();
+    };
+    $scope.getStatSrez();
+
+
     $scope.gridOptions = {
         enableFiltering: true,
         treeRowHeaderAlwaysVisible: false,
         columnDefs: [
-            { name: 'groupName', displayName: 'Название групп', grouping: { groupPriority: 0 }, sort: { priority: 0, direction: 'asc' }, width: '*', cellFilter: 'mapGender' },
-            { name: 'subGroupName', displayName: 'Подгруппа', grouping: { groupPriority: 0 }, sort: { priority: 0, direction: 'desc' }, width: '*', cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>' },
-            { name: 'sliceNumber', displayName: 'Номер среза', width: '*' },
-            { name: 'period', displayName: 'Период', width: '*' },
-            { name: 'sliceRegion', displayName: 'Срез по региону', width: '*' },
-            { name: 'DB_number', displayName: '# в БД', width: '*' },
-            { name: 'formed', displayName: 'Сформирован', width: '*' }
+            {
+                name: 'groupName',
+                displayName: 'Название групп',
+                grouping: {groupPriority: 0},
+                sort: {priority: 0, direction: 'asc'},
+                width: '*',
+                cellFilter: 'mapGender'
+            },
+            {
+                name: 'subGroupName',
+                displayName: 'Подгруппа',
+                grouping: {groupPriority: 0},
+                sort: {priority: 0, direction: 'desc'},
+                width: '*',
+                cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>'
+            },
+            {name: 'sliceNumber', displayName: 'Номер среза', width: '*'},
+            {name: 'period', displayName: 'Период', width: '*'},
+            {name: 'sliceRegion', displayName: 'Срез по региону', width: '*'},
+            {name: 'DB_number', displayName: '# в БД', width: '*'},
+            {name: 'formed', displayName: 'Сформирован', width: '*'}
 
 
 
@@ -56,14 +83,14 @@ app.controller('MainCtrl', ['$scope', '$http', '$interval', 'uiGridGroupingConst
                     aggregation.rendered = aggregation.value;
                 } }*/
         ],
-        onRegisterApi: function( gridApi ) {
+        onRegisterApi: function (gridApi) {
             $scope.gridApi = gridApi;
         }
     };
 
     // $http.get('https://cdn.rawgit.com/angular-ui/ui-grid.info/gh-pages/data/500_complex.json')
     $http.get('json/data.json')
-        .then(function(response) {
+        .then(function (response) {
             var data = response.data;
             console.log(response.data);
 
@@ -78,62 +105,62 @@ app.controller('MainCtrl', ['$scope', '$http', '$interval', 'uiGridGroupingConst
             $scope.gridOptions.data = data;
         });
 
-    $scope.expandAll = function(){
+    $scope.expandAll = function () {
         $scope.gridApi.treeBase.expandAllRows();
     };
 
-    $scope.toggleRow = function( rowNum ){
+    $scope.toggleRow = function (rowNum) {
         $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[rowNum]);
     };
 
-    $scope.changeGrouping = function() {
+    $scope.changeGrouping = function () {
         $scope.gridApi.grouping.clearGrouping();
         $scope.gridApi.grouping.groupColumn('age');
         $scope.gridApi.grouping.aggregateColumn('state', uiGridGroupingConstants.aggregation.COUNT);
     };
 
-    $scope.getAggregates = function() {
+    $scope.getAggregates = function () {
         var aggregatesTree = [];
         var gender
 
-        var recursiveExtract = function( treeChildren ) {
-            return treeChildren.map( function( node ) {
+        var recursiveExtract = function (treeChildren) {
+            return treeChildren.map(function (node) {
                 var newNode = {};
-                angular.forEach(node.row.entity, function( attributeCol ) {
-                    if( typeof(attributeCol.groupVal) !== 'undefined' ) {
+                angular.forEach(node.row.entity, function (attributeCol) {
+                    if (typeof (attributeCol.groupVal) !== 'undefined') {
                         newNode.groupVal = attributeCol.groupVal;
                         newNode.aggVal = attributeCol.value;
                     }
                 });
-                newNode.otherAggregations = node.aggregations.map( function( aggregation ) {
-                    return { colName: aggregation.col.name, value: aggregation.value, type: aggregation.type };
+                newNode.otherAggregations = node.aggregations.map(function (aggregation) {
+                    return {colName: aggregation.col.name, value: aggregation.value, type: aggregation.type};
                 });
-                if( node.children ) {
-                    newNode.children = recursiveExtract( node.children );
+                if (node.children) {
+                    newNode.children = recursiveExtract(node.children);
                 }
                 return newNode;
             });
         }
 
-        aggregatesTree = recursiveExtract( $scope.gridApi.grid.treeBase.tree );
+        aggregatesTree = recursiveExtract($scope.gridApi.grid.treeBase.tree);
 
         console.log(aggregatesTree);
     };
 }])
-    .filter('mapGender', function() {
+    .filter('mapGender', function () {
         var genderHash = {
             1: 'male',
             2: 'female'
         };
 
-        return function(input) {
+        return function (input) {
             var result;
             var match;
-            if (!input){
+            if (!input) {
                 return '';
             } else if (result = genderHash[input]) {
                 return result;
-            } else if ( ( match = input.match(/(.+)( \(\d+\))/) ) && ( result = genderHash[match[1]] ) ) {
+            } else if ((match = input.match(/(.+)( \(\d+\))/)) && (result = genderHash[match[1]])) {
                 return result + match[2];
             } else {
                 return input;

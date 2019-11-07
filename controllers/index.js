@@ -29,12 +29,58 @@ angular.module("app").controller("mainCtrl", function ($scope) {
 */
 
 
-var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid', 'ui.grid.grouping']);
+var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid', 'ui.grid.grouping', 'angularjs-dropdown-multiselect']);
 
 app.controller('MainCtrl', ['$scope', '$http', '$interval', 'uiGridGroupingConstants', function ($scope, $http, $interval, uiGridGroupingConstants) {
 
+
+    $scope.example14model = [];
+
+
+    $scope.setting2 = {
+        scrollableHeight: '300px',
+        scrollable: true,
+        enableSearch: true
+    };
+
+    $scope.example14data = [
+        {
+            "label": "О преступности/правонарушениях",
+            "id": "1"
+        },
+        {
+            "label": "О работе органа уг.преследования",
+            "id": "2"
+        },
+        {
+            "label": "О работе прокурора",
+            "id": "3"
+        },
+        {
+            "label": "О работе суда",
+            "id": "4"
+        },
+        {
+            "label": "Сведения Зандылык",
+            "id": "5"
+        },
+        {
+            "label": "О дорожно-транспортных проишествиях",
+            "id": "6"
+        },
+        {
+            "label": "О рассмотрении заявлений",
+            "id": "7"
+        }
+    ];
+    $scope.example2settings = {
+        displayProp: 'id'
+    };
+
+    $scope.example2customTexts = {buttonDefaultText: 'Выбрать категорию'};
+
     $scope.getDatas = function () {
-      console.log($scope.item.statsrez)
+        console.log($scope.item.statsrez)
     };
 
     $scope.getStatSrez = function () {

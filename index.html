@@ -3,14 +3,20 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="css/index.css" type="text/css">
+
     <link rel="stylesheet" href="css/font-awesome.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/ui-grid.min.css" type="text/css">
+
+
+    <link rel="stylesheet" href="http://ui-grid.info/release/ui-grid.css" type="text/css">
 
     <link rel="stylesheet" href="css/ui-select/select.min.css">
     <link rel="stylesheet" href="css/ui-select/select2.css">
     <link rel="stylesheet" href="css/ui-select/selectize.default.css">
+
+    <link rel="stylesheet" href="css/index.css" type="text/css">
+
+    <link rel="stylesheet" href="css/treeGrid.css">
 
 
     <script src="js/angular.js"></script>
@@ -18,7 +24,7 @@
     <script src="js/angular-animate.js"></script>
     <script src="js/angular-aria.js"></script>
     <script src="js/csv.js"></script>
-    <script src="js/pdfmake.js"></script>
+<!--    <script src="js/pdfmake.js"></script>-->
     <script src="js/vfs_fonts.js"></script>
     <script src="js/lodash.min.js"></script>
     <script src="js/jszip.min.js"></script>
@@ -36,6 +42,9 @@
 
 
     <script src="Scripts/angular-dropdown-multiselect.js"></script>
+
+    <script src="js/tree-grid-directive.js"></script>
+
 
 </head>
 <body>
@@ -127,42 +136,50 @@
                                     </div>
 
                                     <div class="col-md-5 col-sm-5 col-xs-4">
-                                        <button ng-click="getDatas(item)" style="float: right;" class="btn btn-success">
+                                        <button ng-click="getDatas(dateFrom, dateTo, statsrez, item)" style="float: right;" class="btn btn-success">
                                             Заказать
                                         </button>
                                     </div>
                                     <br>
 
                                 </div>
-                                <div class="col-md-4">
-
+                                <div class="col-md-6">
 
 
                                     <div class="pull-right box">
-                                        <!--<input ng-model="item.type1" id="box3" type="checkbox"/>
-                                        <label class="block" for="box3">О преступности/правонарушениях</label>
 
-                                        <input ng-model="item.type2" id="box4" type="checkbox"/>
-                                        <label class="block" for="box4">О работе органа уг.преследования</label>
 
-                                        <input ng-model="item.type3" id="box5" type="checkbox"/>
-                                        <label class="block" for="box5">О работе прокурора</label>
+                                        <div class="list-group">
 
-                                        <input ng-model="item.type4" id="box6" type="checkbox"/>
-                                        <label class="block" for="box6">О работе суда</label>
+                                            <!--<input ng-model="item.id" id="box3" type="checkbox"/>
+                                            <label class="blockGroup" for="box3">{{group.name}}</label>-->
 
-                                        <input ng-model="item.type5" id="box7" type="checkbox"/>
-                                        <label class="block" for="box7">Сведения "Зандылык"</label>
 
-                                        <input ng-model="item.type6" id="box8" type="checkbox"/>
-                                        <label class="block" for="box8">О дорожно-транспортных проишествиях</label>
+                                            <input ng-model="item.type1" id="box3" type="checkbox"/>
+                                            <label class="blockGroup" for="box3">О преступности/правонарушениях</label>
 
-                                        <input ng-model="item.type7" id="box9" type="checkbox"/>
-                                        <label class="block" for="box9">О рассмотрении заявлений</label>-->
-                                        <div class="text-center" style="margin-top: 19px" ng-dropdown-multiselect=""
-                                         options="example14data"
-                                         selected-model="example14model" extra-settings="setting2"
-                                         translation-texts="example2customTexts"></div>
+                                            <input ng-model="item.type2" id="box4" type="checkbox"/>
+                                            <label class="blockGroup" for="box4">О работе органа
+                                                уг.преследования</label>
+
+                                            <input ng-model="item.type3" id="box5" type="checkbox"/>
+                                            <label class="blockGroup" for="box5">О работе прокурора</label>
+
+                                            <input ng-model="item.type4" id="box6" type="checkbox"/>
+                                            <label class="blockGroup" for="box6">О работе суда</label>
+
+                                            <input ng-model="item.type5" id="box7" type="checkbox"/>
+                                            <label class="blockGroup" for="box7">Сведения "Зандылык"</label>
+
+                                            <input ng-model="item.type6" id="box8" type="checkbox"/>
+                                            <label class="blockGroup" for="box8">О дорожно-транспортных
+                                                проишествиях</label>
+
+                                            <input ng-model="item.type7" id="box9" type="checkbox"/>
+                                            <label class="blockGroup" for="box9">О рассмотрении заявлений</label>
+
+
+                                        </div>
 
 
                                     </div>
@@ -172,42 +189,15 @@
                             </div>
                         </div>
                         <br>
-                        <br>
-                        <br>
+
 
                         <div class="row">
                             <div class="col-md-12" style="padding-bottom: 25px">
-                                <div id="grid1" ui-grid="gridOptions" ui-grid-grouping
-                                     class="grid"></div>
+                                <!--<div id="grid1" ui-grid="gridOptions" ui-grid-grouping
+                                     class="grid"></div>-->
+                                <tree-grid tree-data="tree_data"></tree-grid>
                             </div>
                         </div>
-
-
-                        <!--<div class="row">
-                            <div class="col-md-12">
-                                <button id="expandAll" type="button" class="btn btn-success" ng-click="expandAll()">
-                                    Expand All
-                                </button>
-                                <button id="toggleFirstRow" type="button" class="btn btn-success"
-                                        ng-click="toggleRow(0)">Toggle First
-                                    Row
-                                </button>
-                                <button id="toggleSecondRow" type="button" class="btn btn-success"
-                                        ng-click="toggleRow(1)">Toggle Second
-                                    Row
-                                </button>
-                                <button id="changeGrouping" type="button" class="btn btn-success"
-                                        ng-click="changeGrouping()">Change
-                                    Grouping
-                                </button>
-                                <button id="getAggregates" type="button" class="btn btn-success"
-                                        ng-click="getAggregates()">Get
-                                    Aggregates
-                                </button>
-                                <br>
-
-                            </div>
-                        </div>-->
 
 
                     </form>

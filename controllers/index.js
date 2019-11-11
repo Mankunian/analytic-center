@@ -1,216 +1,71 @@
-/*
-var myApp = angular.module('app', ['ui.bootstrap', 'ui.select', 'ui.grid', 'ngAnimate', 'ngTouch']);
-
-
-angular.module("app").controller("mainCtrl", function ($scope) {
-
-
-
-
-    $scope.getDatas = function (item) {
-      console.log(item.dateFrom.getTime() / 1000)
-    };
-
-    $scope.gridOptions = {
-        data: [
-            {name: 'Bob', title: 'CEO'},
-            {name: 'Frank', title: 'Lowly Developer'},
-            {name: 'Frank', title: 'Lowly Developer'},
-            {name: 'Frank', title: 'Lowly Developer'},
-            {name: 'Frank', title: 'Lowly Developer'}
-        ]
-    };
-
-
-});
-
-
-
-*/
-
-
-var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid', 'ui.grid.grouping', 'angularjs-dropdown-multiselect']);
+var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid', 'ui.grid.grouping', 'angularjs-dropdown-multiselect', 'treeGrid']);
 
 app.controller('MainCtrl', ['$scope', '$http', '$interval', 'uiGridGroupingConstants', function ($scope, $http, $interval, uiGridGroupingConstants) {
 
 
-    $scope.example14model = [];
+    var fromTimestamp = 1546322400;
+    $scope.dateFrom = new Date(fromTimestamp * 1000);
+    console.log($scope.dateFrom);
 
+    $scope.dateTo = new Date();
 
-    $scope.setting2 = {
-        scrollableHeight: '300px',
-        scrollable: true,
-        enableSearch: true
+    $scope.getGroups = function () {
+        $http({
+            method: 'GET',
+            url: 'http://18.140.232.52:8081/api/v1/slices/groups'
+        }).then(function (value) {
+            $scope.groups = value.data;
+            console.log($scope.groups);
+        })
     };
 
-    $scope.example14data = [
-        {
-            "label": "О преступности/правонарушениях",
-            "id": "1"
-        },
-        {
-            "label": "О работе органа уг.преследования",
-            "id": "2"
-        },
-        {
-            "label": "О работе прокурора",
-            "id": "3"
-        },
-        {
-            "label": "О работе суда",
-            "id": "4"
-        },
-        {
-            "label": "Сведения Зандылык",
-            "id": "5"
-        },
-        {
-            "label": "О дорожно-транспортных проишествиях",
-            "id": "6"
-        },
-        {
-            "label": "О рассмотрении заявлений",
-            "id": "7"
-        }
-    ];
-    $scope.example2settings = {
-        displayProp: 'id'
-    };
 
-    $scope.example2customTexts = {buttonDefaultText: 'Выбрать категорию'};
+    $scope.getGroups();
 
-    $scope.getDatas = function () {
-        console.log($scope.item.statsrez)
-    };
 
     $scope.getStatSrez = function () {
-        $scope.statsrez = '12345689';
-        $scope.dateFrom = new Date();
-        $scope.dateTo = new Date();
+        $http({
+            method: 'GET',
+            url: 'http://18.140.232.52:8081/api/v1/slices/max'
+        }).then(function (value) {
+            $scope.statsrez = value.data.value;
+            console.log($scope.statsrez);
+        })
     };
+
     $scope.getStatSrez();
 
 
-    $scope.gridOptions = {
-        enableFiltering: true,
-        treeRowHeaderAlwaysVisible: false,
-        columnDefs: [
-            {
-                name: 'groupName',
-                displayName: 'Название групп',
-                grouping: {groupPriority: 0},
-                sort: {priority: 0, direction: 'asc'},
-                width: '*',
-                cellFilter: 'mapGender'
-            },
-            {
-                name: 'subGroupName',
-                displayName: 'Подгруппа',
-                grouping: {groupPriority: 0},
-                sort: {priority: 0, direction: 'desc'},
-                width: '*',
-                cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>'
-            },
-            {name: 'sliceNumber', displayName: 'Номер среза', width: '*'},
-            {name: 'period', displayName: 'Период', width: '*'},
-            {name: 'sliceRegion', displayName: 'Срез по региону', width: '*'},
-            {name: 'DB_number', displayName: '# в БД', width: '*'},
-            {name: 'formed', displayName: 'Сформирован', width: '*'}
-
-
-
-
-
-
-            /*{ name: 'age', treeAggregationType: uiGridGroupingConstants.aggregation.MAX, width: '*' },
-            { name: 'company', width: '*' },
-            { name: 'registered', width: '*', cellFilter: 'date', type: 'date' },
-            { name: 'balance', width: '*', cellFilter: 'currency', treeAggregationType: uiGridGroupingConstants.aggregation.AVG, customTreeAggregationFinalizerFn: function( aggregation ) {
-                    aggregation.rendered = aggregation.value;
-                } }*/
-        ],
-        onRegisterApi: function (gridApi) {
-            $scope.gridApi = gridApi;
-        }
+    $scope.getDatas = function (dateFrom, dateTo, statsrez, item) {
+        console.log(dateFrom);
+        console.log(dateTo);
+        console.log(statsrez);
+        console.log(item)
     };
 
-    // $http.get('https://cdn.rawgit.com/angular-ui/ui-grid.info/gh-pages/data/500_complex.json')
-    $http.get('json/data.json')
-        .then(function (response) {
-            var data = response.data;
-            console.log(response.data);
 
-            /*for ( var i = 0; i < data.length; i++ ){
-                var registeredDate = new Date( data[i].registered );
-                data[i].state = data[i].address.state;
-                data[i].gender = data[i].gender === 'male' ? 1: 2;
-                data[i].balance = Number( data[i].balance.slice(1).replace(/,/,'') );
-                data[i].registered = new Date( registeredDate.getFullYear(), registeredDate.getMonth(), 1 )
-            }
-            delete data[2].age;*/
-            $scope.gridOptions.data = data;
-        });
-
-    $scope.expandAll = function () {
-        $scope.gridApi.treeBase.expandAllRows();
-    };
-
-    $scope.toggleRow = function (rowNum) {
-        $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[rowNum]);
-    };
-
-    $scope.changeGrouping = function () {
-        $scope.gridApi.grouping.clearGrouping();
-        $scope.gridApi.grouping.groupColumn('age');
-        $scope.gridApi.grouping.aggregateColumn('state', uiGridGroupingConstants.aggregation.COUNT);
-    };
-
-    $scope.getAggregates = function () {
-        var aggregatesTree = [];
-        var gender
-
-        var recursiveExtract = function (treeChildren) {
-            return treeChildren.map(function (node) {
-                var newNode = {};
-                angular.forEach(node.row.entity, function (attributeCol) {
-                    if (typeof (attributeCol.groupVal) !== 'undefined') {
-                        newNode.groupVal = attributeCol.groupVal;
-                        newNode.aggVal = attributeCol.value;
-                    }
-                });
-                newNode.otherAggregations = node.aggregations.map(function (aggregation) {
-                    return {colName: aggregation.col.name, value: aggregation.value, type: aggregation.type};
-                });
-                if (node.children) {
-                    newNode.children = recursiveExtract(node.children);
+    $scope.tree_data = [
+        {
+            Name: "Группа о преступности/правонарушениях", Area: 268581, Population: 26448193, TimeZone: "Mountain",
+            children: [
+                {
+                    Name: "California",
+                    children: [
+                        {Name: "San Francisco", Area: 231, Population: 837442, TimeZone: "PST"},
+                        {Name: "Los Angeles", Area: 503, Population: 3904657, TimeZone: "PST"}
+                    ]
+                },
+                {
+                    Name: "Illinois", Area: 57914, Population: 12882135, TimeZone: "Central Time Zone",
+                    children: [
+                        {Name: "Chicago", Area: 234, Population: 2695598, TimeZone: "CST"}
+                    ]
                 }
-                return newNode;
-            });
+            ]
         }
+        // {Name:"Texas",Area:268581,Population:26448193,TimeZone:"Mountain"}
+    ];
 
-        aggregatesTree = recursiveExtract($scope.gridApi.grid.treeBase.tree);
 
-        console.log(aggregatesTree);
-    };
-}])
-    .filter('mapGender', function () {
-        var genderHash = {
-            1: 'male',
-            2: 'female'
-        };
-
-        return function (input) {
-            var result;
-            var match;
-            if (!input) {
-                return '';
-            } else if (result = genderHash[input]) {
-                return result;
-            } else if ((match = input.match(/(.+)( \(\d+\))/)) && (result = genderHash[match[1]])) {
-                return result + match[2];
-            } else {
-                return input;
-            }
-        };
-    });
+}]);
 

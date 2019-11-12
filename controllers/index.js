@@ -134,3 +134,50 @@ app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
 
 }]);
 
+app.controller('ModalCtrl', function($scope, $uibModal) {
+
+  $scope.open = function() {
+    var modalInstance =  $uibModal.open({
+      templateUrl: "modalContent.html",
+      controller: "ModalContentCtrl",
+      size: 'lg',
+      windowTopClass: 'getReportModal',
+    });
+    
+    modalInstance.result.then(function(response){
+      $scope.result = `${response} button hitted`;
+    });
+  };
+})
+
+app.controller('langDropdownCtrl', function ($scope, $log) {
+
+  $scope.data = {
+    langs: [
+      {id: '0', name: 'Русский'},
+      {id: '1', name: 'Казахский'},
+    ],
+    selectedOption: {id: '0', name: 'Русский'}
+  };
+
+});
+
+app.controller('ModalContentCtrl', function($scope, $uibModalInstance) {
+
+  $scope.ok = function(){
+    $uibModalInstance.close("Ok");
+  }
+
+  $scope.cancel = function(){
+    $uibModalInstance.dismiss();
+  } 
+  
+});
+
+app.controller('requestedReportsCtrl', function($scope) {
+  
+});
+
+app.controller('requestStatusCtrl', function($scope) {
+  
+});

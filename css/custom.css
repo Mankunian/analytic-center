@@ -1,0 +1,40 @@
+.left-nav,.right-nav{
+	float:left; 
+}
+.right-nav{
+	margin-left:20px;
+}
+a{
+	cursor:pointer; 
+}
+.modal-header {
+	text-align: center;
+}
+form.tab-form-demo .tab-pane {
+  margin: 20px 20px;
+}
+.nav-tabs>li>a {
+	color: #000;
+}
+.getReportModal .tab-content {
+	margin-top: 30px;
+}
+.getReportModal form label {
+	color: #000;
+	font-size: 14px;
+	min-width: 130px;
+	margin-right: 10px;
+}
+
+.getReportModal form .form-group {
+	margin-bottom: 10px;
+}
+.requested-reports {
+	min-height: 100px;
+}
+.request-status {
+	min-height: 100px;
+}
+.btn-submit .btn {
+	padding: 6px 35px;
+}

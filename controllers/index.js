@@ -153,21 +153,21 @@ app.controller('ModalCtrl', function($scope, $uibModal) {
       templateUrl: "modalContent.html",
       controller: "ModalContentCtrl",
       size: 'lg',
-      windowTopClass: 'getReportModal',
+      windowTopClass: 'getReportModal'
     });
     
     modalInstance.result.then(function(response){
-      $scope.result = `${response} button hitted`;
+      // $scope.result = `${response} button hitted`;
     });
   };
-})
+});
 
 app.controller('langDropdownCtrl', function ($scope, $log) {
 
   $scope.data = {
     langs: [
       {id: '0', name: 'Русский'},
-      {id: '1', name: 'Казахский'},
+      {id: '1', name: 'Казахский'}
     ],
     selectedOption: {id: '0', name: 'Русский'}
   };
@@ -178,7 +178,7 @@ app.controller('ModalContentCtrl', function($scope, $uibModalInstance) {
 
   $scope.ok = function(){
     $uibModalInstance.close("Ok");
-  }
+  };
 
   $scope.cancel = function(){
     $uibModalInstance.dismiss();

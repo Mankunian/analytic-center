@@ -1,4 +1,11 @@
-var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.grouping', 'angularjs-dropdown-multiselect', 'treeGrid', 'ui.bootstrap', 'ui.select']);
+var app = angular.module('app', [
+    'ngTouch',
+    'angularjs-dropdown-multiselect',
+    'treeGrid',
+    'ui.bootstrap',
+    'ui.select',
+    'checklist-model'
+]);
 
 app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
 

@@ -24,7 +24,7 @@
     <script src="js/angular-animate.js"></script>
     <script src="js/angular-aria.js"></script>
     <script src="js/csv.js"></script>
-<!--    <script src="js/pdfmake.js"></script>-->
+    <!--    <script src="js/pdfmake.js"></script>-->
     <script src="js/vfs_fonts.js"></script>
     <script src="js/lodash.min.js"></script>
     <script src="js/jszip.min.js"></script>
@@ -44,6 +44,9 @@
     <script src="Scripts/angular-dropdown-multiselect.js"></script>
 
     <script src="js/tree-grid-directive.js"></script>
+
+
+    <script src="js/checklist-model.js"></script>
 
 
 </head>
@@ -68,7 +71,7 @@
 
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="col-md-6">
+                                <div class="col-lg-6">
                                     <div class="col-md-4" style="color: #fff !important;">
 
                                         <label>Дата начала отчета <span
@@ -95,27 +98,35 @@
                                     <div class="col-md-1 col-xs-1">
                                         <label> <span
                                                 class="required" style="color: transparent">*</span></label>
-                                        <a ng-click="getStatSrez()" style="padding: 2px 5px"
+                                        <!--<a ng-click="getStatSrez()" style="padding: 2px 5px"
                                            class="btn btn-warning btn-sm refresh">
 
                                             <span title="Обновить статсрез" class="glyphicon glyphicon-refresh"></span>
-                                        </a>
+                                        </a>-->
+                                        <button title="Обновить статсрез" ng-click="getStatSrez()" class="btn btn-warning"><i class="fa fa-refresh"></i></button>
                                     </div>
 
                                     <div class="col-md-6 col-xs-6">
-                                        <input ng-model="remote" id="box1" type="checkbox"/>
-                                        <label class="block" for="box1">Удаленное формирование</label>
+                                        <!--<input ng-model="remote" id="box1" type="checkbox"/>
+                                        <label class="block" for="box1">Удаленное формирование</label>-->
+                                        <label class="containerLabel">
+                                            <input type="checkbox">Удаленное формирование
+                                            <span class="checkmark"></span>
+                                        </label>
+
                                     </div>
 
                                     <div class="col-md-6 col-xs-6">
                                         <div class="pull-right">
-                                            <input ng-model="showRemote" id="box2" type="checkbox"/>
-                                            <label class="block" for="box2">Показать удаленные</label>
+                                            <label class="containerLabel">
+                                                <input type="checkbox">Показать удаленные
+                                                <span class="checkmark"></span>
+                                            </label>
                                         </div>
                                     </div>
 
 
-                                    <div class="col-md-7 col-sm-7 col-xs-8">
+                                    <!--<div class="col-md-7 col-sm-7 col-xs-8">
                                         <a href="#" class="btn btn-primary btn-md">
                                             <span class="glyphicon glyphicon-refresh"></span>
                                         </a>
@@ -133,55 +144,29 @@
                                         </a>
 
 
-                                    </div>
+                                    </div>-->
 
-                                    <div class="col-md-5 col-sm-5 col-xs-4">
-                                        <button ng-click="getDatas(dateFrom, dateTo, statsrez, item)" style="float: right;" class="btn btn-success">
+                                    <!--<div class="col-md-5 col-sm-5 col-xs-4">
+                                        <button ng-click="getDatas(dateFrom, dateTo, statsrez, user)"
+                                                style="float: right;" class="btn btn-success">
                                             Заказать
                                         </button>
-                                    </div>
+                                    </div>-->
                                     <br>
 
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-lg-4 col-md-12" style="float: right">
 
 
                                     <div class="pull-right box">
-
-
-                                        <div class="list-group">
-
-                                            <!--<input ng-model="item.id" id="box3" type="checkbox"/>
-                                            <label class="blockGroup" for="box3">{{group.name}}</label>-->
-
-
-                                            <input ng-model="item.type1" id="box3" type="checkbox"/>
-                                            <label class="blockGroup" for="box3">О преступности/правонарушениях</label>
-
-                                            <input ng-model="item.type2" id="box4" type="checkbox"/>
-                                            <label class="blockGroup" for="box4">О работе органа
-                                                уг.преследования</label>
-
-                                            <input ng-model="item.type3" id="box5" type="checkbox"/>
-                                            <label class="blockGroup" for="box5">О работе прокурора</label>
-
-                                            <input ng-model="item.type4" id="box6" type="checkbox"/>
-                                            <label class="blockGroup" for="box6">О работе суда</label>
-
-                                            <input ng-model="item.type5" id="box7" type="checkbox"/>
-                                            <label class="blockGroup" for="box7">Сведения "Зандылык"</label>
-
-                                            <input ng-model="item.type6" id="box8" type="checkbox"/>
-                                            <label class="blockGroup" for="box8">О дорожно-транспортных
-                                                проишествиях</label>
-
-                                            <input ng-model="item.type7" id="box9" type="checkbox"/>
-                                            <label class="blockGroup" for="box9">О рассмотрении заявлений</label>
-
-
-                                        </div>
-
-
+                                        <label class="containerLabel" ng-repeat="group in groups">
+                                            <input type="checkbox" checklist-model="user" checklist-value="group.id">{{group.name}}
+                                            <span class="checkmark"></span>
+                                        </label>
+                                        <pre>{{user}}</pre>
+                                        <button ng-disabled="user.length == 0" class="btn btn-success"
+                                                ng-click="checkAll(user)">Заказать
+                                        </button>
                                     </div>
                                 </div>
 
@@ -193,9 +178,8 @@
 
                         <div class="row">
                             <div class="col-md-12" style="padding-bottom: 25px">
-                                <!--<div id="grid1" ui-grid="gridOptions" ui-grid-grouping
-                                     class="grid"></div>-->
-                                <tree-grid tree-data="tree_data"></tree-grid>
+
+                                <tree-grid style="display: block" tree-data="tree_data"></tree-grid>
                             </div>
                         </div>
 

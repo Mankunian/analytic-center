@@ -3,13 +3,26 @@
 @import "https://fonts.googleapis.com/css?family=Varela+Round";
 
 
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    height: 100%;
+    width: 100%;
+}
+
+
 .selector-for-some-widget {
     box-sizing: content-box;
 }
 
 body {
     overflow: auto;
-    height: 100%;
+    min-height: 100%;
+    font-family: sans-serif;
 }
 
 
@@ -143,37 +156,7 @@ label {
 }
 
 
-/*** custom checkboxes ***/
 
-input[type=checkbox] {
-    display: none;
-}
-
-/* to hide the checkbox itself */
-input[type=checkbox] + label:before {
-    font-family: FontAwesome;
-    display: inline-block;
-}
-
-input[type=checkbox] + label:before {
-    content: "\f096";
-}
-
-/* unchecked icon */
-input[type=checkbox] + label:before {
-    letter-spacing: 10px;
-}
-
-/* space between checkbox and label */
-
-input[type=checkbox]:checked + label:before {
-    content: "\f046";
-}
-
-/* checked icon */
-input[type=checkbox]:checked + label:before {
-    letter-spacing: 5px;
-}
 
 /* allow space for check mark */
 
@@ -561,6 +544,8 @@ tbody tr{
 
 
 
+
+
 @media only screen  and (min-width : 1824px) {
     /* Styles */
     .main {
@@ -616,20 +601,26 @@ tbody tr{
         background-position: center;
         background-size: cover;
         background-repeat: no-repeat;
-        height: 100vh;
+        height: 100%;
     }
 
 }
 
-/*
-.main {
-    background-image: url("../img/3.jpg");
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
-    height: 100vh;
+
+
+
+@media only screen  and (min-width : 1440px) {
+    /* Styles */
+    .main {
+        background-image: url("../img/3.jpg");
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        height: 100%;
+    }
+
 }
-*/
+
 
 
 #myChart{
@@ -737,8 +728,11 @@ zing-grid[loading] {
 
 
 .box{
-   /* border: 1px transparent;
-    padding: 5px;*/
+    display: grid;
+    /* background: #fff; */
+    border: 2px solid #fff;
+    border-radius: 5px;
+    padding: 12px;
 }
 
 .glyphicon{
@@ -825,4 +819,81 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     color: #000000;
     border: 2px solid;
     padding: 5px;
+}
+
+.list-group{
+    margin-bottom: 0;
+}
+
+table thead{
+    color: #fff;
+}
+
+
+/* The container */
+.containerLabel {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.containerLabel input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+.containerLabel:hover input ~ .checkmark {
+    background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.containerLabel input:checked ~ .checkmark {
+    background-color: #2196F3;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the checkmark when checked */
+.containerLabel input:checked ~ .checkmark:after {
+    display: block;
+}
+
+/* Style the checkmark/indicator */
+.containerLabel .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
 }

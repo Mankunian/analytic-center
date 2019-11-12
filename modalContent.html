@@ -1,0 +1,59 @@
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal" ng-click="cancel()" >×</button>
+  <h3>Получение отчетов</h3>
+</div>
+<div class="modal-body">
+	<uib-tabset active="active">
+   <uib-tab index="0" heading="Каталог">
+   	<div class="row">
+   		<div class="col-md-6">
+		   	
+		   	<form class="form-inline">
+		   		<div class="form-group">
+			   		<label for="statSliceNum">Статсрез на №</label>
+			 			<input type="text" name="statSliceNum" id="statSliceNum" ng-model="statSliceNum" class="form-control" disabled>
+		   		</div>
+		   		<div class="form-group">
+			   		<label for="reportDatePeriod">Отчетный период</label>
+			 			<input type="text" name="reportDatePeriod" id="reportDatePeriod" ng-model="reportDatePeriod" class="form-control" disabled>
+		   		</div>
+		   		<div class="form-group" ng-controller="langDropdownCtrl">
+			   		<label for="langSelect">Язык отчета</label>
+				    <select name="langSelect" id="langSelect"
+				      ng-options="option.name for option in data.langs track by option.id"
+				      ng-model="data.selectedOption" class="form-control"></select>
+						</select>
+		   		</div>
+		   		<div class="btn-submit">
+		   			<button class="btn btn-primary btn-md" type="submit" ng-click="getReports()">Получить</button>
+		   		</div>
+		   	</form>   			
+
+   		</div>
+   		<div class="col-md-6">
+   			
+   		</div>
+   	</div>
+   	<div class="row">
+   		<div class="requested-reports" ng-controller="requestedReportsCtrl"></div>
+   	</div>
+   	<div class="row">
+   		<div class="request-status" ng-controller="requestStatusCtrl"></div>
+   	</div>
+   </uib-tab>
+   <uib-tab index="1" heading="1-М">
+   	
+   </uib-tab>
+   <uib-tab index="3" heading="3-К">Long Labeled Justified content3</uib-tab>
+   <uib-tab index="4" heading="1-Н">Long Labeled Justified content4</uib-tab>
+   <uib-tab index="5" heading="СНГ-3">Long Labeled Justified content55</uib-tab>
+   <uib-tab index="6" heading="СНГ-1">Long Labeled Justified conten666t</uib-tab>
+   <uib-tab index="7" heading="СНГ-ОП">Long Labeled Justified content777</uib-tab>
+   <uib-tab index="8" heading="1-ЭТ">Long Labeled Justified conten888t</uib-tab>
+   <uib-tab index="9" heading="МПС">Long Labeled Justified conten9999t</uib-tab>
+ </uib-tabset>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()">OK</button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>

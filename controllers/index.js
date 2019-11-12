@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ngTouch', 'treeGrid', "checklist-model"]);
+var app = angular.module('app', ['ngAnimate', 'ngTouch', 'ui.grid', 'ui.grid.grouping', 'angularjs-dropdown-multiselect', 'treeGrid', 'ui.bootstrap', 'ui.select', 'ui.grid', 'ngAnimate', 'ngTouch']);
 
 app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
 

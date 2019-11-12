@@ -19,7 +19,6 @@ app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
             "startDate": dateFromString,
             "endDate": dateToString,
             "maxRecNum": $scope.statsrez,
-            // "region": 19,
             "groups": $scope.group
         };
 
@@ -97,17 +96,6 @@ app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
     $scope.getGroups();
     //Получение списка групп
 
-
-
-
-    //Заказать формирование срезов
-    $scope.getDatas = function () {
-
-
-    };
-
-
-    //Заказать формирование срезов
 
 
     $scope.tree_data = [

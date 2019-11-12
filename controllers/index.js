@@ -97,22 +97,24 @@ app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
     //Получение списка групп
 
 
-
     $scope.tree_data = [
-        {Name:"USA",Area:9826675,Population:318212000,TimeZone:"UTC -5 to -10",
-            children:[
-                {Name:"California", Area:423970,Population:38340000,TimeZone:"Pacific Time",
-                    children:[
-                        {Name:"San Francisco", Area:231,Population:837442,TimeZone:"PST"},
-                        {Name:"Los Angeles", Area:503,Population:3904657,TimeZone:"PST"}
+        {
+            Name: "USA", Area: 9826675, Population: 318212000, TimeZone: "UTC -5 to -10",
+            children: [
+                {
+                    Name: "California", Area: 423970, Population: 38340000, TimeZone: "Pacific Time",
+                    children: [
+                        {Name: "San Francisco", Area: 231, Population: 837442, TimeZone: "PST"},
+                        {Name: "Los Angeles", Area: 503, Population: 3904657, TimeZone: "PST"}
                     ],
                     icons: {
                         iconLeaf: "fa fa-sun-o"
                     }
                 },
-                {Name:"Illinois", Area:57914,Population:12882135,TimeZone:"Central Time Zone",
-                    children:[
-                        {Name:"Chicago", Area:234,Population:2695598,TimeZone:"CST"}
+                {
+                    Name: "Illinois", Area: 57914, Population: 12882135, TimeZone: "Central Time Zone",
+                    children: [
+                        {Name: "Chicago", Area: 234, Population: 2695598, TimeZone: "CST"}
                     ]
                 }
             ],
@@ -134,3 +136,50 @@ app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
 
 }]);
 
+app.controller('ModalCtrl', function($scope, $uibModal) {
+
+  $scope.open = function() {
+    var modalInstance =  $uibModal.open({
+      templateUrl: "modalContent.html",
+      controller: "ModalContentCtrl",
+      size: 'lg',
+      windowTopClass: 'getReportModal',
+    });
+
+    modalInstance.result.then(function(response){
+      // $scope.result = `${response} button hitted`;
+    });
+  };
+})
+
+app.controller('langDropdownCtrl', function ($scope, $log) {
+
+  $scope.data = {
+    langs: [
+      {id: '0', name: 'Русский'},
+      {id: '1', name: 'Казахский'},
+    ],
+    selectedOption: {id: '0', name: 'Русский'}
+  };
+
+});
+
+app.controller('ModalContentCtrl', function($scope, $uibModalInstance) {
+
+  $scope.ok = function(){
+    $uibModalInstance.close("Ok");
+  }
+
+  $scope.cancel = function(){
+    $uibModalInstance.dismiss();
+  }
+
+});
+
+app.controller('requestedReportsCtrl', function($scope) {
+
+});
+
+app.controller('requestStatusCtrl', function($scope) {
+
+});

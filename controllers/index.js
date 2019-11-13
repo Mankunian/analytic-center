@@ -1,30 +1,95 @@
 var app = angular.module('app', [
     'ngTouch',
-    'angularjs-dropdown-multiselect',
     'treeGrid',
     'ui.bootstrap',
     'ui.select',
     'checklist-model',
-    'ui.grid', 
+    'ui.grid',
     'ui.grid.treeView',
     'ui.grid.grouping',
     'ui.grid.edit',
     'ui.grid.selection'
 ]);
 
-app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', function ($scope, $http, uiGridGroupingConstants) {
+
+
+        $scope.gridOptions = {
+            enableRowSelection: true,
+            enableSelectAll: true,
+            selectionRowHeaderWidth: 35,
+            rowHeight: 35,
+            enableFiltering: false,
+            treeRowHeaderAlwaysVisible: false,
+            columnDefs: [
+                {
+                    name: 'groupName',
+                    displayName: 'Группы',
+                    grouping: {groupPriority: 0},
+                    sort: {priority: 0, direction: 'desc'},
+                    width: '*',
+                    cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>'
+                },
+
+                {
+                    name: 'statusName',
+                    displayName: 'Статус',
+                    grouping: {groupPriority: 0},
+                    sort: {priority: 0, direction: 'desc'},
+                    width: '*',
+                    cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>'
+                },
+                {
+                    name: 'maxRecNum',
+                    displayName: 'Номер среза',
+                    width: '*'
+                },
+                {
+                    name: 'period',
+                    displayName: 'Период',
+                    width: '*'
+                },
+                {
+                    name: 'created',
+                    displayName: 'Сформирован',
+                    width: '*'
+                }
+
+
+
+                /*{name: 'name', width: '30%'},
+                {
+                    name: 'statusName',
+                    grouping: {groupPriority: 0},
+                    sort: {priority: 1, direction: 'asc'},
+                    width: '20%',
+                    cellFilter: 'mapGender'
+                },
+                {name: 'age', treeAggregationType: uiGridGroupingConstants.aggregation.MAX, width: '20%'},
+                {name: 'company', width: '25%'},
+                {name: 'registered', width: '40%', cellFilter: 'date', type: 'date'},
+
+                {
+                    name: 'balance',
+                    width: '25%',
+                    cellFilter: 'currency',
+                    treeAggregationType: uiGridGroupingConstants.aggregation.AVG,
+                    customTreeAggregationFinalizerFn: function (aggregation) {
+                        aggregation.rendered = aggregation.value;
+                    }
+                }*/
+
+            ],
+            onRegisterApi: function (gridApi) {
+                $scope.gridApi = gridApi;
+            }
+        };
 
     $scope.user = [];
-    $scope.checkAll = function (user) {
+    $scope.orderSrez = function (user) {
         console.log(user);
 
         $scope.group = user;
-
-
-        console.log(dateFromString);
-        console.log(dateToString);
-        console.log($scope.statsrez);
-        console.log($scope.group);
 
         var dataObj = {
             "startDate": dateFromString,
@@ -34,14 +99,20 @@ app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
             "groups": $scope.group
         };
 
-        console.log(dataObj);
 
         $http({
             method: 'POST',
             url: 'http://18.140.232.52:8081/api/v1/slices',
             data: dataObj
-        }).then(function (value) {
-            console.log(value)
+        }).then(function (response) {
+
+
+            var data = response.data;
+            $scope.showGrid = response.data;
+
+            $scope.gridOptions.data = data;
+
+
         }, function (reason) {
             console.log(reason)
         })
@@ -49,7 +120,7 @@ app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
     };
 
 
-  //Получить № статсреза
+    //Получить № статсреза
     $scope.getStatSrez = function () {
         $http({
             method: 'GET',
@@ -67,13 +138,8 @@ app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
     //Дата начала отчета по умолчанию 1 января 2019
     var fromTimestamp = 1546322400;
     $scope.dateFrom = new Date(fromTimestamp * 1000);
-    console.log($scope.dateFrom.getTime() / 1000);
 
     $scope.dateTo = new Date();
-
-
-    console.log($scope.dateFrom);
-    console.log($scope.dateTo);
 
 
     var dd = ('0' + $scope.dateFrom.getDate()).slice(-2);
@@ -89,9 +155,6 @@ app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
 
     var dateToString = dd + '.' + mm + '.' + yy;
 
-    console.log(dateFromString);
-    console.log(dateToString);
-
 
     //Получение списка групп
     $scope.getGroups = function () {
@@ -100,77 +163,73 @@ app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
             url: 'http://18.140.232.52:8081/api/v1/slices/groups'
         }).then(function (value) {
             $scope.groups = value.data;
-            console.log($scope.groups);
         })
     };
-
-
     $scope.getGroups();
     //Получение списка групп
 
 
+}])
 
+    .filter('mapGender', function () {
+        var genderHash = {
+            1: 'male',
+            2: 'female'
+        };
 
-    //Заказать формирование срезов
-    $scope.getDatas = function () {
+        return function (input) {
+            var result;
+            var match;
+            if (!input) {
+                return '';
+            } else if (result = genderHash[input]) {
+                return result;
+            } else if ((match = input.match(/(.+)( \(\d+\))/)) && (result = genderHash[match[1]])) {
+                return result + match[2];
+            } else {
+                return input;
+            }
+        };
+    });
 
+app.controller('ModalControlCtrl', function ($scope, $uibModal) {
 
+    $scope.open = function () {
+        var modalInstance = $uibModal.open({
+            templateUrl: "modalContent.html",
+            controller: "ModalContentCtrl",
+            size: 'lg',
+            windowTopClass: 'getReportModal'
+        });
+
+        modalInstance.result.then(function (response) {
+            // $scope.result = `${response} button hitted`;
+        });
+    };
+});
+
+app.controller('langDropdownCtrl', function ($scope, $log) {
+
+    $scope.data = {
+        langs: [
+            {id: '0', name: 'Русский'},
+            {id: '1', name: 'Казахский'}
+        ],
+        selectedOption: {id: '0', name: 'Русский'}
     };
 
+});
 
-    //Заказать формирование срезов
+app.controller('ModalContentCtrl', function ($scope, $uibModalInstance) {
 
+    $scope.ok = function () {
+        $uibModalInstance.close("Ok");
+    };
 
-    $scope.tree_data = [
-        {Name:"USA",Area:9826675,Population:318212000,TimeZone:"UTC -5 to -10",
-            children:[
-                {Name:"California", Area:423970,Population:38340000,TimeZone:"Pacific Time",
-                    children:[
-                        {Name:"San Francisco", Area:231,Population:837442,TimeZone:"PST"},
-                        {Name:"Los Angeles", Area:503,Population:3904657,TimeZone:"PST"}
-                    ],
-                    icons: {
-                        iconLeaf: "fa fa-sun-o"
-                    }
-                },
-                {Name:"Illinois", Area:57914,Population:12882135,TimeZone:"Central Time Zone",
-                    children:[
-                        {Name:"Chicago", Area:234,Population:2695598,TimeZone:"CST"}
-                    ]
-                }
-            ],
-            icons: {
-                iconLeaf: "fa fa-flag",
-                iconCollapse: "fa fa-folder-open",
-                iconExpand: "fa fa-folder"
-            }
-        },
-        {Name:"Texas",Area:268581,Population:26448193,TimeZone:"Mountain"},
-        {Name:"Texas",Area:268581,Population:26448193,TimeZone:"Mountain"},
-        {Name:"Texas",Area:268581,Population:26448193,TimeZone:"Mountain"},
-        {Name:"Texas",Area:268581,Population:26448193,TimeZone:"Mountain"},
-        {Name:"Texas",Area:268581,Population:26448193,TimeZone:"Mountain"},
-        {Name:"Texas",Area:268581,Population:26448193,TimeZone:"Mountain"},
-        {Name:"Texas",Area:268581,Population:26448193,TimeZone:"Mountain"}
-    ];
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss();
+    }
 
-
-}]);
-
-app.controller('ModalControlCtrl', function($scope, $uibModal) {
-
-  $scope.open = function() {
-    var modalInstance =  $uibModal.open({
-      templateUrl: "modalContent.html",
-      controller: "ModalContentCtrl",
-      size: 'lg',
-      windowTopClass: 'getReportModal'
-    });
-    
-    modalInstance.result.then(function(response){
-      // $scope.result = `${response} button hitted`;
-    });
-  };
 });
 
 app.controller('langDropdownCtrl', function ($scope, $log) {

@@ -6,7 +6,9 @@ var app = angular.module('app', [
     'checklist-model',
     'ui.grid',
     'ui.grid.treeView',
-    'ui.grid.grouping'
+    'ui.grid.grouping',
+    'ui.grid.edit',
+    'ui.grid.selection'
 ]);
 
 app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', function ($scope, $http, uiGridGroupingConstants) {
@@ -128,6 +130,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
             console.log($scope.statsrez);
         })
     };
+
     $scope.getStatSrez();
     //Получить № статсреза
 
@@ -229,80 +232,85 @@ app.controller('ModalContentCtrl', function ($scope, $uibModalInstance) {
 
 });
 
-app.controller('requestedReportsCtrl', function ($scope) {
+app.controller('langDropdownCtrl', function ($scope, $log) {
+
+  $scope.data = {
+    langs: [
+      {id: '0', name: 'Русский'},
+      {id: '1', name: 'Казахский'}
+    ],
+    selectedOption: {id: '0', name: 'Русский'}
+  };
 
 });
 
-app.controller('requestStatusCtrl', function ($scope) {
+app.controller('ModalContentCtrl', function($scope, $uibModalInstance) {
 
+  $scope.ok = function(){
+    $uibModalInstance.close("Ok");
+  };
+
+  $scope.cancel = function(){
+    $uibModalInstance.dismiss();
+  } 
+  
 });
 
-app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', 'uiGridGroupingConstants', 'uiGridTreeViewConstants', function ($scope, $http, $interval, uiGridTreeViewConstants, uiGridGroupingConstants) {
-    $scope.gridOptions = {
-        enableSorting: false,
-        enableFiltering: false,
-        showTreeExpandNoChildren: false,
-        enableHiding: false,
-        enableColumnMenus: false,
-        columnDefs: [
-            {name: 'id', width: '20%', displayName: 'Идентификатор'},
-            {name: 'region', width: '60%', displayName: 'Регион/Орган'},
-            // { name: 'parent_id', width: '10%',displayName: 'Парент айди', grouping: { groupPriority: 0 }, },
-        ],
-    };
+app.controller('requestedReportsCtrl', function($scope) {
+  
+});
 
-    $http.get('/json/regions-test.json')
-        .then(function (response) {
-            var data = response.data,
-                subTreeLevel = 0;
+app.controller('requestStatusCtrl', function($scope) {
+  
+});
 
-            // data[0].$$treeLevel = 0;
+app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', 'uiGridTreeViewConstants', function ($scope, $http, $interval, uiGridTreeViewConstants ) {
+  $scope.gridOptions = {
+    enableColumnMenus: false,
+    enableSorting: false,
+    enableFiltering: false,
+    showTreeExpandNoChildren: false,
+    enableHiding: false,
+    columnDefs: [
+      { name: 'id', width: '20%',displayName: 'Идентификатор' },
+      { name: 'region', width: '60%',displayName: 'Регион/Орган' },
+    ],
+  };
 
-            for (var i = 0; i < data.length; i++) {
+  var id=0;
+  var writeoutNode = function( childArray, currentLevel, dataArray ){
+    childArray.forEach( function( childNode ){
 
-                data[i].id = data[i].id;
-                ;
-                data[i].region = data[i].region;
-                data[i].parentId = data[i].parent_id;
+    if ( childNode.children.length > 0 ){
+        childNode.$$treeLevel = currentLevel;
+        id=childNode.categoryId;
+       if(childNode.categoryId == childNode.parentCategoryId)
+        {
+          childNode.parentCategoryName='';
+        }
+     }
+    else
+    {
+     if((id!=childNode.parentCategoryId) || (childNode.categoryId == childNode.parentCategoryId))
+      {
+        if(childNode.categoryId == childNode.parentCategoryId)
+        {
+          childNode.parentCategoryName='';
+        }
+        childNode.$$treeLevel = currentLevel;
+      }
+    }
+      dataArray.push( childNode );
+      writeoutNode( childNode.children, currentLevel + 1, dataArray );
+    });
+  };
 
-                // if (data[i].children) {
+  $http.get('/json/regions.json')
+  .then(function(response) {
+    var dataSet = response.data;
 
-                //   for ( var j = 0; j < data[i].length; j++ ){
-                //     data[i].id = data[j].id;;
-                //     data[i].region = data[j].region;
-                //     data[i].parentId = data[j].parent_id;
-                //   }
+    $scope.gridOptions.data = [];
+    writeoutNode( dataSet, 0, $scope.gridOptions.data );
+  });
 
-                //   data[i].$$treeLevel = subTreeLevel;
-                //   subTreeLevel++;
-                // }
-            }
-            data[0].$$treeLevel = 0;
-            data[1].$$treeLevel = 1;
-            data[2].$$treeLevel = 2;
-            data[3].$$treeLevel = 2;
-            data[4].$$treeLevel = 2;
-
-            data[5].$$treeLevel = 1;
-            data[6].$$treeLevel = 1;
-            data[7].$$treeLevel = 1;
-            data[8].$$treeLevel = 1;
-
-
-            $scope.gridOptions.data = data;
-            console.log('data' + data);
-        });
-
-    $scope.expandAll = function () {
-        $scope.gridApi.treeBase.expandAllRows();
-    };
-
-    $scope.toggleRow = function (rowNum) {
-        $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[rowNum]);
-    };
-
-    $scope.toggleExpandNoChildren = function () {
-        $scope.gridOptions.showTreeExpandNoChildren = !$scope.gridOptions.showTreeExpandNoChildren;
-        $scope.gridApi.grid.refresh();
-    };
 }]);

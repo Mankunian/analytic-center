@@ -1,26 +1,41 @@
 var app = angular.module('app', [
     'ngTouch',
-    'angularjs-dropdown-multiselect',
     'treeGrid',
     'ui.bootstrap',
     'ui.select',
-    'checklist-model'
+    'checklist-model',
+    'ui.grid',
+    'ui.grid.grouping'
 ]);
 
-app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', function ($scope, $http, uiGridGroupingConstants ) {
+
+
+    $scope.gridOptions = {
+        enableFiltering: true,
+        treeRowHeaderAlwaysVisible: false,
+        columnDefs: [
+            { name: 'groupName', width: '30%' },
+            { name: 'groupId', grouping: { groupPriority: 1 }, sort: { priority: 1, direction: 'asc' }, width: '20%' }
+            /*{ name: 'age', treeAggregationType: uiGridGroupingConstants.aggregation.MAX, width: '20%' },
+            { name: 'company', width: '25%' },
+            { name: 'registered', width: '40%', cellFilter: 'date', type: 'date' },
+            { name: 'state', grouping: { groupPriority: 0 }, sort: { priority: 0, direction: 'desc' }, width: '35%', cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>' },
+            { name: 'balance', width: '25%', cellFilter: 'currency', treeAggregationType: uiGridGroupingConstants.aggregation.AVG, customTreeAggregationFinalizerFn: function( aggregation ) {
+                    aggregation.rendered = aggregation.value;
+                } }*/
+        ],
+        onRegisterApi: function( gridApi ) {
+            $scope.gridApi = gridApi;
+        }
+    };
 
 
     $scope.user = [];
-    $scope.checkAll = function (user) {
+    $scope.orderSrez = function (user) {
         console.log(user);
 
         $scope.group = user;
-
-
-        console.log(dateFromString);
-        console.log(dateToString);
-        console.log($scope.statsrez);
-        console.log($scope.group);
 
         var dataObj = {
             "startDate": dateFromString,
@@ -36,13 +51,54 @@ app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
             method: 'POST',
             url: 'http://18.140.232.52:8081/api/v1/slices',
             data: dataObj
-        }).then(function (value) {
-            console.log(value)
+        }).then(function (response) {
+            var data = response.data;
+            $scope.gridOptions.data = data;
         }, function (reason) {
             console.log(reason)
         })
 
     };
+
+
+   /* $scope.tree_data = [
+        {
+            Name: "USA",
+            Area: 9826675,
+            Population: 318212000,
+            TimeZone: "UTC -5 to -10",
+            children: [
+                {
+                    Name: "California", Area: 423970, Population: 38340000, TimeZone: "Pacific Time",
+                    children: [
+                        {Name: "San Francisco", Area: 231, Population: 837442, TimeZone: "PST"},
+                        {Name: "Los Angeles", Area: 503, Population: 3904657, TimeZone: "PST"}
+                    ],
+                    icons: {
+                        iconLeaf: "fa fa-sun-o"
+                    }
+                },
+                {
+                    Name: "Illinois", Area: 57914, Population: 12882135, TimeZone: "Central Time Zone",
+                    children: [
+                        {Name: "Chicago", Area: 234, Population: 2695598, TimeZone: "CST"}
+                    ]
+                }
+            ],
+            icons: {
+                iconLeaf: "fa fa-flag",
+                iconCollapse: "fa fa-folder-open",
+                iconExpand: "fa fa-folder"
+            }
+        },
+        {Name: "Texas", Area: 268581, Population: 26448193, TimeZone: "Mountain"},
+        {Name: "Texas", Area: 268581, Population: 26448193, TimeZone: "Mountain"},
+        {Name: "Texas", Area: 268581, Population: 26448193, TimeZone: "Mountain"},
+        {Name: "Texas", Area: 268581, Population: 26448193, TimeZone: "Mountain"},
+        {Name: "Texas", Area: 268581, Population: 26448193, TimeZone: "Mountain"},
+        {Name: "Texas", Area: 268581, Population: 26448193, TimeZone: "Mountain"},
+        {Name: "Texas", Area: 268581, Population: 26448193, TimeZone: "Mountain"}
+    ];*/
 
 
 //Получить № статсреза
@@ -52,7 +108,6 @@ app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
             url: 'http://18.140.232.52:8081/api/v1/slices/max'
         }).then(function (value) {
             $scope.statsrez = value.data.value;
-            console.log($scope.statsrez);
         })
     };
 
@@ -63,13 +118,8 @@ app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
     //Дата начала отчета по умолчанию 1 января 2019
     var fromTimestamp = 1546322400;
     $scope.dateFrom = new Date(fromTimestamp * 1000);
-    console.log($scope.dateFrom.getTime() / 1000);
 
     $scope.dateTo = new Date();
-
-
-    console.log($scope.dateFrom);
-    console.log($scope.dateTo);
 
 
     var dd = ('0' + $scope.dateFrom.getDate()).slice(-2);
@@ -85,9 +135,6 @@ app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
 
     var dateToString = dd + '.' + mm + '.' + yy;
 
-    console.log(dateFromString);
-    console.log(dateToString);
-
 
     //Получение списка групп
     $scope.getGroups = function () {
@@ -96,7 +143,6 @@ app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
             url: 'http://18.140.232.52:8081/api/v1/slices/groups'
         }).then(function (value) {
             $scope.groups = value.data;
-            console.log($scope.groups);
         })
     };
 
@@ -105,98 +151,52 @@ app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
     //Получение списка групп
 
 
-
-
-    //Заказать формирование срезов
-    $scope.getDatas = function () {
-
-
-    };
-
-
-    //Заказать формирование срезов
-
-
-    $scope.tree_data = [
-        {Name:"USA",Area:9826675,Population:318212000,TimeZone:"UTC -5 to -10",
-            children:[
-                {Name:"California", Area:423970,Population:38340000,TimeZone:"Pacific Time",
-                    children:[
-                        {Name:"San Francisco", Area:231,Population:837442,TimeZone:"PST"},
-                        {Name:"Los Angeles", Area:503,Population:3904657,TimeZone:"PST"}
-                    ],
-                    icons: {
-                        iconLeaf: "fa fa-sun-o"
-                    }
-                },
-                {Name:"Illinois", Area:57914,Population:12882135,TimeZone:"Central Time Zone",
-                    children:[
-                        {Name:"Chicago", Area:234,Population:2695598,TimeZone:"CST"}
-                    ]
-                }
-            ],
-            icons: {
-                iconLeaf: "fa fa-flag",
-                iconCollapse: "fa fa-folder-open",
-                iconExpand: "fa fa-folder"
-            }
-        },
-        {Name:"Texas",Area:268581,Population:26448193,TimeZone:"Mountain"},
-        {Name:"Texas",Area:268581,Population:26448193,TimeZone:"Mountain"},
-        {Name:"Texas",Area:268581,Population:26448193,TimeZone:"Mountain"},
-        {Name:"Texas",Area:268581,Population:26448193,TimeZone:"Mountain"},
-        {Name:"Texas",Area:268581,Population:26448193,TimeZone:"Mountain"},
-        {Name:"Texas",Area:268581,Population:26448193,TimeZone:"Mountain"},
-        {Name:"Texas",Area:268581,Population:26448193,TimeZone:"Mountain"}
-    ];
-
-
 }]);
 
-app.controller('ModalCtrl', function($scope, $uibModal) {
+app.controller('ModalCtrl', function ($scope, $uibModal) {
 
-  $scope.open = function() {
-    var modalInstance =  $uibModal.open({
-      templateUrl: "modalContent.html",
-      controller: "ModalContentCtrl",
-      size: 'lg',
-      windowTopClass: 'getReportModal'
-    });
-    
-    modalInstance.result.then(function(response){
-      // $scope.result = `${response} button hitted`;
-    });
-  };
+    $scope.open = function () {
+        var modalInstance = $uibModal.open({
+            templateUrl: "modalContent.html",
+            controller: "ModalContentCtrl",
+            size: 'lg',
+            windowTopClass: 'getReportModal'
+        });
+
+        modalInstance.result.then(function (response) {
+            // $scope.result = `${response} button hitted`;
+        });
+    };
 });
 
 app.controller('langDropdownCtrl', function ($scope, $log) {
 
-  $scope.data = {
-    langs: [
-      {id: '0', name: 'Русский'},
-      {id: '1', name: 'Казахский'}
-    ],
-    selectedOption: {id: '0', name: 'Русский'}
-  };
+    $scope.data = {
+        langs: [
+            {id: '0', name: 'Русский'},
+            {id: '1', name: 'Казахский'}
+        ],
+        selectedOption: {id: '0', name: 'Русский'}
+    };
 
 });
 
-app.controller('ModalContentCtrl', function($scope, $uibModalInstance) {
+app.controller('ModalContentCtrl', function ($scope, $uibModalInstance) {
 
-  $scope.ok = function(){
-    $uibModalInstance.close("Ok");
-  };
+    $scope.ok = function () {
+        $uibModalInstance.close("Ok");
+    };
 
-  $scope.cancel = function(){
-    $uibModalInstance.dismiss();
-  } 
-  
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss();
+    }
+
 });
 
-app.controller('requestedReportsCtrl', function($scope) {
-  
+app.controller('requestedReportsCtrl', function ($scope) {
+
 });
 
-app.controller('requestStatusCtrl', function($scope) {
-  
+app.controller('requestStatusCtrl', function ($scope) {
+
 });

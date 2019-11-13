@@ -8,7 +8,6 @@
   <link rel="stylesheet" href="css/bootstrap.min.css">
 
 
-  <link rel="stylesheet" href="http://ui-grid.info/release/ui-grid.css" type="text/css">
 
   <link rel="stylesheet" href="css/ui-select/select.min.css">
   <link rel="stylesheet" href="css/ui-select/select2.css">
@@ -40,7 +39,6 @@
   <script src="Scripts/angular-route.js"></script>
 
 
-  <script src="Scripts/angular-dropdown-multiselect.js"></script>
 
   <script src="js/tree-grid-directive.js"></script>
   <script src="js/checklist-model.js"></script>
@@ -80,18 +78,13 @@
                       <button title="Обновить статсрез" ng-click="getStatSrez()" class="btn btn-warning"><i class="fa fa-refresh"></i></button>
                     </div>
                     <div class="col-md-6 col-xs-6">
-                      <!-- <input ng-model="remote" id="box1" type="checkbox"/> -->
-                      <!-- <label class="block" for="box1">Удаленное формирование</label> -->
+
                       <label class="containerLabel">
                           <input type="checkbox">Удаленное формирование
                           <span class="checkmark"></span>
                       </label>
                     </div>
                     <div class="col-md-6 col-xs-6">
-                    <!--   <div class="pull-right">
-                        <input ng-model="showRemote" id="box2" type="checkbox"/>
-                        <label class="block" for="box2">Показать удаленные</label>
-                      </div> -->
                       <div class="pull-right">
                         <label class="containerLabel">
                           <input type="checkbox">Показать удаленные
@@ -124,8 +117,8 @@
                         <input type="checkbox" checklist-model="user" checklist-value="group.id">{{group.name}}
                         <span class="checkmark"></span>
                       </label>
-                      <pre>{{user}}</pre>
-                      <button ng-disabled="user.length == 0" class="btn btn-success" ng-click="checkAll(user)">Заказать</button>
+<!--                      <pre>{{user}}</pre>-->
+                      <button ng-disabled="user.length == 0" class="btn btn-success" ng-click="orderSrez(user)">Заказать</button>
                     </div>
                   </div>
                 </div>
@@ -139,7 +132,8 @@
              </div>
               <div class="row">
                 <div class="col-md-12" style="padding-bottom: 25px">
-                 <tree-grid style="display: block" tree-data="tree_data"></tree-grid>
+<!--                 <tree-grid style="display: block" tree-data="tree_data"></tree-grid>-->
+                  <div id="grid1" ui-grid="gridOptions" ui-grid-grouping class="grid"></div>
                </div>
              </div>
            </form>

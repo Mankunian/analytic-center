@@ -4,11 +4,13 @@ var app = angular.module('app', [
     'treeGrid',
     'ui.bootstrap',
     'ui.select',
-    'checklist-model'
+    'checklist-model',
+    'ui.grid', 
+    'ui.grid.treeView',
+    'ui.grid.grouping'
 ]);
 
 app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
-
 
     $scope.user = [];
     $scope.checkAll = function (user) {
@@ -45,7 +47,7 @@ app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
     };
 
 
-//Получить № статсреза
+  //Получить № статсреза
     $scope.getStatSrez = function () {
         $http({
             method: 'GET',
@@ -153,7 +155,7 @@ app.controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
 
 }]);
 
-app.controller('ModalCtrl', function($scope, $uibModal) {
+app.controller('ModalControlCtrl', function($scope, $uibModal) {
 
   $scope.open = function() {
     var modalInstance =  $uibModal.open({
@@ -200,3 +202,72 @@ app.controller('requestedReportsCtrl', function($scope) {
 app.controller('requestStatusCtrl', function($scope) {
   
 });
+
+app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval','uiGridGroupingConstants', 'uiGridTreeViewConstants', function ($scope, $http, $interval, uiGridTreeViewConstants, uiGridGroupingConstants ) {
+  $scope.gridOptions = {
+    enableSorting: false,
+    enableFiltering: false,
+    showTreeExpandNoChildren: false,
+    enableHiding: false,
+    enableColumnMenus: false,
+    columnDefs: [
+      { name: 'id', width: '20%',displayName: 'Идентификатор' },
+      { name: 'region', width: '60%',displayName: 'Регион/Орган' },
+      // { name: 'parent_id', width: '10%',displayName: 'Парент айди', grouping: { groupPriority: 0 }, },
+    ],
+  };
+ 
+ $http.get('/json/regions-test.json')
+ .then(function(response) {
+   var data = response.data,
+       subTreeLevel = 0;
+
+    // data[0].$$treeLevel = 0;
+   
+   for ( var i = 0; i < data.length; i++ ){
+
+    data[i].id = data[i].id;;
+    data[i].region = data[i].region;
+    data[i].parentId = data[i].parent_id;
+
+    // if (data[i].children) {
+
+    //   for ( var j = 0; j < data[i].length; j++ ){
+    //     data[i].id = data[j].id;;
+    //     data[i].region = data[j].region;
+    //     data[i].parentId = data[j].parent_id;        
+    //   }
+
+    //   data[i].$$treeLevel = subTreeLevel;
+    //   subTreeLevel++;
+    // }
+   }
+   data[0].$$treeLevel = 0;
+   data[1].$$treeLevel = 1;
+   data[2].$$treeLevel = 2;
+   data[3].$$treeLevel = 2;
+   data[4].$$treeLevel = 2;
+   
+   data[5].$$treeLevel = 1;
+   data[6].$$treeLevel = 1;
+   data[7].$$treeLevel = 1;
+   data[8].$$treeLevel = 1;
+
+
+   $scope.gridOptions.data = data;
+   console.log('data' + data);
+ });
+ 
+  $scope.expandAll = function(){
+    $scope.gridApi.treeBase.expandAllRows();
+  };
+ 
+  $scope.toggleRow = function( rowNum ){
+    $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[rowNum]);
+  };
+ 
+  $scope.toggleExpandNoChildren = function(){
+    $scope.gridOptions.showTreeExpandNoChildren = !$scope.gridOptions.showTreeExpandNoChildren;
+    $scope.gridApi.grid.refresh();
+  };
+}]);

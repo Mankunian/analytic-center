@@ -38,3 +38,7 @@ form.tab-form-demo .tab-pane {
 .btn-submit .btn {
 	padding: 6px 35px;
 }
+.grid {
+  width: 500px;
+  height: 400px;
+}

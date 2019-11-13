@@ -9,10 +9,79 @@ var app = angular.module('app', [
     'ui.grid.grouping'
 ]);
 
-app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', function ($scope, $http, uiGridGroupingConstants ) {
+app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', function ($scope, $http, uiGridGroupingConstants) {
+
+
+        $scope.gridOptions = {
+            enableRowSelection: true,
+            enableSelectAll: true,
+            selectionRowHeaderWidth: 35,
+            rowHeight: 35,
+            enableFiltering: false,
+            treeRowHeaderAlwaysVisible: false,
+            columnDefs: [
+                {
+                    name: 'groupName',
+                    displayName: 'Группы',
+                    grouping: {groupPriority: 0},
+                    sort: {priority: 0, direction: 'desc'},
+                    width: '*',
+                    cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>'
+                },
+
+                {
+                    name: 'statusName',
+                    displayName: 'Статус',
+                    grouping: {groupPriority: 0},
+                    sort: {priority: 0, direction: 'desc'},
+                    width: '*',
+                    cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>'
+                },
+                {
+                    name: 'maxRecNum',
+                    displayName: 'Номер среза',
+                    width: '*'
+                },
+                {
+                    name: 'period',
+                    displayName: 'Период',
+                    width: '*'
+                },
+                {
+                    name: 'created',
+                    displayName: 'Сформирован',
+                    width: '*'
+                }
 
 
 
+                /*{name: 'name', width: '30%'},
+                {
+                    name: 'statusName',
+                    grouping: {groupPriority: 0},
+                    sort: {priority: 1, direction: 'asc'},
+                    width: '20%',
+                    cellFilter: 'mapGender'
+                },
+                {name: 'age', treeAggregationType: uiGridGroupingConstants.aggregation.MAX, width: '20%'},
+                {name: 'company', width: '25%'},
+                {name: 'registered', width: '40%', cellFilter: 'date', type: 'date'},
+
+                {
+                    name: 'balance',
+                    width: '25%',
+                    cellFilter: 'currency',
+                    treeAggregationType: uiGridGroupingConstants.aggregation.AVG,
+                    customTreeAggregationFinalizerFn: function (aggregation) {
+                        aggregation.rendered = aggregation.value;
+                    }
+                }*/
+
+            ],
+            onRegisterApi: function (gridApi) {
+                $scope.gridApi = gridApi;
+            }
+        };
 
     $scope.user = [];
     $scope.orderSrez = function (user) {
@@ -28,24 +97,20 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
             "groups": $scope.group
         };
 
-        $scope.gridOptions = {
-        enableFiltering: true,
-        treeRowHeaderAlwaysVisible: false,
-        columnDefs: [
-            { name: 'groupName', width: '30%' }
-        ],
-        onRegisterApi: function( gridApi ) {
-            $scope.gridApi = gridApi;
-        }
-    };
 
         $http({
             method: 'POST',
             url: 'http://18.140.232.52:8081/api/v1/slices',
             data: dataObj
         }).then(function (response) {
+
+
             var data = response.data;
+            $scope.showGrid = response.data;
+
             $scope.gridOptions.data = data;
+
+
         }, function (reason) {
             console.log(reason)
         })
@@ -53,7 +118,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
     };
 
 
-  //Получить № статсреза
+    //Получить № статсреза
     $scope.getStatSrez = function () {
         $http({
             method: 'GET',
@@ -101,121 +166,143 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
     //Получение списка групп
 
 
-}]);
+}])
 
-app.controller('ModalControlCtrl', function($scope, $uibModal) {
+    .filter('mapGender', function () {
+        var genderHash = {
+            1: 'male',
+            2: 'female'
+        };
 
-  $scope.open = function() {
-    var modalInstance =  $uibModal.open({
-      templateUrl: "modalContent.html",
-      controller: "ModalContentCtrl",
-      size: 'lg',
-      windowTopClass: 'getReportModal'
+        return function (input) {
+            var result;
+            var match;
+            if (!input) {
+                return '';
+            } else if (result = genderHash[input]) {
+                return result;
+            } else if ((match = input.match(/(.+)( \(\d+\))/)) && (result = genderHash[match[1]])) {
+                return result + match[2];
+            } else {
+                return input;
+            }
+        };
     });
-    
-    modalInstance.result.then(function(response){
-      // $scope.result = `${response} button hitted`;
-    });
-  };
+
+app.controller('ModalControlCtrl', function ($scope, $uibModal) {
+
+    $scope.open = function () {
+        var modalInstance = $uibModal.open({
+            templateUrl: "modalContent.html",
+            controller: "ModalContentCtrl",
+            size: 'lg',
+            windowTopClass: 'getReportModal'
+        });
+
+        modalInstance.result.then(function (response) {
+            // $scope.result = `${response} button hitted`;
+        });
+    };
 });
 
 app.controller('langDropdownCtrl', function ($scope, $log) {
 
-  $scope.data = {
-    langs: [
-      {id: '0', name: 'Русский'},
-      {id: '1', name: 'Казахский'}
-    ],
-    selectedOption: {id: '0', name: 'Русский'}
-  };
+    $scope.data = {
+        langs: [
+            {id: '0', name: 'Русский'},
+            {id: '1', name: 'Казахский'}
+        ],
+        selectedOption: {id: '0', name: 'Русский'}
+    };
 
 });
 
-app.controller('ModalContentCtrl', function($scope, $uibModalInstance) {
+app.controller('ModalContentCtrl', function ($scope, $uibModalInstance) {
 
-  $scope.ok = function(){
-    $uibModalInstance.close("Ok");
-  };
+    $scope.ok = function () {
+        $uibModalInstance.close("Ok");
+    };
 
-  $scope.cancel = function(){
-    $uibModalInstance.dismiss();
-  } 
-  
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss();
+    }
+
 });
 
-app.controller('requestedReportsCtrl', function($scope) {
-  
+app.controller('requestedReportsCtrl', function ($scope) {
+
 });
 
-app.controller('requestStatusCtrl', function($scope) {
-  
+app.controller('requestStatusCtrl', function ($scope) {
+
 });
 
-app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval','uiGridGroupingConstants', 'uiGridTreeViewConstants', function ($scope, $http, $interval, uiGridTreeViewConstants, uiGridGroupingConstants ) {
-  $scope.gridOptions = {
-    enableSorting: false,
-    enableFiltering: false,
-    showTreeExpandNoChildren: false,
-    enableHiding: false,
-    enableColumnMenus: false,
-    columnDefs: [
-      { name: 'id', width: '20%',displayName: 'Идентификатор' },
-      { name: 'region', width: '60%',displayName: 'Регион/Орган' },
-      // { name: 'parent_id', width: '10%',displayName: 'Парент айди', grouping: { groupPriority: 0 }, },
-    ],
-  };
+app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', 'uiGridGroupingConstants', 'uiGridTreeViewConstants', function ($scope, $http, $interval, uiGridTreeViewConstants, uiGridGroupingConstants) {
+    $scope.gridOptions = {
+        enableSorting: false,
+        enableFiltering: false,
+        showTreeExpandNoChildren: false,
+        enableHiding: false,
+        enableColumnMenus: false,
+        columnDefs: [
+            {name: 'id', width: '20%', displayName: 'Идентификатор'},
+            {name: 'region', width: '60%', displayName: 'Регион/Орган'},
+            // { name: 'parent_id', width: '10%',displayName: 'Парент айди', grouping: { groupPriority: 0 }, },
+        ],
+    };
 
- $http.get('/json/regions-test.json')
- .then(function(response) {
-   var data = response.data,
-       subTreeLevel = 0;
+    $http.get('/json/regions-test.json')
+        .then(function (response) {
+            var data = response.data,
+                subTreeLevel = 0;
 
-    // data[0].$$treeLevel = 0;
+            // data[0].$$treeLevel = 0;
 
-   for ( var i = 0; i < data.length; i++ ){
+            for (var i = 0; i < data.length; i++) {
 
-    data[i].id = data[i].id;;
-    data[i].region = data[i].region;
-    data[i].parentId = data[i].parent_id;
+                data[i].id = data[i].id;
+                ;
+                data[i].region = data[i].region;
+                data[i].parentId = data[i].parent_id;
 
-    // if (data[i].children) {
+                // if (data[i].children) {
 
-    //   for ( var j = 0; j < data[i].length; j++ ){
-    //     data[i].id = data[j].id;;
-    //     data[i].region = data[j].region;
-    //     data[i].parentId = data[j].parent_id;
-    //   }
+                //   for ( var j = 0; j < data[i].length; j++ ){
+                //     data[i].id = data[j].id;;
+                //     data[i].region = data[j].region;
+                //     data[i].parentId = data[j].parent_id;
+                //   }
 
-    //   data[i].$$treeLevel = subTreeLevel;
-    //   subTreeLevel++;
-    // }
-   }
-   data[0].$$treeLevel = 0;
-   data[1].$$treeLevel = 1;
-   data[2].$$treeLevel = 2;
-   data[3].$$treeLevel = 2;
-   data[4].$$treeLevel = 2;
+                //   data[i].$$treeLevel = subTreeLevel;
+                //   subTreeLevel++;
+                // }
+            }
+            data[0].$$treeLevel = 0;
+            data[1].$$treeLevel = 1;
+            data[2].$$treeLevel = 2;
+            data[3].$$treeLevel = 2;
+            data[4].$$treeLevel = 2;
 
-   data[5].$$treeLevel = 1;
-   data[6].$$treeLevel = 1;
-   data[7].$$treeLevel = 1;
-   data[8].$$treeLevel = 1;
+            data[5].$$treeLevel = 1;
+            data[6].$$treeLevel = 1;
+            data[7].$$treeLevel = 1;
+            data[8].$$treeLevel = 1;
 
 
-   $scope.gridOptions.data = data;
-   console.log('data' + data);
- });
+            $scope.gridOptions.data = data;
+            console.log('data' + data);
+        });
 
-  $scope.expandAll = function(){
-    $scope.gridApi.treeBase.expandAllRows();
-  };
+    $scope.expandAll = function () {
+        $scope.gridApi.treeBase.expandAllRows();
+    };
 
-  $scope.toggleRow = function( rowNum ){
-    $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[rowNum]);
-  };
+    $scope.toggleRow = function (rowNum) {
+        $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[rowNum]);
+    };
 
-  $scope.toggleExpandNoChildren = function(){
-    $scope.gridOptions.showTreeExpandNoChildren = !$scope.gridOptions.showTreeExpandNoChildren;
-    $scope.gridApi.grid.refresh();
-  };
+    $scope.toggleExpandNoChildren = function () {
+        $scope.gridOptions.showTreeExpandNoChildren = !$scope.gridOptions.showTreeExpandNoChildren;
+        $scope.gridApi.grid.refresh();
+    };
 }]);

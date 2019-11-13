@@ -9,79 +9,63 @@ var app = angular.module('app', [
     'ui.grid.grouping'
 ]);
 
-app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', function ($scope, $http, uiGridGroupingConstants) {
+app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', function ($scope, $http) {
+
+    var detailButton = '<div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents"> <button ng-click="$root.open()" ng-hide="row.treeLevel==0 || row.treeLevel == 1" type="button" class="btn btn-success"> Получить отчет </button> </div>'
 
 
-        $scope.gridOptions = {
-            enableRowSelection: true,
-            enableSelectAll: true,
-            selectionRowHeaderWidth: 35,
-            rowHeight: 35,
-            enableFiltering: false,
-            treeRowHeaderAlwaysVisible: false,
-            columnDefs: [
-                {
-                    name: 'groupName',
-                    displayName: 'Группы',
-                    grouping: {groupPriority: 0},
-                    sort: {priority: 0, direction: 'desc'},
-                    width: '*',
-                    cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>'
-                },
+    $scope.gridOptions = {
+        enableRowSelection: true,
+        enableSelectAll: true,
+        selectionRowHeaderWidth: 35,
+        rowHeight: 35,
+        enableFiltering: false,
+        treeRowHeaderAlwaysVisible: false,
+        columnDefs: [
+            {
+                name: 'groupName',
+                displayName: 'Группы',
+                grouping: {groupPriority: 0},
+                sort: {priority: 0, direction: 'desc'},
+                width: '*',
+                cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>'
+            },
 
-                {
-                    name: 'statusName',
-                    displayName: 'Статус',
-                    grouping: {groupPriority: 0},
-                    sort: {priority: 0, direction: 'desc'},
-                    width: '*',
-                    cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>'
-                },
-                {
-                    name: 'maxRecNum',
-                    displayName: 'Номер среза',
-                    width: '*'
-                },
-                {
-                    name: 'period',
-                    displayName: 'Период',
-                    width: '*'
-                },
-                {
-                    name: 'created',
-                    displayName: 'Сформирован',
-                    width: '*'
-                }
-
-
-
-                /*{name: 'name', width: '30%'},
-                {
-                    name: 'statusName',
-                    grouping: {groupPriority: 0},
-                    sort: {priority: 1, direction: 'asc'},
-                    width: '20%',
-                    cellFilter: 'mapGender'
-                },
-                {name: 'age', treeAggregationType: uiGridGroupingConstants.aggregation.MAX, width: '20%'},
-                {name: 'company', width: '25%'},
-                {name: 'registered', width: '40%', cellFilter: 'date', type: 'date'},
-
-                {
-                    name: 'balance',
-                    width: '25%',
-                    cellFilter: 'currency',
-                    treeAggregationType: uiGridGroupingConstants.aggregation.AVG,
-                    customTreeAggregationFinalizerFn: function (aggregation) {
-                        aggregation.rendered = aggregation.value;
-                    }
-                }*/
-
-            ],
-            onRegisterApi: function (gridApi) {
-                $scope.gridApi = gridApi;
+            {
+                name: 'statusName',
+                displayName: 'Статус',
+                grouping: {groupPriority: 0},
+                sort: {priority: 0, direction: 'desc'},
+                width: '*',
+                cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>'
+            },
+            {
+                name: 'maxRecNum',
+                displayName: 'Номер среза',
+                width: '*'
+            },
+            {
+                name: 'period',
+                displayName: 'Период',
+                width: '*'
+            },
+            {
+                name: 'created',
+                displayName: 'Сформирован',
+                width: '*'
+            },
+            {
+                name: 'button',
+                displayName: 'Действие',
+                cellTemplate: detailButton
             }
-        };
+
+        ],
+        onRegisterApi: function (gridApi) {
+            $scope.gridApi = gridApi;
+        }
+    };
+
 
     $scope.user = [];
     $scope.orderSrez = function (user) {
@@ -166,32 +150,12 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
     //Получение списка групп
 
 
-}])
+}]);
 
-    .filter('mapGender', function () {
-        var genderHash = {
-            1: 'male',
-            2: 'female'
-        };
+app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope) {
 
-        return function (input) {
-            var result;
-            var match;
-            if (!input) {
-                return '';
-            } else if (result = genderHash[input]) {
-                return result;
-            } else if ((match = input.match(/(.+)( \(\d+\))/)) && (result = genderHash[match[1]])) {
-                return result + match[2];
-            } else {
-                return input;
-            }
-        };
-    });
-
-app.controller('ModalControlCtrl', function ($scope, $uibModal) {
-
-    $scope.open = function () {
+    $rootScope.open = function () {
+        console.log('Opened');
         var modalInstance = $uibModal.open({
             templateUrl: "modalContent.html",
             controller: "ModalContentCtrl",
@@ -246,12 +210,12 @@ app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', 'uiGridGroupin
         enableColumnMenus: false,
         columnDefs: [
             {name: 'id', width: '20%', displayName: 'Идентификатор'},
-            {name: 'region', width: '60%', displayName: 'Регион/Орган'},
+            {name: 'region', width: '60%', displayName: 'Регион/Орган'}
             // { name: 'parent_id', width: '10%',displayName: 'Парент айди', grouping: { groupPriority: 0 }, },
-        ],
+        ]
     };
 
-    $http.get('/json/regions-test.json')
+    $http.get('./json/regions-test.json')
         .then(function (response) {
             var data = response.data,
                 subTreeLevel = 0;

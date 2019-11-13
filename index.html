@@ -36,6 +36,14 @@
 
     <!-- UI Grid -->
     <script src="js/ui-grid/ui-grid.core.min.js"></script>
+    <!-- <script src="js/ui-grid/ui-grid.edit.min.js"></script> -->
+    <script src="js/ui-grid/ui-grid.tree-base.min.js"></script>
+    <!-- <script src="js/ui-grid/ui-grid.tree-view.min.js"></script> -->
+    <script src="js/ui-grid/ui-grid.grouping.min.js"></script>
+    <script src="js/ui-grid/ui-grid.selection.min.js"></script>
+
+    <!-- UI Grid -->
+    <script src="js/ui-grid/ui-grid.core.min.js"></script>
     <script src="js/ui-grid/ui-grid.tree-base.min.js"></script>
     <script src="js/ui-grid/ui-grid.tree-view.min.js"></script>
     <script src="js/ui-grid/ui-grid.grouping.min.js"></script>
@@ -44,11 +52,11 @@
     <script src="Scripts/jquery-2.2.1.js"></script>
     <script src="Scripts/angular-route.js"></script>
 
+    <script src="Scripts/angular-dropdown-multiselect.js"></script>
 
     <script src="js/tree-grid-directive.js"></script>
     <script src="js/checklist-model.js"></script>
-    <script data-require="ui-bootstrap@*" data-semver="2.5.0"
-            src="https://cdn.rawgit.com/angular-ui/bootstrap/gh-pages/ui-bootstrap-tpls-2.5.0.js"></script>
+    <script data-require="ui-bootstrap@*" data-semver="2.5.0" src="js/ui-bootstrap-tpls-2.5.0.js"></script>
 </head>
 <body>
 <div ng-controller="MainCtrl">
@@ -143,7 +151,6 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12" style="padding-bottom: 25px">
-                                <!--                 <tree-grid style="display: block" tree-data="tree_data"></tree-grid>-->
                                 <div ng-if="showGrid" style="width: 99%" id="grid1" ui-grid="gridOptions"
                                      ui-grid-grouping ui-grid-auto-fit-columns
                                      ui-grid-resize-columns ui-grid-selection class="grid"></div>
@@ -157,7 +164,6 @@
 </div>
 
 <script src="controllers/index.js"></script>
-<!-- <script src="controllers/getReports.js"></script> -->
 <script src="Scripts/bootstrap.min.js"></script>
 </body>
 </html>

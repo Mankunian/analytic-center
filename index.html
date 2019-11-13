@@ -28,10 +28,17 @@
   <script src="js/jszip.min.js"></script>
   <script src="js/excel-builder.dist.js"></script>
   <script src="js/ui-grid.js"></script>
+  <link rel="stylesheet" href="http://ui-grid.info/release/ui-grid.css" type="text/css">
+
   <script src="Scripts/ui-bootstrap.js"></script>
 
   <script src="Scripts/ui-select/select.min.js"></script>
-
+    
+  <!-- UI Grid -->
+  <script src="js/ui-grid/ui-grid.core.min.js"></script>
+  <script src="js/ui-grid/ui-grid.tree-base.min.js"></script>
+  <script src="js/ui-grid/ui-grid.tree-view.min.js"></script>
+  <script src="js/ui-grid/ui-grid.grouping.min.js"></script>
 
   <script src="Scripts/jquery-2.2.1.js"></script>
 
@@ -42,7 +49,7 @@
 
   <script src="js/tree-grid-directive.js"></script>
   <script src="js/checklist-model.js"></script>
-  <script data-require="ui-bootstrap@*" data-semver="2.5.0" src="js/ui-bootstrap-tpls-2.5.0.js"></script>
+  <script data-require="ui-bootstrap@*" data-semver="2.5.0" src="https://cdn.rawgit.com/angular-ui/bootstrap/gh-pages/ui-bootstrap-tpls-2.5.0.js"></script>
 </head>
 <body>
   <div ng-controller="MainCtrl">
@@ -125,7 +132,7 @@
               </div><br>
 
              <div class="row">
-                <div ng-controller="ModalCtrl">
+                <div ng-controller="ModalControlCtrl">
                  <button class="btn btn-info" ng-click="open()" style="margin: 15px;">Open Modal</button>
                  <span style="color: red;">{{result}}</span>
                </div>
@@ -144,6 +151,7 @@
  </div>
 
 <script src="controllers/index.js"></script>
+<!-- <script src="controllers/getReports.js"></script> -->
 <script src="Scripts/bootstrap.min.js"></script>
 </body>
-</html>    
+</html>

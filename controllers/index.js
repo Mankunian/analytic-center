@@ -13,7 +13,7 @@ var app = angular.module('app', [
 
 app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', function ($scope, $http) {
 
-    var detailButton = '<div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents"> <button ng-click="grid.appScope.open(row.entity)" ng-hide="row.treeLevel==0 || row.treeLevel == 1" type="button" class="btn btn-success"> Операции со срезами </button> </div>'
+    var detailButton = '<div ng-controller="ModalControlCtrl" ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents"> <button ng-click="grid.appScope.open(row.entity)" ng-hide="row.treeLevel==0 || row.treeLevel == 1" type="button" class="btn btn-success"> Операции со срезами </button> </div>'
 
 
 
@@ -173,14 +173,21 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
 }]);
 
 app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope) {
-
-    $rootScope.open = function (row) {
-        console.log(row);
+    
+    $rootScope.open = function (value) {
+        
+        $scope.dataSendByModal = value;
+        
         var modalInstance = $uibModal.open({
             templateUrl: "modalContent.html",
             controller: "ModalContentCtrl",
             size: 'lg',
-            windowTopClass: 'getReportModal'
+            windowTopClass: 'getReportModal',
+            resolve: {
+              value: function () {
+                return $scope.dataSendByModal
+              }
+            }
         });
 
         modalInstance.result.then(function (response) {
@@ -201,7 +208,10 @@ app.controller('langDropdownCtrl', function ($scope, $log) {
 
 });
 
-app.controller('ModalContentCtrl', function ($scope, $uibModalInstance) {
+app.controller('ModalContentCtrl', function ($scope, $uibModalInstance, value) {
+
+    $scope.statSliceNum = value['maxRecNum'];
+    $scope.statSlicePeriod = value['period'];
 
     $scope.ok = function () {
         $uibModalInstance.close("Ok");
@@ -223,6 +233,10 @@ app.controller('requestedReportsCtrl', function($scope) {
 app.controller('requestStatusCtrl', function($scope) {
   
 });
+
+/**
+  * Regions tree Controller
+ */
 
 app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', '$log', 'uiGridTreeViewConstants', 'uiGridConstants', function ($scope, $http, $interval, $log, uiGridTreeViewConstants, uiGridGroupingConstants ) {
   $scope.gridOptions = {
@@ -300,6 +314,11 @@ app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', '$log', 'uiGri
 
 }]);
 
+
+/**
+  * Department Controller
+ */
+
 app.controller('DepartmentCtrl', ['$scope', '$http', '$log', 'uiGridConstants', function ($scope, $http, $log, uiGridConstants) {
   $scope.gridOptions = {    
     showGridFooter:false,
@@ -312,7 +331,6 @@ app.controller('DepartmentCtrl', ['$scope', '$http', '$log', 'uiGridConstants', 
 
     enableRowSelection: true,
     enableSelectAll: true,
-    // selectionRowHeaderWidth: 35,
     rowHeight: 35,
   };
  
@@ -335,27 +353,12 @@ app.controller('DepartmentCtrl', ['$scope', '$http', '$log', 'uiGridConstants', 
  
     $scope.info = {}
  
-    $scope.setSelectable = function() {
-      $scope.gridApi.selection.clearSelectedRows();
- 
-      $scope.gridOptions.isRowSelectable = function(row){
-        if(row.entity.age > 30){
-          return false;
-        } else {
-          return true;
-        }
-      };
-      $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.OPTIONS);
- 
-      $scope.gridOptions.data[0].age = 31;
-      $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.EDIT);
-    };
- 
     $scope.gridOptions.onRegisterApi = function(gridApi){
+
       //set gridApi on scope
       $scope.gridApi = gridApi;
       gridApi.selection.on.rowSelectionChanged($scope,function(row){
-        var msg = 'row selected ' + row.isSelected;
+        var msg = row.entity;
         $log.log(msg);
       });
  

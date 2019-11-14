@@ -1,6 +1,6 @@
 var app = angular.module('app', [
     'ngTouch',
-    'treeGrid',
+    // 'treeGrid',
     'ui.bootstrap',
     'ui.select',
     'checklist-model',
@@ -8,13 +8,30 @@ var app = angular.module('app', [
     'ui.grid.treeView',
     'ui.grid.grouping',
     'ui.grid.edit',
-    'ui.grid.selection'
+    'angularTreeview'
 ]);
 
 app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', function ($scope, $http) {
 
-    var detailButton = '<div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents"> <button ng-click="grid.appScope.open(row.entity)" ng-hide="row.treeLevel==0 || row.treeLevel == 1" type="button" class="btn btn-success"> Получить отчет </button> </div>'
+    var detailButton = '<div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents"> <button ng-click="grid.appScope.open(row.entity)" ng-hide="row.treeLevel==0 || row.treeLevel == 1" type="button" class="btn btn-success"> Операции со срезами </button> </div>'
 
+
+
+    $scope.roleList1 = [
+        { "roleName" : "User", "roleId" : "role1", "children" : [
+                { "roleName" : "subUser1", "roleId" : "role11", "children" : [] },
+                { "roleName" : "subUser2", "roleId" : "role12", "children" : [
+                        { "roleName" : "subUser2-1", "roleId" : "role121", "children" : [
+                                { "roleName" : "subUser2-1-1", "roleId" : "role1211", "children" : [] },
+                                { "roleName" : "subUser2-1-2", "roleId" : "role1212", "children" : [] }
+                            ]}
+                    ]}
+            ]},
+
+        { "roleName" : "Admin", "roleId" : "role2", "children" : [] },
+
+        { "roleName" : "Guest", "roleId" : "role3", "children" : [] }
+    ];
 
     $scope.gridOptions = {
         enableRowSelection: true,

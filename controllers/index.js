@@ -1,6 +1,6 @@
 var app = angular.module('app', [
     'ngTouch',
-    'treeGrid',
+    // 'treeGrid',
     'ui.bootstrap',
     'ui.select',
     'checklist-model',
@@ -8,58 +8,83 @@ var app = angular.module('app', [
     'ui.grid.treeView',
     'ui.grid.grouping',
     'ui.grid.edit',
-    'ui.grid.selection',
-    'ngAria',
+    'angularTreeview'
 ]);
 
-app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', function ($scope, $http, uiGridGroupingConstants) {
+app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', function ($scope, $http) {
 
-  $scope.gridOptions = {
-      enableRowSelection: true,
-      enableSelectAll: true,
-      selectionRowHeaderWidth: 35,
-      rowHeight: 35,
-      enableFiltering: false,
-      treeRowHeaderAlwaysVisible: false,
-      columnDefs: [
-          {
-              name: 'groupName',
-              displayName: 'Группы',
-              grouping: {groupPriority: 0},
-              sort: {priority: 0, direction: 'desc'},
-              width: '*',
-              cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>'
-          },
+    var detailButton = '<div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents"> <button ng-click="grid.appScope.open(row.entity)" ng-hide="row.treeLevel==0 || row.treeLevel == 1" type="button" class="btn btn-success"> Операции со срезами </button> </div>'
 
-          {
-              name: 'statusName',
-              displayName: 'Статус',
-              grouping: {groupPriority: 0},
-              sort: {priority: 0, direction: 'desc'},
-              width: '*',
-              cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>'
-          },
-          {
-              name: 'maxRecNum',
-              displayName: 'Номер среза',
-              width: '*'
-          },
-          {
-              name: 'period',
-              displayName: 'Период',
-              width: '*'
-          },
-          {
-              name: 'created',
-              displayName: 'Сформирован',
-              width: '*'
-          }
 
-      ],
-      onRegisterApi: function (gridApi) {
-          $scope.gridApi = gridApi;
-      }
-  };
+
+    $scope.roleList1 = [
+        { "roleName" : "User", "roleId" : "role1", "children" : [
+                { "roleName" : "subUser1", "roleId" : "role11", "children" : [] },
+                { "roleName" : "subUser2", "roleId" : "role12", "children" : [
+                        { "roleName" : "subUser2-1", "roleId" : "role121", "children" : [
+                                { "roleName" : "subUser2-1-1", "roleId" : "role1211", "children" : [] },
+                                { "roleName" : "subUser2-1-2", "roleId" : "role1212", "children" : [] }
+                            ]}
+                    ]}
+            ]},
+
+        { "roleName" : "Admin", "roleId" : "role2", "children" : [] },
+
+        { "roleName" : "Guest", "roleId" : "role3", "children" : [] }
+    ];
+
+    $scope.gridOptions = {
+        enableRowSelection: true,
+        enableSelectAll: true,
+        selectionRowHeaderWidth: 35,
+        rowHeight: 35,
+        enableFiltering: false,
+        treeRowHeaderAlwaysVisible: false,
+        columnDefs: [
+            {
+                name: 'groupName',
+                displayName: 'Группы',
+                grouping: {groupPriority: 0},
+                sort: {priority: 0, direction: 'desc'},
+                width: '*',
+                cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>'
+            },
+
+            {
+                name: 'statusName',
+                displayName: 'Статус',
+                grouping: {groupPriority: 0},
+                sort: {priority: 0, direction: 'desc'},
+                width: '*',
+                cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>'
+            },
+            {
+                name: 'maxRecNum',
+                displayName: 'Номер среза',
+                width: '*'
+            },
+            {
+                name: 'period',
+                displayName: 'Период',
+                width: '*'
+            },
+            {
+                name: 'created',
+                displayName: 'Сформирован',
+                width: '*'
+            },
+            {
+                name: 'button',
+                displayName: 'Действие',
+                cellTemplate: detailButton
+            }
+
+        ],
+        onRegisterApi: function (gridApi) {
+            $scope.gridApi = gridApi;
+        }
+    };
+
 
     $scope.user = [];
     $scope.orderSrez = function (user) {
@@ -145,69 +170,51 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
     //Получение списка групп
 
 
-}])
+}]);
 
-.filter('mapGender', function () {
-    var genderHash = {
-        1: 'male',
-        2: 'female'
+app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope) {
+
+    $rootScope.open = function (row) {
+        console.log(row);
+        var modalInstance = $uibModal.open({
+            templateUrl: "modalContent.html",
+            controller: "ModalContentCtrl",
+            size: 'lg',
+            windowTopClass: 'getReportModal'
+        });
+
+        modalInstance.result.then(function (response) {
+            // $scope.result = `${response} button hitted`;
+        });
     };
-
-    return function (input) {
-        var result;
-        var match;
-        if (!input) {
-            return '';
-        } else if (result = genderHash[input]) {
-            return result;
-        } else if ((match = input.match(/(.+)( \(\d+\))/)) && (result = genderHash[match[1]])) {
-            return result + match[2];
-        } else {
-            return input;
-        }
-    };
-});
-
-app.controller('ModalControlCtrl', function ($scope, $uibModal) {
-
-  $scope.open = function () {
-    var modalInstance = $uibModal.open({
-        templateUrl: "modalContent.html",
-        controller: "ModalContentCtrl",
-        size: 'lg',
-        windowTopClass: 'getReportModal'
-    });
-
-    modalInstance.result.then(function (response) {
-        // $scope.result = `${response} button hitted`;
-    });
-
-  };
 });
 
 app.controller('langDropdownCtrl', function ($scope, $log) {
 
-  $scope.data = {
-    langs: [
-      {id: '0', name: 'Русский'},
-      {id: '1', name: 'Казахский'}
-    ],
-    selectedOption: {id: '0', name: 'Русский'}
-  };
+    $scope.data = {
+        langs: [
+            {id: '0', name: 'Русский'},
+            {id: '1', name: 'Казахский'}
+        ],
+        selectedOption: {id: '0', name: 'Русский'}
+    };
 
 });
-  
-app.controller('ModalContentCtrl', function($scope, $uibModalInstance) {
 
-  $scope.ok = function(){
-    $uibModalInstance.close("Ok");
-  };
+app.controller('ModalContentCtrl', function ($scope, $uibModalInstance) {
 
-  $scope.cancel = function(){
-    $uibModalInstance.dismiss();
-  } 
-  
+    $scope.ok = function () {
+        $uibModalInstance.close("Ok");
+    };
+
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss();
+    }
+
 });
+
+
+
 
 app.controller('requestedReportsCtrl', function($scope) {
   
@@ -267,9 +274,9 @@ app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', '$timeout', '$
     });
   };
 
-  $http.get('/json/regions.json')
-  .then(function(response) {
-    var dataSet = response.data;
+    $http.get('./json/regions.json')
+        .then(function (response) {
+            var dataSet = response.data;
 
     $scope.gridOptions.data = [];
     writeoutNode( dataSet, 0, $scope.gridOptions.data );

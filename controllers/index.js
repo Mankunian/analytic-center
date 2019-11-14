@@ -1,6 +1,5 @@
 var app = angular.module('app', [
     'ngTouch',
-    // 'treeGrid',
     'ui.bootstrap',
     'ui.select',
     'checklist-model',
@@ -8,12 +7,13 @@ var app = angular.module('app', [
     'ui.grid.treeView',
     'ui.grid.grouping',
     'ui.grid.edit',
-    'angularTreeview'
+    'angularTreeview',
+    'ui.grid.selection',
 ]);
 
 app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', function ($scope, $http) {
 
-    var detailButton = '<div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents"> <button ng-click="grid.appScope.open(row.entity)" ng-hide="row.treeLevel==0 || row.treeLevel == 1" type="button" class="btn btn-success"> Операции со срезами </button> </div>'
+    var detailButton = '<div ng-controller="ModalControlCtrl" ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents"> <button ng-click="grid.appScope.open(row.entity)" ng-hide="row.treeLevel==0 || row.treeLevel == 1" type="button" class="btn btn-success"> Операции со срезами </button> </div>'
 
 
 
@@ -173,14 +173,21 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
 }]);
 
 app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope) {
-
-    $rootScope.open = function (row) {
-        console.log(row);
+    
+    $rootScope.open = function (value) {
+        
+        $scope.dataSendByModal = value;
+        
         var modalInstance = $uibModal.open({
             templateUrl: "modalContent.html",
             controller: "ModalContentCtrl",
             size: 'lg',
-            windowTopClass: 'getReportModal'
+            windowTopClass: 'getReportModal',
+            resolve: {
+              value: function () {
+                return $scope.dataSendByModal
+              }
+            }
         });
 
         modalInstance.result.then(function (response) {
@@ -201,7 +208,10 @@ app.controller('langDropdownCtrl', function ($scope, $log) {
 
 });
 
-app.controller('ModalContentCtrl', function ($scope, $uibModalInstance) {
+app.controller('ModalContentCtrl', function ($scope, $uibModalInstance, value) {
+
+    $scope.statSliceNum = value['maxRecNum'];
+    $scope.statSlicePeriod = value['period'];
 
     $scope.ok = function () {
         $uibModalInstance.close("Ok");
@@ -224,7 +234,11 @@ app.controller('requestStatusCtrl', function($scope) {
   
 });
 
-app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', '$timeout', '$log', 'uiGridTreeViewConstants', 'uiGridConstants', function ($scope, $http, $interval, $timeout, $log, uiGridTreeViewConstants, uiGridGroupingConstants ) {
+/**
+  * Regions tree Controller
+ */
+
+app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', '$log', 'uiGridTreeViewConstants', 'uiGridConstants', function ($scope, $http, $interval, $log, uiGridTreeViewConstants, uiGridGroupingConstants ) {
   $scope.gridOptions = {
     enableColumnMenus: false,
     showTreeExpandNoChildren: false,
@@ -234,12 +248,12 @@ app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', '$timeout', '$
     enableFiltering: false,
 
     enableRowSelection: true,
-    enableSelectAll: true,
+    enableSelectAll: false,
     selectionRowHeaderWidth: 35,
     rowHeight: 35,
 
     columnDefs: [
-      { name: 'id', width: '20%',displayName: 'Идентификатор' },
+      { name: 'id', width: '20%',displayName: 'и/н' },
       { name: 'region', width: '60%',displayName: 'Регион/Орган' },
     ],
   };
@@ -281,11 +295,6 @@ app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', '$timeout', '$
     $scope.gridOptions.data = [];
     writeoutNode( dataSet, 0, $scope.gridOptions.data );
 
-    $timeout(function() {
-      if($scope.gridApi.selection.selectRow){
-        $scope.gridApi.selection.selectRow($scope.gridOptions.data[0]);
-      }
-    });
   });
 
   $scope.info = {};
@@ -303,4 +312,59 @@ app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', '$timeout', '$
     });
   };
 
+}]);
+
+
+/**
+  * Department Controller
+ */
+
+app.controller('DepartmentCtrl', ['$scope', '$http', '$log', 'uiGridConstants', function ($scope, $http, $log, uiGridConstants) {
+  $scope.gridOptions = {    
+    showGridFooter:false,
+    enableColumnMenus: false,
+    showTreeExpandNoChildren: false,
+    enableHiding: false,
+
+    enableSorting: false,
+    enableFiltering: false,
+
+    enableRowSelection: true,
+    enableSelectAll: true,
+    rowHeight: 35,
+  };
+ 
+  $scope.gridOptions.columnDefs = [
+    { name: 'id', width: '15%', displayName: 'и/н'},
+    { name: 'name', width: '70%', displayName: 'Ведомство'}
+  ];
+ 
+  $scope.gridOptions.multiSelect = true;
+ 
+  $http.get('/json/ved.json')
+    .then(function(response) {
+      $scope.gridOptions.data = response.data;
+      // $timeout(function() {
+      //   if($scope.gridApi.selection.selectRow){
+      //     $scope.gridApi.selection.selectRow($scope.gridOptions.data[0]);
+      //   }
+      // });
+    });
+ 
+    $scope.info = {}
+ 
+    $scope.gridOptions.onRegisterApi = function(gridApi){
+
+      //set gridApi on scope
+      $scope.gridApi = gridApi;
+      gridApi.selection.on.rowSelectionChanged($scope,function(row){
+        var msg = row.entity;
+        $log.log(msg);
+      });
+ 
+      gridApi.selection.on.rowSelectionChangedBatch($scope,function(rows){
+        var msg = 'rows changed ' + rows.length;
+        $log.log(msg);
+      });
+    };
 }]);

@@ -8,82 +8,58 @@ var app = angular.module('app', [
     'ui.grid.treeView',
     'ui.grid.grouping',
     'ui.grid.edit',
-    'ui.grid.selection'
+    'ui.grid.selection',
+    'ngAria',
 ]);
 
 app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', function ($scope, $http, uiGridGroupingConstants) {
 
+  $scope.gridOptions = {
+      enableRowSelection: true,
+      enableSelectAll: true,
+      selectionRowHeaderWidth: 35,
+      rowHeight: 35,
+      enableFiltering: false,
+      treeRowHeaderAlwaysVisible: false,
+      columnDefs: [
+          {
+              name: 'groupName',
+              displayName: 'Группы',
+              grouping: {groupPriority: 0},
+              sort: {priority: 0, direction: 'desc'},
+              width: '*',
+              cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>'
+          },
 
-        $scope.gridOptions = {
-            enableRowSelection: true,
-            enableSelectAll: true,
-            selectionRowHeaderWidth: 35,
-            rowHeight: 35,
-            enableFiltering: false,
-            treeRowHeaderAlwaysVisible: false,
-            columnDefs: [
-                {
-                    name: 'groupName',
-                    displayName: 'Группы',
-                    grouping: {groupPriority: 0},
-                    sort: {priority: 0, direction: 'desc'},
-                    width: '*',
-                    cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>'
-                },
+          {
+              name: 'statusName',
+              displayName: 'Статус',
+              grouping: {groupPriority: 0},
+              sort: {priority: 0, direction: 'desc'},
+              width: '*',
+              cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>'
+          },
+          {
+              name: 'maxRecNum',
+              displayName: 'Номер среза',
+              width: '*'
+          },
+          {
+              name: 'period',
+              displayName: 'Период',
+              width: '*'
+          },
+          {
+              name: 'created',
+              displayName: 'Сформирован',
+              width: '*'
+          }
 
-                {
-                    name: 'statusName',
-                    displayName: 'Статус',
-                    grouping: {groupPriority: 0},
-                    sort: {priority: 0, direction: 'desc'},
-                    width: '*',
-                    cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>'
-                },
-                {
-                    name: 'maxRecNum',
-                    displayName: 'Номер среза',
-                    width: '*'
-                },
-                {
-                    name: 'period',
-                    displayName: 'Период',
-                    width: '*'
-                },
-                {
-                    name: 'created',
-                    displayName: 'Сформирован',
-                    width: '*'
-                }
-
-
-
-                /*{name: 'name', width: '30%'},
-                {
-                    name: 'statusName',
-                    grouping: {groupPriority: 0},
-                    sort: {priority: 1, direction: 'asc'},
-                    width: '20%',
-                    cellFilter: 'mapGender'
-                },
-                {name: 'age', treeAggregationType: uiGridGroupingConstants.aggregation.MAX, width: '20%'},
-                {name: 'company', width: '25%'},
-                {name: 'registered', width: '40%', cellFilter: 'date', type: 'date'},
-
-                {
-                    name: 'balance',
-                    width: '25%',
-                    cellFilter: 'currency',
-                    treeAggregationType: uiGridGroupingConstants.aggregation.AVG,
-                    customTreeAggregationFinalizerFn: function (aggregation) {
-                        aggregation.rendered = aggregation.value;
-                    }
-                }*/
-
-            ],
-            onRegisterApi: function (gridApi) {
-                $scope.gridApi = gridApi;
-            }
-        };
+      ],
+      onRegisterApi: function (gridApi) {
+          $scope.gridApi = gridApi;
+      }
+  };
 
     $scope.user = [];
     $scope.orderSrez = function (user) {
@@ -171,65 +147,42 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
 
 }])
 
-    .filter('mapGender', function () {
-        var genderHash = {
-            1: 'male',
-            2: 'female'
-        };
+.filter('mapGender', function () {
+    var genderHash = {
+        1: 'male',
+        2: 'female'
+    };
 
-        return function (input) {
-            var result;
-            var match;
-            if (!input) {
-                return '';
-            } else if (result = genderHash[input]) {
-                return result;
-            } else if ((match = input.match(/(.+)( \(\d+\))/)) && (result = genderHash[match[1]])) {
-                return result + match[2];
-            } else {
-                return input;
-            }
-        };
-    });
+    return function (input) {
+        var result;
+        var match;
+        if (!input) {
+            return '';
+        } else if (result = genderHash[input]) {
+            return result;
+        } else if ((match = input.match(/(.+)( \(\d+\))/)) && (result = genderHash[match[1]])) {
+            return result + match[2];
+        } else {
+            return input;
+        }
+    };
+});
 
 app.controller('ModalControlCtrl', function ($scope, $uibModal) {
 
-    $scope.open = function () {
-        var modalInstance = $uibModal.open({
-            templateUrl: "modalContent.html",
-            controller: "ModalContentCtrl",
-            size: 'lg',
-            windowTopClass: 'getReportModal'
-        });
+  $scope.open = function () {
+    var modalInstance = $uibModal.open({
+        templateUrl: "modalContent.html",
+        controller: "ModalContentCtrl",
+        size: 'lg',
+        windowTopClass: 'getReportModal'
+    });
 
-        modalInstance.result.then(function (response) {
-            // $scope.result = `${response} button hitted`;
-        });
-    };
-});
+    modalInstance.result.then(function (response) {
+        // $scope.result = `${response} button hitted`;
+    });
 
-app.controller('langDropdownCtrl', function ($scope, $log) {
-
-    $scope.data = {
-        langs: [
-            {id: '0', name: 'Русский'},
-            {id: '1', name: 'Казахский'}
-        ],
-        selectedOption: {id: '0', name: 'Русский'}
-    };
-
-});
-
-app.controller('ModalContentCtrl', function ($scope, $uibModalInstance) {
-
-    $scope.ok = function () {
-        $uibModalInstance.close("Ok");
-    };
-
-    $scope.cancel = function () {
-        $uibModalInstance.dismiss();
-    }
-
+  };
 });
 
 app.controller('langDropdownCtrl', function ($scope, $log) {
@@ -243,7 +196,7 @@ app.controller('langDropdownCtrl', function ($scope, $log) {
   };
 
 });
-
+  
 app.controller('ModalContentCtrl', function($scope, $uibModalInstance) {
 
   $scope.ok = function(){
@@ -264,18 +217,27 @@ app.controller('requestStatusCtrl', function($scope) {
   
 });
 
-app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', 'uiGridTreeViewConstants', function ($scope, $http, $interval, uiGridTreeViewConstants ) {
+app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', '$timeout', '$log', 'uiGridTreeViewConstants', 'uiGridConstants', function ($scope, $http, $interval, $timeout, $log, uiGridTreeViewConstants, uiGridGroupingConstants ) {
   $scope.gridOptions = {
     enableColumnMenus: false,
-    enableSorting: false,
-    enableFiltering: false,
     showTreeExpandNoChildren: false,
     enableHiding: false,
+
+    enableSorting: false,
+    enableFiltering: false,
+
+    enableRowSelection: true,
+    enableSelectAll: true,
+    selectionRowHeaderWidth: 35,
+    rowHeight: 35,
+
     columnDefs: [
       { name: 'id', width: '20%',displayName: 'Идентификатор' },
       { name: 'region', width: '60%',displayName: 'Регион/Орган' },
     ],
   };
+
+  $scope.gridOptions.multiSelect = true;
 
   var id=0;
   var writeoutNode = function( childArray, currentLevel, dataArray ){
@@ -311,6 +273,27 @@ app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', 'uiGridTreeVie
 
     $scope.gridOptions.data = [];
     writeoutNode( dataSet, 0, $scope.gridOptions.data );
+
+    $timeout(function() {
+      if($scope.gridApi.selection.selectRow){
+        $scope.gridApi.selection.selectRow($scope.gridOptions.data[0]);
+      }
+    });
   });
+
+  $scope.info = {};
+  $scope.gridOptions.onRegisterApi = function(gridApi){
+    //set gridApi on scope
+    $scope.gridApi = gridApi;
+    gridApi.selection.on.rowSelectionChanged($scope,function(row){
+      var msg = 'row selected ' + row.isSelected;
+      $log.log(msg);
+    });
+
+    gridApi.selection.on.rowSelectionChangedBatch($scope,function(rows){
+      var msg = 'rows changed ' + rows.length;
+      $log.log(msg);
+    });
+  };
 
 }]);

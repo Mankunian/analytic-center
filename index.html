@@ -15,19 +15,18 @@
     <link rel="stylesheet" href="css/index.css" type="text/css">
     <link rel="stylesheet" href="css/custom.css" type="text/css">
     <link rel="stylesheet" href="css/treeGrid.css">
+    <link rel="stylesheet" href="css/angular-treeview.css">
 
     <script src="js/angular.js"></script>
     <script src="js/angular-touch.js"></script>
     <script src="js/angular-animate.js"></script>
     <script src="js/angular-aria.js"></script>
     <script src="js/csv.js"></script>
-    <!--    <script src="js/pdfmake.js"></script>-->
     <script src="js/vfs_fonts.js"></script>
     <script src="js/lodash.min.js"></script>
     <script src="js/jszip.min.js"></script>
     <script src="js/excel-builder.dist.js"></script>
     <script src="js/ui-grid.js"></script>
-    <!--  <link rel="stylesheet" href="http://ui-grid.info/release/ui-grid.css" type="text/css">-->
     <link rel="stylesheet" href="css/ui-grid.css" type="text/css">
 
     <script src="Scripts/ui-bootstrap.js"></script>
@@ -131,7 +130,7 @@
                         <br>
 
 
-                        <div class="row">
+                        <div class="row" ng-if="showGrid">
                             <div class="col-md-6 col-xs-6">
                                 <div class="pull-left">
                                     <label class="containerLabel">
@@ -157,12 +156,12 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12" style="padding-bottom: 25px">
+                            <div class="col-md-12" style="padding-bottom: 25px;">
                                 <div ng-if="showGrid" style="width: 100%" id="grid1" ui-grid="gridOptions"
                                      ui-grid-grouping
                                      ui-grid-resize-columns ui-grid-selection class="grid"></div>
 
-                                <!--<div
+                                <!--<div style="background: #fff"
                                         data-angular-treeview="true"
                                         data-tree-id="tree01"
                                         data-tree-model="roleList1"

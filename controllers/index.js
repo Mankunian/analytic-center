@@ -14,7 +14,7 @@ var app = angular.module('app', [
 
 app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', function ($scope, $http) {
 
-  var detailButton = '<div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents"> <button ng-click="grid.appScope.open(row.entity)" ng-hide="row.treeLevel==0 || row.treeLevel == 1" type="button" class="btn btn-success"> Операции со срезами </button> </div>'
+  var detailButton = '<div  ng-controller="ModalControlCtrl" ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents"> <button ng-click="grid.appScope.open(row.entity)" ng-hide="row.treeLevel==0 || row.treeLevel == 1" type="button" class="btn btn-success"> Операции со срезами </button> </div>'
 
 
   $scope.roleList1 = [
@@ -94,7 +94,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
 
   $scope.user = [];
   $scope.orderSrez = function (user) {
-    console.log(user);
+    // console.log(user);
 
     $scope.group = user;
 
@@ -134,7 +134,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
       url: 'http://18.140.232.52:8081/api/v1/slices/max'
     }).then(function (value) {
       $scope.statsrez = value.data.value;
-      console.log($scope.statsrez);
+      // console.log($scope.statsrez);
     })
   };
 
@@ -183,7 +183,7 @@ app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope) {
   $rootScope.open = function (value) {
 
     $scope.dataSendByModal = value;
-
+    // console.log(dataSendByModal);
     var modalInstance = $uibModal.open({
       templateUrl: "modalContent.html",
       controller: "ModalContentCtrl",
@@ -218,7 +218,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
 
     $scope.statSliceNum = value['maxRecNum'];
     $scope.statSlicePeriod = value['period'];
-
+    console.log();
     $http.get('/json/reports.json')
       .then(function(response) {
         $scope.reportCodes = response.data;

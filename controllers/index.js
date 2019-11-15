@@ -14,30 +14,22 @@ var app = angular.module('app', [
 
 app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', function ($scope, $http) {
 
+
+  //Получение списка групп
+  $scope.getGroups = function () {
+    $http({
+      method: 'GET',
+      url: 'http://18.140.232.52:8081/api/v1/slices/groups'
+    }).then(function (value) {
+      $scope.groups = value.data;
+    })
+  };
+  $scope.getGroups();
+  //Получение списка групп
+
+
   var detailButton = '<div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents"> <button ng-click="grid.appScope.open(row.entity)" ng-hide="row.treeLevel==0 || row.treeLevel == 1" type="button" class="btn btn-success"> Операции со срезами </button> </div>'
 
-
-  $scope.roleList1 = [
-    {
-      "roleName": "User", "roleId": "role1", "children": [
-        {"roleName": "subUser1", "roleId": "role11", "children": []},
-        {
-          "roleName": "subUser2", "roleId": "role12", "children": [
-            {
-              "roleName": "subUser2-1", "roleId": "role121", "children": [
-                {"roleName": "subUser2-1-1", "roleId": "role1211", "children": []},
-                {"roleName": "subUser2-1-2", "roleId": "role1212", "children": []}
-              ]
-            }
-          ]
-        }
-      ]
-    },
-
-    {"roleName": "Admin", "roleId": "role2", "children": []},
-
-    {"roleName": "Guest", "roleId": "role3", "children": []}
-  ];
 
   $scope.gridOptions = {
     enableRowSelection: true,
@@ -91,6 +83,27 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
     }
   };
 
+  //Получение всех срезов
+
+
+  $scope.loader = false;
+  $scope.getAllSrez = function () {
+    $scope.loader = true;
+    $http({
+      method: 'GET',
+      url: 'http://18.140.232.52:8081/api/v1/slices'
+    }).then(function (response) {
+      $scope.loader = false;
+      var data = response.data;
+      console.log(data);
+      $scope.showGrid = response.data;
+      $scope.gridOptions.data = data;
+    })
+  };
+
+  $scope.getAllSrez();
+  //Получение всех срезов
+
 
   $scope.user = [];
   $scope.orderSrez = function (user) {
@@ -115,9 +128,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
 
 
       var data = response.data;
-      $scope.showGrid = response.data;
-
       $scope.gridOptions.data = data;
+      $scope.getAllSrez();
 
 
     }, function (reason) {
@@ -161,19 +173,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
   var yy = $scope.dateTo.getFullYear();
 
   var dateToString = dd + '.' + mm + '.' + yy;
-
-
-  //Получение списка групп
-  $scope.getGroups = function () {
-    $http({
-      method: 'GET',
-      url: 'http://18.140.232.52:8081/api/v1/slices/groups'
-    }).then(function (value) {
-      $scope.groups = value.data;
-    })
-  };
-  $scope.getGroups();
-  //Получение списка групп
 
 
 }]);

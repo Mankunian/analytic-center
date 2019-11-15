@@ -68,7 +68,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="col-md-6">
-                                    <div class="col-md-4" style="color: #fff !important;">
+                                    <div class="col-md-4">
                                         <label>Дата начала отчета <span class="required">*</span></label>
                                         <input class="form-control" data-format="dd.MM.yyyy" ng-model="dateFrom"
                                                type="date" required>
@@ -80,7 +80,7 @@
                                     </div>
                                     <div class="col-md-3 col-xs-10">
                                         <label>Статсрез на № <span class="required">*</span></label>
-                                        <input ng-model="statsrez" type="text" class="form-control">
+                                        <input disabled ng-model="statsrez" type="text" class="form-control">
                                     </div>
                                     <div class="col-md-1 col-xs-1">
                                         <label> <span class="required" style="color: transparent">*</span></label>
@@ -148,8 +148,24 @@
                                 </button>
                             </div>
                         </div>
+
+                        <div ng-if="loader" class='loader loader1'>
+                            <div>
+                                <div>
+                                    <div>
+                                        <div>
+                                            <div>
+                                                <div></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
                         <div class="row">
-                            <div class="col-md-12" style="padding-bottom: 25px;">
+                            <div class="col-md-12" style="padding-bottom: 25px; padding-top: 10px">
                                 <div ng-if="showGrid" style="width: 100%" id="grid1" ui-grid="gridOptions"
                                      ui-grid-grouping
                                      ui-grid-resize-columns ui-grid-selection class="grid"></div>

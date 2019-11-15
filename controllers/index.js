@@ -208,23 +208,21 @@ app.controller('langDropdownCtrl', function ($scope, $log) {
 
 });
 
-app.controller('ModalContentCtrl', function ($scope, $uibModalInstance, value) {
+app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, value) {
 
     $scope.statSliceNum = value['maxRecNum'];
     $scope.statSlicePeriod = value['period'];
 
-    $scope.ok = function () {
-        $uibModalInstance.close("Ok");
-    };
+    $http.get('/json/reports.json')
+      .then(function(response) {
+        $scope.reportCodes = response.data;
+      });
 
     $scope.cancel = function () {
         $uibModalInstance.dismiss();
     }
 
 });
-
-
-
 
 app.controller('requestedReportsCtrl', function($scope) {
   
@@ -253,8 +251,8 @@ app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', '$log', 'uiGri
     rowHeight: 35,
 
     columnDefs: [
-      { name: 'id', width: '20%',displayName: 'и/н' },
-      { name: 'region', width: '60%',displayName: 'Регион/Орган' },
+      { name: 'code', width: '20%',displayName: 'и/н' },
+      { name: 'name', width: '60%',displayName: 'Регион/Орган' },
     ],
   };
 
@@ -288,14 +286,18 @@ app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', '$log', 'uiGri
     });
   };
 
-    $http.get('./json/regions.json')
-        .then(function (response) {
-            var dataSet = response.data;
+    var dataSet = [];
+    // $http.get('./json/response_1573739360481.json')
+    $http({
+        method: 'GET',
+        url: 'http://18.140.232.52:8081/api/v1/slices/regsTree'
+    }).then(function (response) {
+        dataSet.push(response.data);
 
-    $scope.gridOptions.data = [];
-    writeoutNode( dataSet, 0, $scope.gridOptions.data );
+        $scope.gridOptions.data = [];
+        writeoutNode( dataSet, 0, $scope.gridOptions.data );
 
-  });
+    });
 
   $scope.info = {};
   $scope.gridOptions.onRegisterApi = function(gridApi){

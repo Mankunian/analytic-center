@@ -109,7 +109,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
 
     $http({
       method: 'POST',
-      url: 'http://18.140.232.52:8081/api/v1/slices',
+      url: 'http://18.140.232.52:8081/api/v1/ru/slices',
       data: dataObj
     }).then(function (response) {
 
@@ -131,7 +131,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
   $scope.getStatSrez = function () {
     $http({
       method: 'GET',
-      url: 'http://18.140.232.52:8081/api/v1/slices/max'
+      url: 'http://18.140.232.52:8081/api/v1/ru/slices/max'
     }).then(function (value) {
       $scope.statsrez = value.data.value;
       // console.log($scope.statsrez);
@@ -167,7 +167,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
   $scope.getGroups = function () {
     $http({
       method: 'GET',
-      url: 'http://18.140.232.52:8081/api/v1/slices/groups'
+      url: 'http://18.140.232.52:8081/api/v1/ru/slices/groups'
     }).then(function (value) {
       $scope.groups = value.data;
     })
@@ -218,11 +218,15 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
 
     $scope.statSliceNum = value['maxRecNum'];
     $scope.statSlicePeriod = value['period'];
-    console.log();
+
     $http.get('/json/reports.json')
       .then(function(response) {
         $scope.reportCodes = response.data;
       });
+
+    $scope.alertMe = function(index) {
+        console.log(index)
+    };
 
     $scope.cancel = function () {
         $uibModalInstance.dismiss();
@@ -291,7 +295,7 @@ app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', '$log', 'uiGri
     // $http.get('./json/response_1573739360481.json')
     $http({
         method: 'GET',
-        url: 'http://18.140.232.52:8081/api/v1/slices/regsTree'
+        url: 'http://18.140.232.52:8081/api/v1/ru/slices/regsTree'
     }).then(function (response) {
         dataSet.push(response.data);
 

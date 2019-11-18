@@ -4,7 +4,7 @@
 </div>
 <div class="modal-body">
    <uib-tabset active="active">
-      <uib-tab  heading="Каталог">
+      <!-- <uib-tab  heading="Каталог" index="0">
       	<div class="row">
       		<div class="col-md-6">
    		   	
@@ -44,8 +44,8 @@
       	<div class="row">
       		<div class="request-status" ng-controller="requestStatusCtrl"></div>
       	</div>
-      </uib-tab>
-      <uib-tab  heading="1-М">
+      </uib-tab> -->
+      <!-- <uib-tab  heading="1-М">
       	<div class="row">
       		<div class="col-md-6" ng-controller="RegionTreeCtrl" >
    		   	<div id="grid1" ui-grid="gridOptions" ui-grid-selection ui-grid-cellnav  ui-grid-grouping class="grid"></div>
@@ -54,10 +54,13 @@
       			<div id="grid1Selection" ui-grid="gridOptions" ui-grid-selection ui-grid-cellnav class="grid"></div>
       		</div>
       	</div>
-      </uib-tab>
-      <uib-tab index="index" heading="{{ reportCode.name }}" code="{{ reportCode.code }}" ng-repeat="reportCode in reportCodes track by $index">
+      </uib-tab> -->
+      <uib-tab ng-repeat="reportCode in reportCodes track by reportCode.code" heading="{{ reportCode.name }}" code="{{ reportCode.code }}"  select="alertMe(reportCode.code)">
          <div class="row"> 
-            
+            {{reportCode.code}}
+            <p>{{$index}}</p>
+            <p>{{$even}}</p>
+            {{reportCode.name}}
          </div>
    	 </uib-tab>
    </uib-tabset>

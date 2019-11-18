@@ -8,18 +8,19 @@ var app = angular.module('app', [
   'ui.grid.treeView',
   'ui.grid.grouping',
   'ui.grid.edit',
-  'angularTreeview',
   'ui.grid.selection'
 ]);
 
 app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', function ($scope, $http) {
 
 
+
+
   //Получение списка групп
   $scope.getGroups = function () {
     $http({
       method: 'GET',
-      url: 'http://18.140.232.52:8081/api/v1/slices/groups'
+      url: 'http://18.140.232.52:8081/api/v1/ru/slices/groups'
     }).then(function (value) {
       $scope.groups = value.data;
     })
@@ -91,7 +92,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
     $scope.loader = true;
     $http({
       method: 'GET',
-      url: 'http://18.140.232.52:8081/api/v1/slices'
+      url: 'http://18.140.232.52:8081/api/v1/ru/slices'
     }).then(function (response) {
       $scope.loader = false;
       var data = response.data;
@@ -122,14 +123,17 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
 
     $http({
       method: 'POST',
-      url: 'http://18.140.232.52:8081/api/v1/slices',
+      url: 'http://18.140.232.52:8081/api/v1/ru/slices',
       data: dataObj
     }).then(function (response) {
 
 
       var data = response.data;
       $scope.gridOptions.data = data;
-      $scope.getAllSrez();
+
+
+      console.log($scope.gridOptions.data[0]);
+      // $scope.getAllSrez();
 
 
     }, function (reason) {
@@ -143,7 +147,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
   $scope.getStatSrez = function () {
     $http({
       method: 'GET',
-      url: 'http://18.140.232.52:8081/api/v1/slices/max'
+      url: 'http://18.140.232.52:8081/api/v1/ru/slices/max'
     }).then(function (value) {
       $scope.statsrez = value.data.value;
       console.log($scope.statsrez);

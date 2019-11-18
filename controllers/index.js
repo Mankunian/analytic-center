@@ -8,6 +8,7 @@ var app = angular.module('app', [
   'ui.grid.treeView',
   'ui.grid.grouping',
   'ui.grid.edit',
+  'angularTreeview',
   'ui.grid.selection'
 ]);
 
@@ -109,7 +110,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
 
   $scope.user = [];
   $scope.orderSrez = function (user) {
-    console.log(user);
+    // console.log(user);
 
     $scope.group = user;
 
@@ -135,10 +136,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
       $scope.gridOptions.data = data;
 
 
-      console.log($scope.gridOptions.data[0]);
-      // $scope.getAllSrez();
-
-
     }, function (reason) {
       console.log(reason)
     })
@@ -153,7 +150,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
       url: 'http://18.140.232.52:8081/api/v1/ru/slices/max'
     }).then(function (value) {
       $scope.statsrez = value.data.value;
-      console.log($scope.statsrez);
+      // console.log($scope.statsrez);
     })
   };
 
@@ -180,6 +177,19 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
   var yy = $scope.dateTo.getFullYear();
 
   var dateToString = dd + '.' + mm + '.' + yy;
+
+
+  //Получение списка групп
+  $scope.getGroups = function () {
+    $http({
+      method: 'GET',
+      url: 'http://18.140.232.52:8081/api/v1/slices/groups'
+    }).then(function (value) {
+      $scope.groups = value.data;
+    })
+  };
+  $scope.getGroups();
+  //Получение списка групп
 
 
 }]);
@@ -274,8 +284,6 @@ app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', '$log', 'uiGri
   var writeoutNode = function (childArray, currentLevel, dataArray) {
     childArray.forEach(function (childNode) {
 
-
-      console.log(childNode);
       if (childNode.children.length > 0) {
         childNode.$$treeLevel = currentLevel;
         id = childNode.categoryId;

@@ -183,7 +183,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
   $scope.getGroups = function () {
     $http({
       method: 'GET',
-      url: 'http://18.140.232.52:8081/api/v1/slices/groups'
+      url: 'http://18.140.232.52:8081/api/v1/ru/slices/groups'
     }).then(function (value) {
       $scope.groups = value.data;
     })

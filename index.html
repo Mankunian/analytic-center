@@ -127,7 +127,7 @@
 
           </div>
           <div id="menu1" class="tab-pane fade">
-            <div>
+            <div class="container">
 
               <div class="row">
                 <div class="col-md-12">
@@ -142,35 +142,37 @@
                 <div class="row">
                   <div class="col-md-12">
 
-                    <div class="col-lg-4 col-md-12">
+                    <div class="col-lg-6 col-md-12">
                       <div class="box">
                         <label class="containerLabel" ng-repeat="group in groups">
                           <input ng-checked="vChecked" type="checkbox" checklist-model="user"
-                                 checklist-value="group.id">{{group.name}}
+                                 checklist-value="group.code">{{group.name}}
                           <span class="checkmark"></span>
                         </label>
                       </div>
                     </div>
 
 
-                    <div class="col-lg-4">
+                    <div class="col-lg-6">
                       <div class="col-lg-12">
                         <label>Дата начала отчета <span class="required">*</span></label>
                         <input class="form-control" data-format="dd.MM.yyyy" ng-model="dateFrom"
                                type="date" required>
+                        <br>
                       </div>
 
                       <div class="col-lg-12">
                         <label>Дата окончания отчета <span class="required">*</span></label>
                         <input class="form-control" data-format="dd.MM.yyyy" ng-model="dateTo"
-                               type="date" required> <br>
+                               type="date" required>
+                        <br>
                       </div>
 
 
                       <div class="col-lg-10 col-xs-10">
                         <label>Статсрез на № <span class="required">*</span></label>
                         <input ng-model="statsrez" type="text" class="form-control">
-
+                        <br>
 
                       </div>
                       <div class="col-lg-2">

@@ -8,11 +8,10 @@ var app = angular.module('app', [
   'ui.grid.treeView',
   'ui.grid.grouping',
   'ui.grid.edit',
-  'ui.grid.selection',
-  'ui.grid.expandable'
+  'ui.grid.selection'
 ]);
 
-app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', function ($scope, $http, $rootScope) {
+app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGridTreeViewConstants', 'uiGridTreeBaseService', function ($scope, $http, $rootScope, uiGridTreeBaseService) {
 
 
   //Получение списка групп
@@ -33,37 +32,51 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
 
 
   $scope.gridOptions = {
-    expandableRowTemplate: 'expandableRowTemplate.html',
-    expandableRowHeight: 150,
-    expandableRowScope: {
-      subGridVariable: 'subGridScopeVariable'
-    },
     enableRowSelection: true,
     enableSelectAll: true,
     selectionRowHeaderWidth: 35,
-    rowHeight: 35,
+    rowHeight: 45,
     enableFiltering: false,
     treeRowHeaderAlwaysVisible: false,
     columnDefs: [
+
+      {
+        name: 'groupCode',
+        displayName: 'Код группы',
+        visible: false
+      },
       {
         name: 'groupName',
         displayName: 'Группы',
         grouping: {groupPriority: 0},
         sort: {priority: 0, direction: 'desc'},
-        width: '*',
-        cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>'
+        width: '500',
+        cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP"><button class="btn btn-primary" ng-click="grid.appScope.toggleRow(row)"><i class="fa fa-folder"></i></button> {{COL_FIELD CUSTOM_FILTERS}}</div></div>'
       },
+      {
+        name: 'statusCode',
+        displayName: 'Код статуса',
+        visible: false
+      },
+
 
       {
         name: 'statusName',
         displayName: 'Статус',
         grouping: {groupPriority: 0},
         sort: {priority: 0, direction: 'desc'},
-        width: '*',
-        cellTemplate: '<div>' +
-          '<div ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div>' +
+        width: '250',
+        cellTemplate:
+          '<div>' + '<div  ' +
+          'ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" ' +
+          'class="ui-grid-cell-contents" ' +
+          'title="TOOLTIP">' +
+          '<button class="btn btn-primary" ng-click="grid.appScope.toggleRow(row.treeLevel)"> <i class="fa fa-folder"></i></button> {{COL_FIELD CUSTOM_FILTERS}}'  +
+          '</div>' +
           '</div>'
       },
+
+
       {
         name: 'maxRecNum',
         displayName: 'Номер среза',
@@ -86,6 +99,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
       }
 
     ],
+
     onRegisterApi: function (gridApi) {
       $scope.gridApi = gridApi;
     }
@@ -94,9 +108,11 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
   //Получение всех срезов
 
 
-  $rootScope.treeBtn = function (row) {
-    console.log(row)
+  $scope.toggleRow = function (rowNum) {
+    console.log(rowNum);
+    $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[rowNum]);
   };
+
 
   $scope.loader = false;
   $scope.getAllSrez = function () {

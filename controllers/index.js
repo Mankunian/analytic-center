@@ -8,13 +8,11 @@ var app = angular.module('app', [
   'ui.grid.treeView',
   'ui.grid.grouping',
   'ui.grid.edit',
-  'angularTreeview',
-  'ui.grid.selection'
+  'ui.grid.selection',
+  'ui.grid.expandable'
 ]);
 
-app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', function ($scope, $http) {
-
-
+app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', function ($scope, $http, $rootScope) {
 
 
   //Получение списка групп
@@ -35,6 +33,11 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
 
 
   $scope.gridOptions = {
+    expandableRowTemplate: 'expandableRowTemplate.html',
+    expandableRowHeight: 150,
+    expandableRowScope: {
+      subGridVariable: 'subGridScopeVariable'
+    },
     enableRowSelection: true,
     enableSelectAll: true,
     selectionRowHeaderWidth: 35,
@@ -57,7 +60,9 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
         grouping: {groupPriority: 0},
         sort: {priority: 0, direction: 'desc'},
         width: '*',
-        cellTemplate: '<div><div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div></div>'
+        cellTemplate: '<div>' +
+          '<div ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div>' +
+          '</div>'
       },
       {
         name: 'maxRecNum',
@@ -89,6 +94,10 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
   //Получение всех срезов
 
 
+  $rootScope.treeBtn = function (row) {
+    console.log(row)
+  };
+
   $scope.loader = false;
   $scope.getAllSrez = function () {
     $scope.loader = true;
@@ -110,7 +119,15 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
 
   $scope.user = [];
   $scope.orderSrez = function (user) {
-    // console.log(user);
+
+
+    var changeTab = function () {
+      $('.nav-tabs a[href="#home"]').tab('show');
+      $scope.vChecked = false;
+    };
+
+
+    changeTab();
 
     $scope.group = user;
 
@@ -129,11 +146,14 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
       data: dataObj
     }).then(function (response) {
 
+      $scope.user = [];
+
 
       var data = response.data;
       $scope.showGrid = response.data;
 
       $scope.gridOptions.data = data;
+      console.log(user)
 
 
     }, function (reason) {
@@ -232,30 +252,30 @@ app.controller('langDropdownCtrl', function ($scope, $log) {
 
 app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, value) {
 
-    $scope.statSliceNum = value['maxRecNum'];
-    $scope.statSlicePeriod = value['period'];
-    console.log();
-    $http.get('./json/reports.json')
-      .then(function(response) {
-        $scope.reportCodes = response.data;
-      });
+  $scope.statSliceNum = value['maxRecNum'];
+  $scope.statSlicePeriod = value['period'];
+  console.log();
+  $http.get('./json/reports.json')
+    .then(function (response) {
+      $scope.reportCodes = response.data;
+    });
 
-    $scope.cancel = function () {
-        $uibModalInstance.dismiss();
-    }
-
-});
-
-app.controller('requestedReportsCtrl', function($scope) {
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss();
+  }
 
 });
 
-app.controller('requestStatusCtrl', function($scope) {
+app.controller('requestedReportsCtrl', function ($scope) {
+
+});
+
+app.controller('requestStatusCtrl', function ($scope) {
 
 });
 
 /**
-  * Regions tree Controller
+ * Regions tree Controller
  */
 
 app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', '$log', 'uiGridTreeViewConstants', 'uiGridConstants', function ($scope, $http, $interval, $log, uiGridTreeViewConstants, uiGridGroupingConstants) {
@@ -273,8 +293,8 @@ app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', '$log', 'uiGri
     rowHeight: 35,
 
     columnDefs: [
-      { name: 'code', width: '20%',displayName: 'и/н' },
-      { name: 'name', width: '60%',displayName: 'Регион/Орган' }
+      {name: 'code', width: '20%', displayName: 'и/н'},
+      {name: 'name', width: '60%', displayName: 'Регион/Орган'}
     ]
   };
 
@@ -303,18 +323,18 @@ app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', '$log', 'uiGri
     });
   };
 
-    var dataSet = [];
-    // $http.get('./json/response_1573739360481.json')
-    $http({
-        method: 'GET',
-        url: 'http://18.140.232.52:8081/api/v1/ru/slices/regsTree'
-    }).then(function (response) {
-        dataSet.push(response.data);
+  var dataSet = [];
+  // $http.get('./json/response_1573739360481.json')
+  $http({
+    method: 'GET',
+    url: 'http://18.140.232.52:8081/api/v1/ru/slices/regsTree'
+  }).then(function (response) {
+    dataSet.push(response.data);
 
-        $scope.gridOptions.data = [];
-        writeoutNode( dataSet, 0, $scope.gridOptions.data );
+    $scope.gridOptions.data = [];
+    writeoutNode(dataSet, 0, $scope.gridOptions.data);
 
-    });
+  });
 
   $scope.info = {};
   $scope.gridOptions.onRegisterApi = function (gridApi) {

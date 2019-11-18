@@ -905,3 +905,8 @@ table thead{
     -ms-transform: rotate(45deg);
     transform: rotate(45deg);
 }
+
+.tab-content{
+    margin: 20px 0;
+}
+

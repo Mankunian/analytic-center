@@ -1,163 +1,145 @@
 <!doctype html>
 <html lang="eng" ng-app="app">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="css/font-awesome.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
 
 
+    <link rel="stylesheet" href="css/ui-select/select.min.css">
+    <link rel="stylesheet" href="css/ui-select/select2.css">
+    <link rel="stylesheet" href="css/ui-select/selectize.default.css">
 
+    <link rel="stylesheet" href="css/index.css" type="text/css">
+    <link rel="stylesheet" href="css/ui-grid.css" type="text/css">
+    <link rel="stylesheet" href="css/custom.css" type="text/css">
+    <link rel="stylesheet" href="css/treeGrid.css">
 
-  <script src="http://igniteui.com/js/modernizr.min.js"></script>
-  <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-  <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>
-  <script src="http://cdn-na.infragistics.com/igniteui/latest/js/infragistics.core.js"></script>
-  <script src="http://cdn-na.infragistics.com/igniteui/latest/js/infragistics.lob.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-  <link rel="stylesheet" href="css/font-awesome.css">
-  <link rel="stylesheet" href="css/bootstrap.min.css">
-
-
-  <link rel="stylesheet" href="css/ui-select/select.min.css">
-  <link rel="stylesheet" href="css/ui-select/select2.css">
-  <link rel="stylesheet" href="css/ui-select/selectize.default.css">
-
-  <link rel="stylesheet" href="css/index.css" type="text/css">
-  <link rel="stylesheet" href="css/ui-grid.css" type="text/css">
-  <link rel="stylesheet" href="css/custom.css" type="text/css">
-
-
-  <script src="js/angular.js"></script>
-  <script src="js/angular-touch.js"></script>
-  <script src="js/angular-animate.js"></script>
-  <script src="js/angular-aria.js"></script>
-  <script src="js/csv.js"></script>
-  <script src="js/vfs_fonts.js"></script>
-  <script src="js/lodash.min.js"></script>
-  <script src="js/jszip.min.js"></script>
-  <script src="js/excel-builder.dist.js"></script>
-  <script src="js/ui-grid.js"></script>
+    <script src="js/angular.js"></script>
+    <script src="js/angular-touch.js"></script>
+    <script src="js/angular-animate.js"></script>
+    <script src="js/angular-aria.js"></script>
+    <script src="js/csv.js"></script>
+    <script src="js/vfs_fonts.js"></script>
+    <script src="js/lodash.min.js"></script>
+    <script src="js/jszip.min.js"></script>
+    <script src="js/excel-builder.dist.js"></script>
+    <script src="js/ui-grid.js"></script>
 
 
   <script src="Scripts/ui-bootstrap.js"></script>
 
-  <script src="Scripts/ui-select/select.min.js"></script>
+    <script src="Scripts/ui-select/select.min.js"></script>
+    
+    <!-- UI Grid -->
+    <script src="js/ui-grid/ui-grid.core.min.js"></script>
+    <script src="js/ui-grid/ui-grid.tree-base.min.js"></script>
+    <script src="js/ui-grid/ui-grid.tree-view.min.js"></script>
+    <script src="js/ui-grid/ui-grid.grouping.min.js"></script>
+    <script src="js/ui-grid/ui-grid.selection.min.js"></script>
 
-  <!-- UI Grid -->
-  <script src="js/ui-grid/ui-grid.core.min.js"></script>
-  <script src="js/ui-grid/ui-grid.tree-base.min.js"></script>
-  <script src="js/ui-grid/ui-grid.tree-view.min.js"></script>
-  <script src="js/ui-grid/ui-grid.grouping.min.js"></script>
-  <script src="js/ui-grid/ui-grid.selection.min.js"></script>
 
+    <script src="Scripts/jquery-2.2.1.js"></script>
+    <script src="Scripts/angular-route.js"></script>
 
-  <script src="Scripts/jquery-2.2.1.js"></script>
-  <script src="Scripts/angular-route.js"></script>
+  <script src="Scripts/angular-dropdown-multiselect.js"></script>
 
-  <script src="js/angular-treeview.js"></script>
-  <script src="js/checklist-model.js"></script>
-  <script data-require="ui-bootstrap@*" data-semver="2.5.0" src="js/ui-bootstrap-tpls-2.5.0.js"></script>
+    <script src="js/angular-treeview.js"></script>
+    <script src="js/checklist-model.js"></script>
+    <script data-require="ui-bootstrap@*" data-semver="2.5.0" src="js/ui-bootstrap-tpls-2.5.0.js"></script>
 </head>
 <body>
 <div ng-controller="MainCtrl">
-  <div class="container-fluid main">
-    <div class="row">
-      <div class="col-sm-12">
-        <div>
-          <form>
-            <div class="row">
-              <div class="col-md-12">
-                <div class="col-md-12" style="padding: 15px; text-align: center">
-                  <p class="title">Статистические срезы</p>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-12">
-                <div class="col-md-6">
-                  <div class="col-md-4">
-                    <label>Дата начала отчета <span class="required">*</span></label>
-                    <input class="form-control" data-format="dd.MM.yyyy" ng-model="dateFrom"
-                           type="date" required>
-                  </div>
-                  <div class="col-md-4">
-                    <label>Дата окончания отчета <span class="required">*</span></label>
-                    <input class="form-control" data-format="dd.MM.yyyy" ng-model="dateTo"
-                           type="date" required> <br>
-                  </div>
-                  <div class="col-md-3 col-xs-10">
-                    <label>Статсрез на № <span class="required">*</span></label>
-                    <input disabled ng-model="statsrez" type="text" class="form-control">
-                  </div>
-                  <div class="col-md-1 col-xs-1">
-                    <label> <span class="required" style="color: transparent">*</span></label>
-                    <button title="Обновить статсрез" ng-click="getStatSrez()"
-                            class="btn btn-warning"><i class="fa fa-refresh"></i></button>
-                  </div>
+    <div class="container-fluid main">
+        <div class="row">
+            <div class="col-sm-12">
+                <div>
+                    <form>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-12" style="padding: 15px; text-align: center">
+                                    <p class="title">Статистические срезы</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-6">
+                                    <div class="col-md-4" style="color: #fff !important;">
+                                        <label>Дата начала отчета <span class="required">*</span></label>
+                                        <input class="form-control" data-format="dd.MM.yyyy" ng-model="dateFrom"
+                                               type="date" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Дата окончания отчета <span class="required">*</span></label>
+                                        <input class="form-control" data-format="dd.MM.yyyy" ng-model="dateTo"
+                                               type="date" required> <br>
+                                    </div>
+                                    <div class="col-md-3 col-xs-10">
+                                        <label>Статсрез на № <span class="required">*</span></label>
+                                        <input ng-model="statsrez" type="text" class="form-control">
+                                    </div>
+                                    <div class="col-md-1 col-xs-1">
+                                        <label> <span class="required" style="color: transparent">*</span></label>
+                                        <button title="Обновить статсрез" ng-click="getStatSrez()"
+                                                class="btn btn-warning"><i class="fa fa-refresh"></i></button>
+                                    </div>
 
 
-                  <!-- <div class="col-md-7 col-sm-7 col-xs-8">
-                    <a href="#" class="btn btn-primary btn-md">
-                      <span class="glyphicon glyphicon-refresh"></span>
-                    </a>
-                    <a href="#" class="btn btn-success btn-md">
-                      <span class="glyphicon glyphicon-check"></span>
-                    </a>
-                    <a href="#" class="btn btn-warning btn-md">
-                      <span class="glyphicon glyphicon-check second"></span>
-                    </a>
-                    <a href="#" class="btn btn-danger btn-md">
-                      <span class="glyphicon glyphicon-remove-circle cancel"></span>
-                    </a>
-                  </div>
-                  <div class="col-md-5 col-sm-5 col-xs-4">
-                    <button ng-click="getDatas(dateFrom, dateTo, statsrez, item)" style="float: right;" class="btn btn-success">Заказать</button>
-                  </div> -->
-                  <br>
-                </div>
-                <div class="col-lg-4 col-md-12" style="float: right">
-                  <div class="pull-right box">
-                    <label class="containerLabel" ng-repeat="group in groups">
-                      <input type="checkbox" checklist-model="user" checklist-value="group.id">{{group.name}}
-                      <span class="checkmark"></span>
-                    </label>
-                    <button ng-disabled="user.length == 0" class="btn btn-success"
-                            ng-click="orderSrez(user)">Заказать
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <br>
+                                    <!-- <div class="col-md-7 col-sm-7 col-xs-8">
+                                      <a href="#" class="btn btn-primary btn-md">
+                                        <span class="glyphicon glyphicon-refresh"></span>
+                                      </a>
+                                      <a href="#" class="btn btn-success btn-md">
+                                        <span class="glyphicon glyphicon-check"></span>
+                                      </a>
+                                      <a href="#" class="btn btn-warning btn-md">
+                                        <span class="glyphicon glyphicon-check second"></span>
+                                      </a>
+                                      <a href="#" class="btn btn-danger btn-md">
+                                        <span class="glyphicon glyphicon-remove-circle cancel"></span>
+                                      </a>
+                                    </div>
+                                    <div class="col-md-5 col-sm-5 col-xs-4">
+                                      <button ng-click="getDatas(dateFrom, dateTo, statsrez, item)" style="float: right;" class="btn btn-success">Заказать</button>
+                                    </div> -->
+                                    <br>
+                                </div>
+                                <div class="col-lg-4 col-md-12" style="float: right">
+                                    <div class="pull-right box">
+                                        <label class="containerLabel" ng-repeat="group in groups">
+                                            <input type="checkbox" checklist-model="user" checklist-value="group.id">{{group.name}}
+                                            <span class="checkmark"></span>
+                                        </label>
+                                        <button ng-disabled="user.length == 0" class="btn btn-success"
+                                                ng-click="orderSrez(user)">Заказать
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
 
 
-            <div class="row" ng-if="showGrid">
-              <div class="col-md-6 col-xs-6">
-                <div class="pull-left">
-                  <label class="containerLabel">
-                    <input type="checkbox">Показать удаленные
-                    <span class="checkmark"></span>
-                  </label>
-                </div>
-              </div>
+                        <div class="row" ng-if="showGrid">
+                            <div class="col-md-6 col-xs-6">
+                                <div class="pull-left">
+                                    <label class="containerLabel">
+                                        <input type="checkbox">Показать удаленные
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
+                            </div>
 
-              <div class="col-md-6">
-                <div class="pull-right">
-                  <button title="Получить список всех записей" ng-click="getAllSrez()"
-                          class="btn btn-primary"><i class="fa fa-refresh"></i></button>
-                </div>
-              </div>
-            </div>
+                            <div class="col-md-6">
+                                <div class="pull-right">
+                                    <button title="Обновить таблицу" ng-click="orderSrez()"
+                                            class="btn btn-primary"><i class="fa fa-refresh"></i></button>
+                                </div>
+                            </div>
+                        </div>
 
             <div class="row" style="display: none">
               <div ng-controller="ModalControlCtrl">

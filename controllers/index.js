@@ -29,7 +29,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
   //Получение списка групп
 
 
-  var detailButton = '<div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents"> <button ng-click="grid.appScope.open(row.entity)" ng-hide="row.treeLevel==0 || row.treeLevel == 1" type="button" class="btn btn-success"> Операции со срезами </button> </div>'
+  // var detailButton = '<div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents"> <button ng-click="grid.appScope.open(row.entity)" ng-hide="row.treeLevel==0 || row.treeLevel == 1" type="button" class="btn btn-success"> Операции со срезами </button> </div>'
+  var detailButton = '<div  ng-controller="ModalControlCtrl" ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents"> <button ng-click="grid.appScope.open(row.entity)" ng-hide="row.treeLevel==0 || row.treeLevel == 1" type="button" class="btn btn-success"> Операции со срезами </button> </div>'
 
 
   $scope.gridOptions = {
@@ -129,6 +130,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
 
 
       var data = response.data;
+      $scope.showGrid = response.data;
+
       $scope.gridOptions.data = data;
 
 
@@ -217,32 +220,32 @@ app.controller('langDropdownCtrl', function ($scope, $log) {
 
 });
 
-app.controller('ModalContentCtrl', function ($scope, $uibModalInstance, value) {
+app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, value) {
 
-  $scope.statSliceNum = value['maxRecNum'];
-  $scope.statSlicePeriod = value['period'];
+    $scope.statSliceNum = value['maxRecNum'];
+    $scope.statSlicePeriod = value['period'];
+    console.log();
+    $http.get('./json/reports.json')
+      .then(function(response) {
+        $scope.reportCodes = response.data;
+      });
 
-  $scope.ok = function () {
-    $uibModalInstance.close("Ok");
-  };
-
-  $scope.cancel = function () {
-    $uibModalInstance.dismiss();
-  }
-
-});
-
-
-app.controller('requestedReportsCtrl', function ($scope) {
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss();
+    }
 
 });
 
-app.controller('requestStatusCtrl', function ($scope) {
+app.controller('requestedReportsCtrl', function($scope) {
+
+});
+
+app.controller('requestStatusCtrl', function($scope) {
 
 });
 
 /**
- * Regions tree Controller
+  * Regions tree Controller
  */
 
 app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', '$log', 'uiGridTreeViewConstants', 'uiGridConstants', function ($scope, $http, $interval, $log, uiGridTreeViewConstants, uiGridGroupingConstants) {
@@ -260,8 +263,8 @@ app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', '$log', 'uiGri
     rowHeight: 35,
 
     columnDefs: [
-      {name: 'id', width: '20%', displayName: 'и/н'},
-      {name: 'region', width: '60%', displayName: 'Регион/Орган'}
+      { name: 'code', width: '20%',displayName: 'и/н' },
+      { name: 'name', width: '60%',displayName: 'Регион/Орган' }
     ]
   };
 
@@ -271,6 +274,8 @@ app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', '$log', 'uiGri
   var writeoutNode = function (childArray, currentLevel, dataArray) {
     childArray.forEach(function (childNode) {
 
+
+      console.log(childNode);
       if (childNode.children.length > 0) {
         childNode.$$treeLevel = currentLevel;
         id = childNode.categoryId;
@@ -290,12 +295,16 @@ app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', '$log', 'uiGri
     });
   };
 
-  $http.get('./json/regions.json')
-    .then(function (response) {
-      var dataSet = response.data;
+    var dataSet = [];
+    // $http.get('./json/response_1573739360481.json')
+    $http({
+        method: 'GET',
+        url: 'http://18.140.232.52:8081/api/v1/ru/slices/regsTree'
+    }).then(function (response) {
+        dataSet.push(response.data);
 
-      $scope.gridOptions.data = [];
-      writeoutNode(dataSet, 0, $scope.gridOptions.data);
+        $scope.gridOptions.data = [];
+        writeoutNode( dataSet, 0, $scope.gridOptions.data );
 
     });
 

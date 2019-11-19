@@ -450,4 +450,3 @@ app.controller('DepartmentCtrl', ['$scope', '$http', '$log', 'uiGridConstants', 
 //     getPrivate: getPrivate
 //   };
 // });
-==== BASE ====

@@ -315,7 +315,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
   // $scope.statSliceNum = value['maxRecNum'];
   // console.log(statSliceNum);
   // $scope.statSlicePeriod = value['period'];
-
+  
   $http.get('./json/reports.json')
     .then(function (response) {
       $scope.reportCodes = response.data;
@@ -327,8 +327,8 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
 
 });
 
-app.controller('requestedReportsCtrl', function ($scope) {
-
+app.controller('requestedReportsCtrl', function ($scope, $rootScope) {
+  console.log('$rootScope.test' + $rootScope.test);
 });
 
 app.controller('requestStatusCtrl', function ($scope) {
@@ -421,7 +421,7 @@ app.controller('requestStatusCtrl', function ($scope) {
  * Department Controller
  */
 
-app.controller('DepartmentCtrl', ['$scope', '$http', '$log', 'uiGridConstants', function ($scope, $http, $log, uiGridConstants, getRequestedReportsFctr) {
+app.controller('DepartmentCtrl', ['$scope', '$http', '$log', 'uiGridConstants','$rootScope', function ($scope, $http, $log, uiGridConstants, $rootScope) {
 
   $scope.gridOptions = {
     showGridFooter: false,
@@ -434,7 +434,8 @@ app.controller('DepartmentCtrl', ['$scope', '$http', '$log', 'uiGridConstants', 
 
     enableRowSelection: true,
     enableSelectAll: true,
-    rowHeight: 35
+    rowHeight: 35,
+    multiSelect: true
   };
 
   $scope.gridOptions.columnDefs = [
@@ -442,22 +443,21 @@ app.controller('DepartmentCtrl', ['$scope', '$http', '$log', 'uiGridConstants', 
     {name: 'name', width: '70%', displayName: 'Ведомство'}
   ];
 
-  $scope.gridOptions.multiSelect = true;
-
   $http.get('./json/ved.json')
     .then(function (response) {
       $scope.gridOptions.data = response.data;
     });
 
   $scope.info = {};
-
+  // $rootScope.test = $scope.msg;
+  // $rootScope.test = 'test ya';  
+ 
   $scope.gridOptions.onRegisterApi = function (gridApi) {
-
     //set gridApi on scope
     $scope.gridApi = gridApi;
     gridApi.selection.on.rowSelectionChanged($scope, function (row) {
-      var msg = row.entity;
-      $log.log(msg);
+      // $scope.msg = row.entity;
+      $rootScope.test = row.entity;
     });
   };
 }]);

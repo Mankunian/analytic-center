@@ -38,7 +38,14 @@
       		<div class="col-md-12">
    	   		<div class="requested-reports" ng-controller="requestedReportsCtrl">
    	   			<h5>Запрошенные отчеты</h5>
-
+                  <table>
+                     <thead>
+                        <div id="grid1" ui-grid="gridOptions" ui-grid-selection class="grid"></div>
+                     </thead>
+                     <tbody>
+                        
+                     </tbody>
+                  </table>
    	   		</div>
       		</div>
       	</div>
@@ -62,7 +69,7 @@
                <div id="grid1" ui-grid="gridOptions" ui-grid-selection ui-grid-cellnav  ui-grid-grouping class="grid"></div>
             </div>
             <div class="col-md-6" ng-controller="DepartmentCtrl">
-               <div id="grid1Selection" ui-grid="gridOptions" ui-grid-selection ui-grid-cellnav class="grid"></div>
+               <div id="grid1Selection" ui-grid="gridOptions" ui-grid-selection class="grid"></div>
             </div>
          </div>
    	 </uib-tab>

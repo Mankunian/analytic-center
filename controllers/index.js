@@ -309,12 +309,12 @@ app.controller('langDropdownCtrl', function ($scope, $log) {
  */
 app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, value) {
 
-  var statSliceNum,
-      statSlicePeriod;
+  // var statSliceNum,
+  //     statSlicePeriod;
       
-  $scope.statSliceNum = value['maxRecNum'];
-  console.log(statSliceNum);
-  $scope.statSlicePeriod = value['period'];
+  // $scope.statSliceNum = value['maxRecNum'];
+  // console.log(statSliceNum);
+  // $scope.statSlicePeriod = value['period'];
 
   $http.get('./json/reports.json')
     .then(function (response) {

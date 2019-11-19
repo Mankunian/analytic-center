@@ -28,7 +28,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
 
   // var detailButton = '<div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents"> <button ng-click="grid.appScope.open(row.entity)" ng-hide="row.treeLevel==0 || row.treeLevel == 1" type="button" class="btn btn-success"> Операции со срезами </button> </div>'
-  var detailButton = '<div  ng-controller="ModalControlCtrl" ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents"> <button ng-click="grid.appScope.open(row.entity)" ng-hide="row.treeLevel==0 || row.treeLevel == 1" type="button" class="btn btn-success"> Операции со срезами </button> </div>'
+
+  var operBySrez = '<div  ng-controller="modalOperBySrezCtrl" ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents"> <button ng-click="grid.appScope.openOperBySrez(row.entity)" ng-hide="row.treeLevel==0 || row.treeLevel == 1" type="button" class="btn btn-success"> Операция со срезами </button> </div>'
 
 
   $scope.gridOptions = {
@@ -44,7 +45,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       {
         name: 'groupCode',
         displayName: 'Код группы',
-        visible: true
+        visible: false,
+        sort: {priority: 0, direction: 'asc'}
       },
       {
         name: 'groupName',
@@ -56,18 +58,18 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
           'ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" ' +
           'class="ui-grid-cell-contents" ' +
           'title="TOOLTIP">' +
-          '<button class="btn btn-primary" ng-click="grid.appScope.toggleFirstRow(rowRenderIndex)"><i class="fa fa-folder"></i></button> {{COL_FIELD CUSTOM_FILTERS}}</div></div>'
+          '<button class="btn btn-primary" ng-click="grid.appScope.toggleFirstRow(rowRenderIndex, row.entity)"><i class="fa fa-folder"></i></button> {{COL_FIELD CUSTOM_FILTERS}}</div></div>'
       },
       {
         name: 'statusCode',
         displayName: 'Код статуса',
-        visible: true
+        visible: false
       },
 
       {
         name: 'year',
         displayName: 'Год',
-        visible: true
+        visible: false
       },
 
 
@@ -82,7 +84,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
           'ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" ' +
           'class="ui-grid-cell-contents" ' +
           'title="TOOLTIP">' +
-          '<button class="btn btn-primary" ng-click="grid.appScope.toggleSecRow(rowRenderIndex, row, \'copy\')"> ' +
+          '<button class="btn btn-primary" ng-click="grid.appScope.$parent.toggleSecRow(rowRenderIndex, COL_FIELD, row.treeNode.children)"> ' +
           '<i class="fa fa-folder"></i>' +
           '</button> {{COL_FIELD CUSTOM_FILTERS}}' +
           '</div>' +
@@ -93,7 +95,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       {
         name: 'maxRecNum',
         displayName: 'Номер среза',
-        width: '*'
+        width: '*',
+        cellTemplate: '<div  ng-controller="ModalControlCtrl" ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents"> <button ng-click="grid.appScope.open(row.entity)" ng-hide="row.treeLevel==0 || row.treeLevel == 1" type="button" class="btn btn-primary"> {{COL_FIELD CUSTOM_FILTERS}} </button> </div>'
       },
       {
         name: 'period',
@@ -108,7 +111,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       {
         name: 'button',
         displayName: 'Действие',
-        cellTemplate: detailButton
+        cellTemplate: operBySrez
       }
 
     ],
@@ -122,21 +125,27 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
 
   $scope.toggleFirstRow = function (index) {
-    console.log(index);
     $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
   };
 
-  $scope.toggleSecRow = function (index, rowEntity) {
-    console.log(rowEntity);
+  $scope.toggleSecRow = function (index, col, rowEntity) {
+    var params = rowEntity[0].row.entity;
+    var groupCode = params.groupCode;
+    var statusCode = params.statusCode;
+    var year = params.year;
 
-    /*$http({
+
+    $http({
       method: 'GET',
-      url: 'http://18.140.232.52:8081/api/v1/RU/slices?deleted=false&groupCode=001&statusCode=0&year=2019'
-    })*/
+      url: 'http://18.140.232.52:8081/api/v1/RU/slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + ''
+    }).then(function (value) {
+      console.log(value);
+      $scope.gridOptions.data = value.data;
+      $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
+    }, function (reason) {
+      console.log(reason)
+    });
 
-
-
-    $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
 
   };
 
@@ -150,6 +159,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       url: 'http://18.140.232.52:8081/api/v1/RU/slices/groupsAndStatuses?deleted=false'
     }).then(function (response) {
       $scope.loader = false;
+      $scope.allSrez = response.data;
       var data = response.data;
       console.log(data);
       angular.forEach(data, function (value, index) {
@@ -289,6 +299,34 @@ app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope) {
   };
 });
 
+
+/**
+ *  ModalOperBySrezCtrl
+ */
+app.controller('modalOperBySrezCtrl', function ($scope, $uibModal, $rootScope) {
+  $rootScope.openOperBySrez = function (value) {
+    $scope.dataSendByModal = value;
+
+
+    var modalInstance = $uibModal.open({
+      templateUrl: 'modalOperBySrez.html',
+      controller: 'modalContentOperBySrezCtrl',
+      size: 'lg',
+      windowTopClass: 'getReportModal',
+      resolve: {
+        value: function () {
+          return $scope.dataSendByModal;
+        }
+      }
+    });
+    modalInstance.result.then(function (response) {
+      // $scope.result = `${response} button hitted`;
+    });
+
+  }
+});
+
+
 /**
  *  LangDropdownCtrl
  */
@@ -320,6 +358,21 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
     .then(function (response) {
       $scope.reportCodes = response.data;
     });
+
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss();
+  }
+
+});
+
+/**
+ *  modalContentOperBySrezCtrl
+ */
+
+
+app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalInstance, value) {
+
+  console.log('Операция со срезами');
 
   $scope.cancel = function () {
     $uibModalInstance.dismiss();

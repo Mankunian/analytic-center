@@ -32,6 +32,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
 
   $scope.gridOptions = {
+    showTreeExpandNoChildren: false,
     enableRowSelection: true,
     enableSelectAll: true,
     selectionRowHeaderWidth: 35,
@@ -43,7 +44,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       {
         name: 'groupCode',
         displayName: 'Код группы',
-        visible: false
+        visible: true
       },
       {
         name: 'groupName',
@@ -55,12 +56,18 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
           'ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" ' +
           'class="ui-grid-cell-contents" ' +
           'title="TOOLTIP">' +
-          '<button class="btn btn-primary" ng-click="grid.appScope.toggleRow(5)"><i class="fa fa-folder"></i></button> {{COL_FIELD CUSTOM_FILTERS}}</div></div>'
+          '<button class="btn btn-primary" ng-click="grid.appScope.toggleFirstRow(rowRenderIndex)"><i class="fa fa-folder"></i></button> {{COL_FIELD CUSTOM_FILTERS}}</div></div>'
       },
       {
         name: 'statusCode',
         displayName: 'Код статуса',
-        visible: false
+        visible: true
+      },
+
+      {
+        name: 'year',
+        displayName: 'Год',
+        visible: true
       },
 
 
@@ -75,7 +82,9 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
           'ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" ' +
           'class="ui-grid-cell-contents" ' +
           'title="TOOLTIP">' +
-          '<button class="btn btn-primary" ng-click="grid.appScope.toggleRow(6)"> <i class="fa fa-folder"></i></button> {{COL_FIELD CUSTOM_FILTERS}}' +
+          '<button class="btn btn-primary" ng-click="grid.appScope.toggleSecRow(rowRenderIndex, row, \'copy\')"> ' +
+          '<i class="fa fa-folder"></i>' +
+          '</button> {{COL_FIELD CUSTOM_FILTERS}}' +
           '</div>' +
           '</div>'
       },
@@ -112,9 +121,23 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   //Получение всех срезов
 
 
-  $scope.toggleRow = function (rowEntity) {
+  $scope.toggleFirstRow = function (index) {
+    console.log(index);
+    $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
+  };
+
+  $scope.toggleSecRow = function (index, rowEntity) {
     console.log(rowEntity);
-    $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[rowEntity]);
+
+    /*$http({
+      method: 'GET',
+      url: 'http://18.140.232.52:8081/api/v1/RU/slices?deleted=false&groupCode=001&statusCode=0&year=2019'
+    })*/
+
+
+
+    $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
+
   };
 
 
@@ -130,7 +153,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       var data = response.data;
       console.log(data);
       angular.forEach(data, function (value, index) {
-        console.log(index);
         $scope.indexSrez = index;
         $scope.valueSrez = value;
       });
@@ -241,8 +263,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 }]);
 
 /**
-  *  ModalControlCtrl
-  */
+ *  ModalControlCtrl
+ */
 app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope) {
 
   $rootScope.open = function (value) {
@@ -268,14 +290,14 @@ app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope) {
 });
 
 /**
-  *  LangDropdownCtrl
-  */
+ *  LangDropdownCtrl
+ */
 app.controller('langDropdownCtrl', function ($scope, $log) {
 
   $scope.data = {
     langs: [
-    {id: '0', name: 'Русский'},
-    {id: '1', name: 'Казахский'}
+      {id: '0', name: 'Русский'},
+      {id: '1', name: 'Казахский'}
     ],
     selectedOption: {id: '0', name: 'Русский'}
   };
@@ -283,17 +305,17 @@ app.controller('langDropdownCtrl', function ($scope, $log) {
 });
 
 /**
-  *  ModalContentCtrl
-  */
+ *  ModalContentCtrl
+ */
 app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, value) {
 
   $scope.statSliceNum = value['maxRecNum'];
   $scope.statSlicePeriod = value['period'];
 
   $http.get('./json/reports.json')
-  .then(function(response) {
-    $scope.reportCodes = response.data;
-  });
+    .then(function (response) {
+      $scope.reportCodes = response.data;
+    });
 
   $scope.cancel = function () {
     $uibModalInstance.dismiss();
@@ -301,80 +323,90 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
 
 });
 
-app.controller('requestedReportsCtrl', function($scope) {
+app.controller('requestedReportsCtrl', function ($scope) {
 
 });
 
-app.controller('requestStatusCtrl', function($scope) {
+app.controller('requestStatusCtrl', function ($scope) {
 
 });
 
 /**
-  * Regions tree Controller
-  */
+ * Regions tree Controller
+ */
 
-  app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', '$log', 'uiGridTreeViewConstants', 'uiGridConstants', function ($scope, $http, $interval, $log, uiGridTreeViewConstants, uiGridGroupingConstants) {
-    $scope.gridOptions = {
-      enableColumnMenus: false,
-      showTreeExpandNoChildren: false,
-      enableHiding: false,
+app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', '$log', 'uiGridTreeViewConstants', 'uiGridConstants', function ($scope, $http, $interval, $log, uiGridTreeViewConstants, uiGridGroupingConstants) {
+  $scope.gridOptions = {
+    enableColumnMenus: false,
+    showTreeExpandNoChildren: false,
+    enableHiding: false,
 
-      enableSorting: false,
-      enableFiltering: false,
+    enableSorting: false,
+    enableFiltering: false,
 
-      enableRowSelection: true,
-      enableSelectAll: false,
-      selectionRowHeaderWidth: 35,
-      rowHeight: 35,
-      treeIndent: 10,
+    enableRowSelection: true,
+    enableSelectAll: false,
+    selectionRowHeaderWidth: 35,
+    rowHeight: 35,
+    treeIndent: 10,
 
-      columnDefs: [
-      { name: 'code', width: '20%',displayName: 'и/н', cellTemplate : "<div class=\"ui-grid-cell-contents\" title=\"TOOLTIP\"><div style=\"float:left;\" class=\"ui-grid-tree-base-row-header-buttons\" ng-class=\"{'ui-grid-tree-base-header': row.treeLevel > -1 }\" ng-click=\"grid.appScope.toggleRow(row,evt)\"><i ng-class=\"{'ui-grid-icon-minus-squared': ( ( grid.options.showTreeExpandNoChildren && row.treeLevel > -1 ) || ( row.treeNode.children && row.treeNode.children.length > 0 ) ) && row.treeNode.state === 'expanded', 'ui-grid-icon-plus-squared': ( ( grid.options.showTreeExpandNoChildren && row.treeLevel > -1 ) || ( row.treeNode.children && row.treeNode.children.length > 0 ) ) && row.treeNode.state === 'collapsed'}\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\"></i>&nbsp;</div>{{COL_FIELD CUSTOM_FILTERS}}</div>" },
+    columnDefs: [
+      {
+        name: 'code',
+        width: '20%',
+        displayName: 'и/н',
+        cellTemplate: "<div class=\"ui-grid-cell-contents\" title=\"TOOLTIP\"><div style=\"float:left;\" class=\"ui-grid-tree-base-row-header-buttons\" ng-class=\"{'ui-grid-tree-base-header': row.treeLevel > -1 }\" ng-click=\"grid.appScope.toggleRow(row,evt)\"><i ng-class=\"{'ui-grid-icon-minus-squared': ( ( grid.options.showTreeExpandNoChildren && row.treeLevel > -1 ) || ( row.treeNode.children && row.treeNode.children.length > 0 ) ) && row.treeNode.state === 'expanded', 'ui-grid-icon-plus-squared': ( ( grid.options.showTreeExpandNoChildren && row.treeLevel > -1 ) || ( row.treeNode.children && row.treeNode.children.length > 0 ) ) && row.treeNode.state === 'collapsed'}\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\"></i>&nbsp;</div>{{COL_FIELD CUSTOM_FILTERS}}</div>"
+      },
       // { name: 'code', width: '20%',displayName: 'и/н', cellTemplate : "<div class=\"ui-grid-cell-contents\" title=\"TOOLTIP\"><div style=\"float:left;\" class=\"ui-grid-tree-base-row-header-buttons\" ng-class=\"{'ui-grid-tree-base-header': row.treeLevel > -1 }\" ng-click=\"grid.appScope.toggleRow(row,evt)\"><i ng-class=\"{'ui-grid-icon-minus-squared': ( ( grid.options.showTreeExpandNoChildren && row.treeLevel > -1 ) || ( row.treeNode.children && row.treeNode.children.length > 0 ) ) && row.treeNode.state === 'expanded', 'ui-grid-icon-plus-squared': ( ( grid.options.showTreeExpandNoChildren && row.treeLevel > -1 ) || ( row.treeNode.children && row.treeNode.children.length > 0 ) ) && row.treeNode.state === 'collapsed'}\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\"></i> &nbsp;</div>{{COL_FIELD CUSTOM_FILTERS}}</div>"  },
       // { name: 'code', width: '20%',displayName: 'и/н', cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>" },
-      { name: 'name', width: '40%',displayName: 'Регион/Орган' , cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>" }
-      ]
-    };
+      {
+        name: 'name',
+        width: '40%',
+        displayName: 'Регион/Орган',
+        cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>"
+      }
+    ]
+  };
 
-    $scope.gridOptions.multiSelect = true;
+  $scope.gridOptions.multiSelect = true;
 
-    var id = 0;
-    var writeoutNode = function (childArray, currentLevel, dataArray) {
-      childArray.forEach(function (childNode) {
+  var id = 0;
+  var writeoutNode = function (childArray, currentLevel, dataArray) {
+    childArray.forEach(function (childNode) {
 
-        if (childNode.children.length > 0) {
-          childNode.$$treeLevel = currentLevel;
-          id = childNode.categoryId;
+      if (childNode.children.length > 0) {
+        childNode.$$treeLevel = currentLevel;
+        id = childNode.categoryId;
+        if (childNode.categoryId == childNode.parentCategoryId) {
+          childNode.parentCategoryName = '';
+        }
+      } else {
+        if ((id != childNode.parentCategoryId) || (childNode.categoryId == childNode.parentCategoryId)) {
           if (childNode.categoryId == childNode.parentCategoryId) {
             childNode.parentCategoryName = '';
           }
-        } else {
-          if ((id != childNode.parentCategoryId) || (childNode.categoryId == childNode.parentCategoryId)) {
-            if (childNode.categoryId == childNode.parentCategoryId) {
-              childNode.parentCategoryName = '';
-            }
-            childNode.$$treeLevel = currentLevel;
-          }
+          childNode.$$treeLevel = currentLevel;
         }
-        dataArray.push(childNode);
-        writeoutNode(childNode.children, currentLevel + 1, dataArray);
-      });
-    };
-
-    var dataSet = [];
-
-    $http({
-      method: 'GET',
-      url: 'http://18.140.232.52:8081/api/v1/RU/slices/regsTree'
-    }).then(function (response) {
-      dataSet.push(response.data);
-
-      $scope.gridOptions.data = [];
-      writeoutNode( dataSet, 0, $scope.gridOptions.data );
+      }
+      dataArray.push(childNode);
+      writeoutNode(childNode.children, currentLevel + 1, dataArray);
     });
+  };
 
-    $scope.info = {};
-    $scope.gridOptions.onRegisterApi = function (gridApi) {
+  var dataSet = [];
+
+  $http({
+    method: 'GET',
+    url: 'http://18.140.232.52:8081/api/v1/RU/slices/regsTree'
+  }).then(function (response) {
+    dataSet.push(response.data);
+
+    $scope.gridOptions.data = [];
+    writeoutNode(dataSet, 0, $scope.gridOptions.data);
+  });
+
+  $scope.info = {};
+  $scope.gridOptions.onRegisterApi = function (gridApi) {
     //set gridApi on scope
     $scope.gridApi = gridApi;
     gridApi.selection.on.rowSelectionChanged($scope, function (row) {
@@ -419,9 +451,9 @@ app.controller('DepartmentCtrl', ['$scope', '$http', '$log', 'uiGridConstants', 
   $scope.gridOptions.multiSelect = true;
 
   $http.get('./json/ved.json')
-  .then(function (response) {
-    $scope.gridOptions.data = response.data;
-  });
+    .then(function (response) {
+      $scope.gridOptions.data = response.data;
+    });
 
   $scope.info = {};
 

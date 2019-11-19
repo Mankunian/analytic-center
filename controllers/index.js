@@ -87,7 +87,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
     $scope.loader = true;
     $http({
       method: 'GET',
-      url: 'http://18.140.232.52:8081/api/v1/ru/slices'
+      url: 'http://18.140.232.52:8081/api/v1/RU/slices/groupsAndStatuses?deleted=false'
     }).then(function (response) {
       $scope.loader = false;
       var data = response.data;
@@ -98,7 +98,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', functi
   };
 
   //Получение всех срезов
-  // $scope.getAllSrez();
+  $scope.getAllSrez();
   
   $scope.user = [];
   $scope.orderSrez = function (user) {
@@ -227,7 +227,11 @@ app.controller('langDropdownCtrl', function ($scope, $log) {
   */
 app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, value) {
 
+  var statSliceNum,
+      statSlicePeriod;
+      
   $scope.statSliceNum = value['maxRecNum'];
+  console.log(statSliceNum);
   $scope.statSlicePeriod = value['period'];
 
   $http.get('./json/reports.json')
@@ -335,7 +339,7 @@ app.controller('requestStatusCtrl', function($scope) {
  * Department Controller
  */
 
-app.controller('DepartmentCtrl', ['$scope', '$http', '$log', 'uiGridConstants', function ($scope, $http, $log, uiGridConstants, getRequestedReportsFctr) {
+app.controller('DepartmentCtrl', ['$scope', '$http', '$log', 'uiGridConstants', function ($scope, $http, $log, uiGridConstants) {
   
   $scope.gridOptions = {
     showGridFooter: false,
@@ -347,7 +351,7 @@ app.controller('DepartmentCtrl', ['$scope', '$http', '$log', 'uiGridConstants', 
     enableFiltering: false,
 
     enableRowSelection: true,
-    enableSelectAll: false,
+    enableSelectAll: true,
     rowHeight: 35
   };
 
@@ -370,24 +374,9 @@ app.controller('DepartmentCtrl', ['$scope', '$http', '$log', 'uiGridConstants', 
     //set gridApi on scope
     $scope.gridApi = gridApi;
     gridApi.selection.on.rowSelectionChanged($scope, function (row) {
-      var departmentEntity = row.entity;
-      $log.log(departmentEntity);
-      return departmentEntity;
+      var msg = row.entity;
+      $log.log(msg);
     });
 
   };
 }]);
-
-// app.factory('getRequestedReportsFctr', function(departmentEntity) {
-  
-//   var thisIsPrivate = "Private";
-
-//   function getPrivate() {
-//     return thisIsPrivate;
-//   }
-
-//   return {
-//     variable: "This is public",
-//     getPrivate: getPrivate
-//   };
-// });

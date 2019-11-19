@@ -180,7 +180,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       $scope.showGrid = response.data;
 
       $scope.gridOptions.data = data;
-      console.log(user)
 
 
     }, function (reason) {
@@ -241,6 +240,9 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
 }]);
 
+/**
+  *  ModalControlCtrl
+  */
 app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope) {
 
   $rootScope.open = function (value) {
@@ -254,7 +256,7 @@ app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope) {
       windowTopClass: 'getReportModal',
       resolve: {
         value: function () {
-          return $scope.dataSendByModal
+          return $scope.dataSendByModal;
         }
       }
     });
@@ -265,27 +267,33 @@ app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope) {
   };
 });
 
+/**
+  *  LangDropdownCtrl
+  */
 app.controller('langDropdownCtrl', function ($scope, $log) {
 
   $scope.data = {
     langs: [
-      {id: '0', name: 'Русский'},
-      {id: '1', name: 'Казахский'}
+    {id: '0', name: 'Русский'},
+    {id: '1', name: 'Казахский'}
     ],
     selectedOption: {id: '0', name: 'Русский'}
   };
 
 });
 
+/**
+  *  ModalContentCtrl
+  */
 app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, value) {
 
   $scope.statSliceNum = value['maxRecNum'];
   $scope.statSlicePeriod = value['period'];
-  console.log();
+
   $http.get('./json/reports.json')
-    .then(function (response) {
-      $scope.reportCodes = response.data;
-    });
+  .then(function(response) {
+    $scope.reportCodes = response.data;
+  });
 
   $scope.cancel = function () {
     $uibModalInstance.dismiss();
@@ -293,78 +301,80 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
 
 });
 
-app.controller('requestedReportsCtrl', function ($scope) {
+app.controller('requestedReportsCtrl', function($scope) {
 
 });
 
-app.controller('requestStatusCtrl', function ($scope) {
+app.controller('requestStatusCtrl', function($scope) {
 
 });
 
 /**
- * Regions tree Controller
- */
+  * Regions tree Controller
+  */
 
-app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', '$log', 'uiGridTreeViewConstants', 'uiGridConstants', function ($scope, $http, $interval, $log, uiGridTreeViewConstants, uiGridGroupingConstants) {
-  $scope.gridOptions = {
-    enableColumnMenus: false,
-    showTreeExpandNoChildren: false,
-    enableHiding: false,
+  app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', '$log', 'uiGridTreeViewConstants', 'uiGridConstants', function ($scope, $http, $interval, $log, uiGridTreeViewConstants, uiGridGroupingConstants) {
+    $scope.gridOptions = {
+      enableColumnMenus: false,
+      showTreeExpandNoChildren: false,
+      enableHiding: false,
 
-    enableSorting: false,
-    enableFiltering: false,
+      enableSorting: false,
+      enableFiltering: false,
 
-    enableRowSelection: true,
-    enableSelectAll: false,
-    selectionRowHeaderWidth: 35,
-    rowHeight: 35,
+      enableRowSelection: true,
+      enableSelectAll: false,
+      selectionRowHeaderWidth: 35,
+      rowHeight: 35,
+      treeIndent: 10,
 
-    columnDefs: [
-      {name: 'code', width: '20%', displayName: 'и/н'},
-      {name: 'name', width: '60%', displayName: 'Регион/Орган'}
-    ]
-  };
+      columnDefs: [
+      { name: 'code', width: '20%',displayName: 'и/н', cellTemplate : "<div class=\"ui-grid-cell-contents\" title=\"TOOLTIP\"><div style=\"float:left;\" class=\"ui-grid-tree-base-row-header-buttons\" ng-class=\"{'ui-grid-tree-base-header': row.treeLevel > -1 }\" ng-click=\"grid.appScope.toggleRow(row,evt)\"><i ng-class=\"{'ui-grid-icon-minus-squared': ( ( grid.options.showTreeExpandNoChildren && row.treeLevel > -1 ) || ( row.treeNode.children && row.treeNode.children.length > 0 ) ) && row.treeNode.state === 'expanded', 'ui-grid-icon-plus-squared': ( ( grid.options.showTreeExpandNoChildren && row.treeLevel > -1 ) || ( row.treeNode.children && row.treeNode.children.length > 0 ) ) && row.treeNode.state === 'collapsed'}\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\"></i>&nbsp;</div>{{COL_FIELD CUSTOM_FILTERS}}</div>" },
+      // { name: 'code', width: '20%',displayName: 'и/н', cellTemplate : "<div class=\"ui-grid-cell-contents\" title=\"TOOLTIP\"><div style=\"float:left;\" class=\"ui-grid-tree-base-row-header-buttons\" ng-class=\"{'ui-grid-tree-base-header': row.treeLevel > -1 }\" ng-click=\"grid.appScope.toggleRow(row,evt)\"><i ng-class=\"{'ui-grid-icon-minus-squared': ( ( grid.options.showTreeExpandNoChildren && row.treeLevel > -1 ) || ( row.treeNode.children && row.treeNode.children.length > 0 ) ) && row.treeNode.state === 'expanded', 'ui-grid-icon-plus-squared': ( ( grid.options.showTreeExpandNoChildren && row.treeLevel > -1 ) || ( row.treeNode.children && row.treeNode.children.length > 0 ) ) && row.treeNode.state === 'collapsed'}\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\"></i> &nbsp;</div>{{COL_FIELD CUSTOM_FILTERS}}</div>"  },
+      // { name: 'code', width: '20%',displayName: 'и/н', cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>" },
+      { name: 'name', width: '40%',displayName: 'Регион/Орган' , cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>" }
+      ]
+    };
 
-  $scope.gridOptions.multiSelect = true;
+    $scope.gridOptions.multiSelect = true;
 
-  var id = 0;
-  var writeoutNode = function (childArray, currentLevel, dataArray) {
-    childArray.forEach(function (childNode) {
+    var id = 0;
+    var writeoutNode = function (childArray, currentLevel, dataArray) {
+      childArray.forEach(function (childNode) {
 
-      if (childNode.children.length > 0) {
-        childNode.$$treeLevel = currentLevel;
-        id = childNode.categoryId;
-        if (childNode.categoryId == childNode.parentCategoryId) {
-          childNode.parentCategoryName = '';
-        }
-      } else {
-        if ((id != childNode.parentCategoryId) || (childNode.categoryId == childNode.parentCategoryId)) {
+        if (childNode.children.length > 0) {
+          childNode.$$treeLevel = currentLevel;
+          id = childNode.categoryId;
           if (childNode.categoryId == childNode.parentCategoryId) {
             childNode.parentCategoryName = '';
           }
-          childNode.$$treeLevel = currentLevel;
+        } else {
+          if ((id != childNode.parentCategoryId) || (childNode.categoryId == childNode.parentCategoryId)) {
+            if (childNode.categoryId == childNode.parentCategoryId) {
+              childNode.parentCategoryName = '';
+            }
+            childNode.$$treeLevel = currentLevel;
+          }
         }
-      }
-      dataArray.push(childNode);
-      writeoutNode(childNode.children, currentLevel + 1, dataArray);
+        dataArray.push(childNode);
+        writeoutNode(childNode.children, currentLevel + 1, dataArray);
+      });
+    };
+
+    var dataSet = [];
+
+    $http({
+      method: 'GET',
+      url: 'http://18.140.232.52:8081/api/v1/RU/slices/regsTree'
+    }).then(function (response) {
+      dataSet.push(response.data);
+
+      $scope.gridOptions.data = [];
+      writeoutNode( dataSet, 0, $scope.gridOptions.data );
     });
-  };
 
-  var dataSet = [];
-  // $http.get('./json/response_1573739360481.json')
-  $http({
-    method: 'GET',
-    url: 'http://18.140.232.52:8081/api/v1/ru/slices/regsTree'
-  }).then(function (response) {
-    dataSet.push(response.data);
-
-    $scope.gridOptions.data = [];
-    writeoutNode(dataSet, 0, $scope.gridOptions.data);
-
-  });
-
-  $scope.info = {};
-  $scope.gridOptions.onRegisterApi = function (gridApi) {
+    $scope.info = {};
+    $scope.gridOptions.onRegisterApi = function (gridApi) {
     //set gridApi on scope
     $scope.gridApi = gridApi;
     gridApi.selection.on.rowSelectionChanged($scope, function (row) {
@@ -385,7 +395,8 @@ app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', '$log', 'uiGri
  * Department Controller
  */
 
-app.controller('DepartmentCtrl', ['$scope', '$http', '$log', 'uiGridConstants', function ($scope, $http, $log, uiGridConstants) {
+app.controller('DepartmentCtrl', ['$scope', '$http', '$log', 'uiGridConstants', function ($scope, $http, $log, uiGridConstants, getRequestedReportsFctr) {
+
   $scope.gridOptions = {
     showGridFooter: false,
     enableColumnMenus: false,
@@ -396,7 +407,7 @@ app.controller('DepartmentCtrl', ['$scope', '$http', '$log', 'uiGridConstants', 
     enableFiltering: false,
 
     enableRowSelection: true,
-    enableSelectAll: true,
+    enableSelectAll: false,
     rowHeight: 35
   };
 
@@ -408,14 +419,9 @@ app.controller('DepartmentCtrl', ['$scope', '$http', '$log', 'uiGridConstants', 
   $scope.gridOptions.multiSelect = true;
 
   $http.get('./json/ved.json')
-    .then(function (response) {
-      $scope.gridOptions.data = response.data;
-      // $timeout(function() {
-      //   if($scope.gridApi.selection.selectRow){
-      //     $scope.gridApi.selection.selectRow($scope.gridOptions.data[0]);
-      //   }
-      // });
-    });
+  .then(function (response) {
+    $scope.gridOptions.data = response.data;
+  });
 
   $scope.info = {};
 
@@ -424,8 +430,9 @@ app.controller('DepartmentCtrl', ['$scope', '$http', '$log', 'uiGridConstants', 
     //set gridApi on scope
     $scope.gridApi = gridApi;
     gridApi.selection.on.rowSelectionChanged($scope, function (row) {
-      var msg = row.entity;
-      $log.log(msg);
+      var departmentEntity = row.entity;
+      $log.log(departmentEntity);
+      return departmentEntity;
     });
 
     gridApi.selection.on.rowSelectionChangedBatch($scope, function (rows) {
@@ -434,3 +441,17 @@ app.controller('DepartmentCtrl', ['$scope', '$http', '$log', 'uiGridConstants', 
     });
   };
 }]);
+
+// app.factory('getRequestedReportsFctr', function(departmentEntity) {
+
+//   var thisIsPrivate = "Private";
+
+//   function getPrivate() {
+//     return thisIsPrivate;
+//   }
+
+//   return {
+//     variable: "This is public",
+//     getPrivate: getPrivate
+//   };
+// });

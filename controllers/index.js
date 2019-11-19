@@ -345,14 +345,14 @@ app.controller('langDropdownCtrl', function ($scope, $log) {
 /**
  *  ModalContentCtrl
  */
-app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, value) {
-
-  // var statSliceNum,
-  //     statSlicePeriod;
+app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, value, $rootScope) {
       
-  // $scope.statSliceNum = value['maxRecNum'];
-  // console.log(statSliceNum);
-  // $scope.statSlicePeriod = value['period'];
+  $scope.statSliceNum = value['maxRecNum'];
+  $scope.statSlicePeriod = value['period'];
+
+  if ($rootScope.test !=undefined){
+    console.log('$rootScope.test   ' + $rootScope.test);
+  }
   
   $http.get('./json/reports.json')
     .then(function (response) {
@@ -366,7 +366,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
 });
 
 app.controller('requestedReportsCtrl', function ($scope, $rootScope) {
-  console.log('$rootScope.test' + $rootScope.test);
+  
 });
 
 app.controller('requestStatusCtrl', function ($scope) {
@@ -489,6 +489,7 @@ app.controller('DepartmentCtrl', ['$scope', '$http', '$log', 'uiGridConstants','
   $scope.info = {};
   // $rootScope.test = $scope.msg;
   // $rootScope.test = 'test ya';  
+  // console.log($rootScope.test);
  
   $scope.gridOptions.onRegisterApi = function (gridApi) {
     //set gridApi on scope
@@ -496,6 +497,7 @@ app.controller('DepartmentCtrl', ['$scope', '$http', '$log', 'uiGridConstants','
     gridApi.selection.on.rowSelectionChanged($scope, function (row) {
       // $scope.msg = row.entity;
       $rootScope.test = row.entity;
+      console.log($rootScope.test);
     });
   };
 }]);

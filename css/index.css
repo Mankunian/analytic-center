@@ -905,3 +905,22 @@ table thead{
     -ms-transform: rotate(45deg);
     transform: rotate(45deg);
 }
+
+.tab-content{
+    margin: 20px 0;
+}
+
+
+
+.ui-grid-cell-contents-auto {
+    /* Old Solution */
+    /*min-width: max-content !important;*/
+
+    /* New Solution */
+    display: grid;
+    grid-auto-columns: max-content;
+
+    /* IE Solution */
+    display: -ms-grid;
+    -ms-grid-columns: max-content;
+}

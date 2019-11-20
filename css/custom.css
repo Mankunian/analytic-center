@@ -31,6 +31,12 @@ form.tab-form-demo .tab-pane {
 .requested-reports {
 	min-height: 100px;
 }
+.requested-reports ul {
+	list-style: none;
+}
+.requested-reports ul li {
+	float: none;
+}
 .request-status {
 	min-height: 100px;
 }

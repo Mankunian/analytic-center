@@ -349,24 +349,27 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
       
   $scope.statSliceNum = value['maxRecNum'];
   $scope.statSlicePeriod = value['period'];
-
-  if ($rootScope.test !=undefined){
-    console.log('$rootScope.test   ' + $rootScope.test);
-  }
+  
   
   $http.get('./json/reports.json')
     .then(function (response) {
       $scope.reportCodes = response.data;
     });
 
+  var selectedDepartmentsArray = [];
+
+  $scope.alertMe = function() {
+    if ($rootScope.selectedDepartments != undefined) {
+      $scope.selectedDepartmentsArray = $rootScope.selectedDepartments;
+      selectedDepartmentsArray.push($rootScope.selectedDepartments);
+    }
+  };
+
+
   $scope.cancel = function () {
     $uibModalInstance.dismiss();
   }
 
-});
-
-app.controller('requestedReportsCtrl', function ($scope, $rootScope) {
-  
 });
 
 app.controller('requestStatusCtrl', function ($scope) {
@@ -393,8 +396,6 @@ app.controller('requestStatusCtrl', function ($scope) {
       treeIndent: 10,
 
       columnDefs: [
-      // { name: 'code', width: '20%',displayName: 'и/н', cellTemplate : "<div class=\"ui-grid-cell-contents\" title=\"TOOLTIP\"><div style=\"float:left;\" class=\"ui-grid-tree-base-row-header-buttons\" ng-class=\"{'ui-grid-tree-base-header': row.treeLevel > -1 }\" ng-click=\"grid.appScope.toggleRow(row,evt)\"><i ng-class=\"{'ui-grid-icon-minus-squared': ( ( grid.options.showTreeExpandNoChildren && row.treeLevel > -1 ) || ( row.treeNode.children && row.treeNode.children.length > 0 ) ) && row.treeNode.state === 'expanded', 'ui-grid-icon-plus-squared': ( ( grid.options.showTreeExpandNoChildren && row.treeLevel > -1 ) || ( row.treeNode.children && row.treeNode.children.length > 0 ) ) && row.treeNode.state === 'collapsed'}\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\"></i>&nbsp;</div>{{COL_FIELD CUSTOM_FILTERS}}</div>" },
-      // { name: 'code', width: '20%',displayName: 'и/н', cellTemplate : "<div class=\"ui-grid-cell-contents\" title=\"TOOLTIP\"><div style=\"float:left;\" class=\"ui-grid-tree-base-row-header-buttons\" ng-class=\"{'ui-grid-tree-base-header': row.treeLevel > -1 }\" ng-click=\"grid.appScope.toggleRow(row,evt)\"><i ng-class=\"{'ui-grid-icon-minus-squared': ( ( grid.options.showTreeExpandNoChildren && row.treeLevel > -1 ) || ( row.treeNode.children && row.treeNode.children.length > 0 ) ) && row.treeNode.state === 'expanded', 'ui-grid-icon-plus-squared': ( ( grid.options.showTreeExpandNoChildren && row.treeLevel > -1 ) || ( row.treeNode.children && row.treeNode.children.length > 0 ) ) && row.treeNode.state === 'collapsed'}\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\"></i> &nbsp;</div>{{COL_FIELD CUSTOM_FILTERS}}</div>"  },
       { name: 'code', width: '20%',displayName: 'и/н', cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>" },
       { name: 'name', width: '40%',displayName: 'Регион/Орган' , cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>" }
       ]
@@ -487,31 +488,43 @@ app.controller('DepartmentCtrl', ['$scope', '$http', '$log', 'uiGridConstants','
     });
 
   $scope.info = {};
-  // $rootScope.test = $scope.msg;
-  // $rootScope.test = 'test ya';  
-  // console.log($rootScope.test);
+
+  // function callbackFunction(row) { 
+  //   $rootScope.selectedDepartments = $scope.gridApi.selection.getSelectedRows();
+  //   return $rootScope.selectedDepartments;
+  // };
  
   $scope.gridOptions.onRegisterApi = function (gridApi) {
     //set gridApi on scope
     $scope.gridApi = gridApi;
+
+    // gridApi.selection.on.rowSelectionChanged($scope, callbackFunction);
     gridApi.selection.on.rowSelectionChanged($scope, function (row) {
-      // $scope.msg = row.entity;
-      $rootScope.test = row.entity;
-      console.log($rootScope.test);
+      $rootScope.selectedDepartmentsArray = $scope.gridApi.selection.getSelectedRows();
     });
   };
 }]);
 
-// app.factory('getRequestedReportsFctr', function(departmentEntity) {
-  
-//   var thisIsPrivate = "Private";
+app.controller('requestedReportsCtrl', function ($scope, $rootScope) {
+  // $scope.gridApi = gridApi;
 
-//   function getPrivate() {
-//     return thisIsPrivate;
-//   }
+  // console.log($rootScope.selectedDepartments);
+  // gridApi.selection.on.rowSelectionChanged($scope, function (row) {
+  //   $rootScope.test = $scope.gridApi.selection.getSelectedRows();
+  //   console.log(test);
+  // });
+});
 
-//   return {
-//     variable: "This is public",
-//     getPrivate: getPrivate
-//   };
-// });
+app.factory('items', function() {
+  var items = [];
+  var itemsService = {};
+
+  itemsService.add = function(item) {
+    items.push(item);
+  };
+  itemsService.list = function() {
+    return items;
+  };
+
+  return itemsService;
+});

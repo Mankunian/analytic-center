@@ -4,7 +4,7 @@
 </div>
 <div class="modal-body">
    <uib-tabset active="active">
-      <uib-tab  heading="Каталог" index="0">
+      <uib-tab  heading="Каталог" index="0"  select="alertMe()">
       	<div class="row">
       		<div class="col-md-6">
    		   	
@@ -38,10 +38,13 @@
       		<div class="col-md-12">
    	   		<div class="requested-reports" ng-controller="requestedReportsCtrl">
    	   			<h5>Запрошенные отчеты</h5>
-               {{$root.test.id}}
+                  <ul>
+                        <!-- {{$root.selectedDepartments}} -->
+                     <li ng-repeat="selectedDepartment in $root.selectedDepartments" >
+                        {{selectedDepartment.name}}
+                     </li>
+                  </ul>
                   <!-- <div id="grid1" ui-grid="gridOptions" ui-grid-selection class="grid"></div> -->
-               
-      
    	   		</div>
       		</div>
       	</div>

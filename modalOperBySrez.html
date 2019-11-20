@@ -1,9 +1,76 @@
-<div class="modal-header">
-  <button type="button" class="close" data-dismiss="modal" ng-click="cancel()">×</button>
-  <h3>Получение отчетов</h3>
-</div>
-<div class="modal-body">
+<style>
+  ul.operBySrez {
+    list-style: none;
+    display: grid;
+    margin: 10px;
+  }
 
+  ul.operBySrez li a {
+    border: 1px solid;
+    border-radius: 1px;
+    padding: 5px;
+    font-weight: bold;
+    margin: 5px 0;
+    background: #fff;
+    color: #0b0b0b;
+    text-decoration: none;
+    text-align: left;
+  }
+
+  ul.operBySrez li a:focus {
+    background: #A5C3E6;
+  }
+
+  h5 {
+    line-height: 1.5em;
+    font-weight: normal;
+  }
+</style>
+
+<div class="modal-header" style="text-align: left">
+  <button type="button" class="close" data-dismiss="modal" ng-click="cancel()">×</button>
+  <h5><b>Операции со срезами</b></h5>
+</div>
+<div class="modal-body" ng-controller="modalOperBySrezCtrl">
+  <div class="row">
+    <div class="col-md-12">
+      <div>
+        <div class="col-md-5">
+          <div
+            style="border: 1px solid; border-radius: 2px; min-height: 70vh; height: 100%; background: #f3f3f1; padding: 10px">
+
+            <h5><b>№ среза</b> {{info.maxRecNum}}</h5>
+            <h5><b>Период:</b> {{info.period}}</h5>
+            <h5><b>Срез на №</b> 6231155 (stat)</h5>
+
+            <div style="border: 2px solid #a7a4a4; border-radius: 2px; height: auto; margin: 15px 0; min-height: 45vh">
+              <ul ng-repeat="status in statuses" class="operBySrez">
+                <li ng-style="{'margin-left': $index*15 + 'px'}"><a href="#">- {{status.statusName}}</a></li>
+                <!--<li><a href="#">-  Сформирован с ошибкой</a></li>
+                <li><a href="#">-  Удален</a></li>-->
+              </ul>
+            </div>
+
+            <button class="btn btn-default">Удалить</button>
+          </div>
+        </div>
+        <div class="col-md-7">
+          <div style="border: 1px solid; border-radius: 2px; min-height: 70vh; height: 100%; background: #f3f3f1; padding: 10px">
+            <h5><b>Статус:</b> сформирован с ошибкой</h5>
+            <h5><b>Срез заказал:</b> ФИО</h5>
+            <h5><b>Время заказа среза:</b>  19.11.2019 18:32</h5>
+            <h5><b>Время начала формирования:</b>  	19.11.2019 18:35</h5>
+            <h5><b>Время окончания формирования: </b> 	19.11.2019 18:40</h5>
+            <h5><b>Сообщение об ошибке</b></h5>
+
+            <div style="border: 1px solid #a7a4a4; padding: 10px">
+              <h5 style="color: red">В ходе формирования среза возникла ошибка код С023, отсутствует поле FE1R01P1</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 <div class="modal-footer">
   <button class="btn btn-warning" ng-click="cancel()">Отмена</button>

@@ -4,7 +4,7 @@
 </div>
 <div class="modal-body">
    <uib-tabset active="active">
-      <uib-tab  heading="Каталог" index="0"  select="alertMe()">
+      <uib-tab  heading="Каталог" index="0"  select="showRequestedReports()">
       	<div class="row">
       		<div class="col-md-6">
    		   	
@@ -37,14 +37,12 @@
       	<div class="row">
       		<div class="col-md-12">
    	   		<div class="requested-reports" ng-controller="requestedReportsCtrl">
-   	   			<h5>Запрошенные отчеты</h5>
+   	   			<h4>Запрошенные отчеты</h4>
                   <ul>
-                        <!-- {{$root.selectedDepartments}} -->
-                     <li ng-repeat="selectedDepartment in $root.selectedDepartments" >
-                        {{selectedDepartment.name}}
+                     <li ng-repeat="item in requestedReports" >
+                        {{item}}
                      </li>
                   </ul>
-                  <!-- <div id="grid1" ui-grid="gridOptions" ui-grid-selection class="grid"></div> -->
    	   		</div>
       		</div>
       	</div>
@@ -52,18 +50,17 @@
       		<div class="request-status" ng-controller="requestStatusCtrl"></div>
       	</div>
       </uib-tab>
-      <uib-tab  heading="1-М">
+      <!-- <uib-tab  heading="1-М">
       	<div class="row">
-      		<div class="col-md-6" ng-controller="RegionTreeCtrl" >
+      		<div class="col-md-6" ng-controller="RegionTreeCtrl">
                <div id="grid1" ui-grid="gridOptions" ui-grid-selection ui-grid-cellnav  ui-grid-grouping class="grid"></div>
       		</div>
       		<div class="col-md-6" ng-controller="DepartmentCtrl">
-               
       			<div id="grid1Selection" ui-grid="gridOptions" ui-grid-selection ui-grid-cellnav class="grid"></div>
       		</div>
       	</div>
-      </uib-tab>
-      <uib-tab ng-repeat="reportCode in reportCodes track by reportCode.code" heading="{{ reportCode.name }}" code="{{ reportCode.code }}"  select="getDepartmentsList(reportCode.code)">
+      </uib-tab> -->
+      <uib-tab ng-repeat="reportCode in reportCodes track by reportCode.code" heading="{{ reportCode.name }}" code="{{ reportCode.code }}"  select="getDepartmentsList(reportCode.name, reportCode.code)">
          <div class="row">
             <div class="col-md-6" ng-controller="RegionTreeCtrl" >
                <div id="grid1" ui-grid="gridOptions" ui-grid-selection ui-grid-cellnav  ui-grid-grouping class="grid"></div>
@@ -78,12 +75,3 @@
 <div class="modal-footer">
     <button class="btn btn-warning" ng-click="cancel()">Отмена</button>
 </div>
-
-<div class="ui-grid-cell-contents" title="TOOLTIP">
-   <div style="float:left;" class="ui-grid-tree-base-row-header-buttons" ng-class="{'ui-grid-tree-base-header': row.treeLevel > -1 }" ng-click="grid.appScope.toggleRow(row,evt)">
-      <i ng-class="{'ui-grid-icon-minus-squared': ( ( grid.options.showTreeExpandNoChildren && row.treeLevel > -1 ) || ( row.treeNode.children && row.treeNode.children.length > 0 ) ) && row.treeNode.state === 'expanded', 'ui-grid-icon-plus-squared': ( ( grid.options.showTreeExpandNoChildren && row.treeLevel > -1 ) || ( row.treeNode.children && row.treeNode.children.length > 0 ) ) && row.treeNode.state === 'collapsed'}" ng-style="{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}"></i> &nbsp;
-   </div>
-   
-</div>
-
-<div class="ui-grid-cell-contents ng-binding ng-scope" ng-style="{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}"></div>

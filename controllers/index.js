@@ -356,15 +356,28 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
       $scope.reportCodes = response.data;
     });
 
-  var selectedDepartmentsArray = [];
+  $scope.obj = {};
+  $scope.showRequestedReports = function() {
+    var i=0;
+    $scope.requestedReports = [];
 
-  $scope.alertMe = function() {
-    if ($rootScope.selectedDepartments != undefined) {
-      $scope.selectedDepartmentsArray = $rootScope.selectedDepartments;
-      selectedDepartmentsArray.push($rootScope.selectedDepartments);
+    if ($rootScope.selectedDepartmentsArray != undefined && $rootScope.selectedRegionsArray != undefined) {
+      angular.forEach($rootScope.selectedRegionsArray, function (value, index) {
+        val1 = value.name;
+        angular.forEach($rootScope.selectedDepartmentsArray, function (value, index) {
+          $scope.requestedReports[i] = val1 + value.name;
+          i++;
+        });
+      });
+
+      console.log($scope.requestedReports);
     }
   };
 
+  $scope.getDepartmentsList = function(reportName, reportCode) {
+    $rootScope.reportName = reportName;
+    $rootScope.reportCode = reportCode;
+  };
 
   $scope.cancel = function () {
     $uibModalInstance.dismiss();
@@ -380,7 +393,7 @@ app.controller('requestStatusCtrl', function ($scope) {
   * Regions tree Controller
   */
 
-  app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', '$log', 'uiGridTreeViewConstants', 'uiGridConstants', function ($scope, $http, $interval, $log, uiGridTreeViewConstants, uiGridGroupingConstants) {
+  app.controller('RegionTreeCtrl', ['$scope','$rootScope', '$http', '$interval', '$log', 'uiGridTreeViewConstants', 'uiGridConstants', function ($scope,$rootScope, $http, $interval, $log, uiGridTreeViewConstants, uiGridGroupingConstants) {
     $scope.gridOptions = {
       enableColumnMenus: false,
       showTreeExpandNoChildren: false,
@@ -442,14 +455,9 @@ app.controller('requestStatusCtrl', function ($scope) {
   $scope.gridOptions.onRegisterApi = function (gridApi) {
     //set gridApi on scope
     $scope.gridApi = gridApi;
-    gridApi.selection.on.rowSelectionChanged($scope, function (row) {
-      var msg = 'row selected ' + row.isSelected;
-      $log.log(msg);
-    });
 
-    gridApi.selection.on.rowSelectionChangedBatch($scope, function (rows) {
-      var msg = 'rows changed ' + rows.length;
-      $log.log(msg);
+    gridApi.selection.on.rowSelectionChanged($scope, function (row) {
+      $rootScope.selectedRegionsArray = $scope.gridApi.selection.getSelectedRows();
     });
   };
 
@@ -488,17 +496,11 @@ app.controller('DepartmentCtrl', ['$scope', '$http', '$log', 'uiGridConstants','
     });
 
   $scope.info = {};
-
-  // function callbackFunction(row) { 
-  //   $rootScope.selectedDepartments = $scope.gridApi.selection.getSelectedRows();
-  //   return $rootScope.selectedDepartments;
-  // };
  
   $scope.gridOptions.onRegisterApi = function (gridApi) {
     //set gridApi on scope
     $scope.gridApi = gridApi;
 
-    // gridApi.selection.on.rowSelectionChanged($scope, callbackFunction);
     gridApi.selection.on.rowSelectionChanged($scope, function (row) {
       $rootScope.selectedDepartmentsArray = $scope.gridApi.selection.getSelectedRows();
     });
@@ -506,25 +508,5 @@ app.controller('DepartmentCtrl', ['$scope', '$http', '$log', 'uiGridConstants','
 }]);
 
 app.controller('requestedReportsCtrl', function ($scope, $rootScope) {
-  // $scope.gridApi = gridApi;
-
-  // console.log($rootScope.selectedDepartments);
-  // gridApi.selection.on.rowSelectionChanged($scope, function (row) {
-  //   $rootScope.test = $scope.gridApi.selection.getSelectedRows();
-  //   console.log(test);
-  // });
-});
-
-app.factory('items', function() {
-  var items = [];
-  var itemsService = {};
-
-  itemsService.add = function(item) {
-    items.push(item);
-  };
-  itemsService.list = function() {
-    return items;
-  };
-
-  return itemsService;
+  
 });

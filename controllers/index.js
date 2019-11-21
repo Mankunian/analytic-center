@@ -61,36 +61,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
 
   $scope.gridOptions = {
-    /*enableColumnMenus: false,
-    showTreeExpandNoChildren: false,
-    enableHiding: false,
-
-    enableSorting: false,
-    enableFiltering: false,
-
-    enableRowSelection: true,
-    enableSelectAll: false,
-    selectionRowHeaderWidth: 35,
-    rowHeight: 35,
-    treeIndent: 10,
-
-    columnDefs: [
-      {
-        name: 'groupName',
-        width: '20%',
-        displayName: 'Группы',
-        cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>"
-      },
-      {
-        name: 'statusName',
-        width: '40%',
-        displayName: 'Статус',
-        cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>"
-      }
-    ]*/
-
-
-
 
     showTreeExpandNoChildren: false,
     enableRowSelection: true,
@@ -188,30 +158,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   };
 
 
-  var id = 0;
-  var writeoutNode = function (childArray, currentLevel, dataArray) {
-    childArray.forEach(function (childNode) {
-      console.log(childNode);
-
-      if (childNode.children.length > 0) {
-        childNode.$$treeLevel = currentLevel;
-        id = childNode.categoryId;
-        if (childNode.categoryId === childNode.parentCategoryId) {
-          childNode.parentCategoryName = '';
-        }
-      } else {
-        if ((id !== childNode.parentCategoryId) || (childNode.categoryId === childNode.parentCategoryId)) {
-          if (childNode.categoryId === childNode.parentCategoryId) {
-            childNode.parentCategoryName = '';
-          }
-          childNode.$$treeLevel = currentLevel;
-        }
-      }
-      dataArray.push(childNode);
-      writeoutNode(childNode.children, currentLevel + 1, dataArray);
-    });
-  };
-
   //Получение всех срезов
 
 
@@ -252,7 +198,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   $scope.getAllSrez = function () {
     $scope.loader = true;
     $scope.showGrid = false;
-    var dataSet = [];
     $http({
       method: 'GET',
       url: 'http://18.140.232.52:8081/api/v1/RU/slices/parents?deleted=false'
@@ -272,10 +217,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     })
   };
 
-  $scope.gridOptions.onRegisterApi = function (gridApi) {
-    //set gridApi on scope
-    $scope.gridApi = gridApi;
-  };
+
 
   $scope.getAllSrez();
   //Получение всех срезов

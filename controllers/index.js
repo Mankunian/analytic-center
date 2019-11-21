@@ -11,6 +11,11 @@ var app = angular.module('app', [
   'ui.grid.selection'
 ]);
 
+
+app.config(['$qProvider', function ($qProvider) {
+  $qProvider.errorOnUnhandledRejections(false);
+}]);
+
 app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGridTreeViewConstants', function ($scope, $http, $rootScope, uiGridTreeBaseService) {
 
 
@@ -232,10 +237,9 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
       $scope.gridOptions.data = value.data;
 
-      /*angular.forEach(value.data, function (data) {
-        $scope.gridOptions.data = data;
-      });*/
       $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
+
+
     }, function (reason) {
       console.log(reason)
     });
@@ -247,6 +251,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   $scope.loader = false;
   $scope.getAllSrez = function () {
     $scope.loader = true;
+    $scope.showGrid = false;
     var dataSet = [];
     $http({
       method: 'GET',
@@ -262,7 +267,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
         $scope.valueSrez = value;
       });
 
-      $scope.showGrid = response.data;
+      $scope.showGrid = true;
       $scope.gridOptions.data = response.data;
     })
   };

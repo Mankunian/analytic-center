@@ -48,13 +48,19 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
         name: 'name',
         width: '*',
         displayName: 'Группы',
-        cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\"><img ng-hide='row.treeLevel == 2' ng-click='grid.appScope.toggleFirstRow(rowRenderIndex)' style='width: 24px; margin: 0 10px' src='./img/folder.png' alt=''>{{COL_FIELD CUSTOM_FILTERS}}</div>"
+        cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">" +
+          "<img id='changeImg' " +
+          "ng-hide='row.treeLevel == 2' " +
+          "ng-click='grid.appScope.toggleFirstRow(rowRenderIndex);' " +
+          "style='width: 24px; margin: 0 10px' " +
+          "src='./img/folder.png' " +
+          "alt=''>{{COL_FIELD CUSTOM_FILTERS}}</div>"
       },
       {
         name: 'id',
         width: '*',
         displayName: 'Номер среза',
-        cellTemplate: '<div ng-controller="ModalControlCtrl"><button ng-click="grid.appScope.open(row.entity)">{{COL_FIELD CUSTOM_FILTERS}}</button></div>'
+        cellTemplate: '<div class="text-center" ng-controller="ModalControlCtrl"><button style="margin: 5px 0" class="btn btn-primary" ng-hide="row.treeLevel==0 || row.treeLevel == 1" ng-click="grid.appScope.open(row.entity)">{{COL_FIELD CUSTOM_FILTERS}}</button></div>'
       },
       {
         name: 'period',
@@ -67,6 +73,17 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
         displayName: 'Сформирован',
         width: '*'
       },
+
+      {
+        name: 'maxRecNum',
+        displayName: 'На номер',
+        width: '*'
+      },
+      {
+        name: 'region',
+        displayName: 'По органу',
+        width: '*'
+      },
       {
         name: 'button',
         displayName: 'Действие',
@@ -75,6 +92,18 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     ]
   };
 
+
+
+
+  $scope.changeImg = function() {
+
+
+    var img2 = 'https://www.freeiconspng.com/uploads/orange-folder-full-icon-png-13.png',
+      img1 = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNGhpmNOG1joyk_s0v1KH229zGd6CpZ0axtXRT6c6pqW4FlB2b&s';
+
+    var imgElement = document.getElementById('changeImg');
+    imgElement.src = (imgElement.src === img1) ? img2 : img1;
+  };
 
   /*$scope.gridOptions = {
 
@@ -218,20 +247,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   //Получение списка статусов
   $scope.getStatus = function () {
     $http({
@@ -258,16 +273,12 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   //Получение списка групп
 
 
-
-
-
-
-
-
   //Получение всех срезов
 
 
   $scope.toggleFirstRow = function (index) {
+
+
     $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
   };
 
@@ -322,7 +333,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       $scope.gridOptions.data = response.data;
     })
   };
-
 
 
   // $scope.getAllSrez();

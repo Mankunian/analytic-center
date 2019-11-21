@@ -18,6 +18,17 @@ app.config(['$qProvider', function ($qProvider) {
 app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGridTreeViewConstants', function ($scope, $http, $rootScope, uiGridTreeBaseService) {
 
 
+  var operBySrez = '<div  ' +
+    /* 'ng-hide="row.entity.statusCode == 0 || row.entity.statusCode == 6" ' +*/
+    'ng-controller="modalOperBySrezCtrl" ' +
+    'ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" ' +
+    'class="ui-grid-cell-contents"> ' +
+    '<button ' +
+    'ng-click="grid.appScope.openOperBySrez(row.entity)" ' +
+    'ng-hide="row.treeLevel==0 || row.treeLevel == 1" ' +
+    'type="button" class="btn btn-success"> Операция со срезами ' +
+    '</button> </div>';
+
   $scope.gridOptions = {
     enableColumnMenus: false,
     showTreeExpandNoChildren: false,
@@ -29,7 +40,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     enableRowSelection: true,
     enableSelectAll: false,
     selectionRowHeaderWidth: 35,
-    rowHeight: 35,
+    rowHeight: 45,
     treeIndent: 10,
 
     columnDefs: [
@@ -42,113 +53,27 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       {
         name: 'id',
         width: '*',
-        displayName: 'Номер среза'
+        displayName: 'Номер среза',
+        cellTemplate: '<div ng-controller="ModalControlCtrl"><button ng-click="grid.appScope.open(row.entity)">{{COL_FIELD CUSTOM_FILTERS}}</button></div>'
       },
       {
         name: 'period',
         width: '*',
         displayName: 'Период'
 
+      },
+      {
+        name: 'created',
+        displayName: 'Сформирован',
+        width: '*'
+      },
+      {
+        name: 'button',
+        displayName: 'Действие',
+        cellTemplate: operBySrez
       }
     ]
   };
-
-  $scope.gridOptions.multiSelect = true;
-
-  var id = 0;
-  var writeoutNode = function (childArray, currentLevel, dataArray) {
-    childArray.forEach(function (childNode) {
-
-      if (childNode.children.length > 0) {
-        childNode.$$treeLevel = currentLevel;
-
-      } else {
-        if ((id != childNode.parentCategoryId) || (childNode.categoryId == childNode.parentCategoryId)) {
-          if (childNode.categoryId == childNode.parentCategoryId) {
-            childNode.parentCategoryName = '';
-          }
-          childNode.$$treeLevel = currentLevel;
-        }
-      }
-      dataArray.push(childNode);
-      writeoutNode(childNode.children, currentLevel + 1, dataArray);
-    });
-  };
-
-  var dataSet = [];
-
-  $http({
-    method: 'GET',
-    // url: 'http://18.140.232.52:8081/api/v1/RU/slices/regsTree'
-    url: './json/regions.json'
-  }).then(function (response) {
-    $scope.showGrid = response.data;
-    dataSet.push(response.data);
-
-    $scope.gridOptions.data = [];
-    writeoutNode(dataSet, 0, $scope.gridOptions.data);
-  });
-
-  $scope.info = {};
-  $scope.gridOptions.onRegisterApi = function (gridApi) {
-    //set gridApi on scope
-    $scope.gridApi = gridApi;
-
-  };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  //Получение списка статусов
-  $scope.getStatus = function () {
-    $http({
-      method: 'GET',
-      url: 'http://18.140.232.52:8081/api/v1/RU/slices/statuses'
-    }).then(function (value) {
-      $scope.status = value.data;
-    })
-  };
-  $scope.getStatus();
-  //Получение списка статусов
-
-
-  // Получение списка групп
-  $scope.getGroups = function () {
-    $http({
-      method: 'GET',
-      url: 'http://18.140.232.52:8081/api/v1/ru/slices/groups'
-    }).then(function (value) {
-      $scope.groups = value.data;
-    })
-  };
-  $scope.getGroups();
-  //Получение списка групп
-
-
-  // var detailButton = '<div ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" class="ui-grid-cell-contents"> <button ng-click="grid.appScope.open(row.entity)" ng-hide="row.treeLevel==0 || row.treeLevel == 1" type="button" class="btn btn-success"> Операции со срезами </button> </div>'
-
-  var operBySrez = '<div  ' +
-    /* 'ng-hide="row.entity.statusCode == 0 || row.entity.statusCode == 6" ' +*/
-    'ng-controller="modalOperBySrezCtrl" ' +
-    'ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" ' +
-    'class="ui-grid-cell-contents"> ' +
-    '<button ' +
-    'ng-click="grid.appScope.openOperBySrez(row.entity)" ' +
-    'ng-hide="row.treeLevel==0 || row.treeLevel == 1" ' +
-    'type="button" class="btn btn-success"> Операция со срезами ' +
-    '</button> </div>';
 
 
   /*$scope.gridOptions = {
@@ -248,6 +173,95 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       $scope.gridApi = gridApi;
     }
   };*/
+
+  $scope.gridOptions.multiSelect = true;
+
+  var id = 0;
+  var writeoutNode = function (childArray, currentLevel, dataArray) {
+    childArray.forEach(function (childNode) {
+
+      if (childNode.children.length > 0) {
+        childNode.$$treeLevel = currentLevel;
+
+      } else {
+        if ((id != childNode.parentCategoryId) || (childNode.categoryId == childNode.parentCategoryId)) {
+          if (childNode.categoryId == childNode.parentCategoryId) {
+            childNode.parentCategoryName = '';
+          }
+          childNode.$$treeLevel = currentLevel;
+        }
+      }
+      dataArray.push(childNode);
+      writeoutNode(childNode.children, currentLevel + 1, dataArray);
+    });
+  };
+
+  var dataSet = [];
+
+  $http({
+    method: 'GET',
+    // url: 'http://18.140.232.52:8081/api/v1/RU/slices/regsTree'
+    url: './json/regions.json'
+  }).then(function (response) {
+    $scope.showGrid = response.data;
+    dataSet.push(response.data);
+
+    $scope.gridOptions.data = [];
+    writeoutNode(dataSet, 0, $scope.gridOptions.data);
+  });
+
+  $scope.info = {};
+  $scope.gridOptions.onRegisterApi = function (gridApi) {
+    //set gridApi on scope
+    $scope.gridApi = gridApi;
+
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  //Получение списка статусов
+  $scope.getStatus = function () {
+    $http({
+      method: 'GET',
+      url: 'http://18.140.232.52:8081/api/v1/RU/slices/statuses'
+    }).then(function (value) {
+      $scope.status = value.data;
+    })
+  };
+  $scope.getStatus();
+  //Получение списка статусов
+
+
+  // Получение списка групп
+  $scope.getGroups = function () {
+    $http({
+      method: 'GET',
+      url: 'http://18.140.232.52:8081/api/v1/ru/slices/groups'
+    }).then(function (value) {
+      $scope.groups = value.data;
+    })
+  };
+  $scope.getGroups();
+  //Получение списка групп
+
+
+
+
+
+
 
 
   //Получение всех срезов

@@ -47,26 +47,20 @@
       		</div>
       	</div>
       	<div class="row">
-      		<div class="request-status" ng-controller="requestStatusCtrl"></div>
+      		<div class="request-status" ng-controller="requestStatusCtrl">
+               <h4>Отчеты</h4>
+               <!-- <p>{{getReports()}}</p> -->
+            </div>
       	</div>
       </uib-tab>
-      <!-- <uib-tab  heading="1-М">
-      	<div class="row">
-      		<div class="col-md-6" ng-controller="RegionTreeCtrl">
-               <div id="grid1" ui-grid="gridOptions" ui-grid-selection ui-grid-cellnav  ui-grid-grouping class="grid"></div>
-      		</div>
-      		<div class="col-md-6" ng-controller="DepartmentCtrl">
-      			<div id="grid1Selection" ui-grid="gridOptions" ui-grid-selection ui-grid-cellnav class="grid"></div>
-      		</div>
-      	</div>
-      </uib-tab> -->
-      <uib-tab ng-repeat="reportCode in reportCodes track by reportCode.code" heading="{{ reportCode.name }}" code="{{ reportCode.code }}"  select="getDepartmentsList(reportCode.name, reportCode.code)">
+      <uib-tab ng-repeat="reportCode in reportCodes track by reportCode.code" heading="{{ reportCode.name }}" select="getDepartmentsList(reportCode.name, reportCode.code)">
+         <a href="" ng-click="exportData()">download xlsx</a>
          <div class="row">
             <div class="col-md-6" ng-controller="RegionTreeCtrl" >
                <div id="grid1" ui-grid="gridOptions" ui-grid-selection ui-grid-cellnav  ui-grid-grouping class="grid"></div>
             </div>
-            <div class="col-md-6" ng-controller="DepartmentCtrl">
-               <div id="grid1Selection" ui-grid="gridOptions" ui-grid-selection class="grid"></div>
+            <div class="col-md-6">
+               <div id="grid1Selection" ui-grid="gridOptionsDep" ui-grid-selection class="grid"></div>
             </div>
          </div>
    	 </uib-tab>

@@ -11,7 +11,7 @@ var app = angular.module('app', [
   'ui.grid.selection'
 ]);
 
-app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGridTreeViewConstants', 'uiGridTreeBaseService', function ($scope, $http, $rootScope, uiGridTreeBaseService) {
+app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGridTreeViewConstants', function ($scope, $http, $rootScope, uiGridTreeBaseService) {
 
 
   //Получение списка статусов
@@ -56,6 +56,37 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
 
   $scope.gridOptions = {
+    /*enableColumnMenus: false,
+    showTreeExpandNoChildren: false,
+    enableHiding: false,
+
+    enableSorting: false,
+    enableFiltering: false,
+
+    enableRowSelection: true,
+    enableSelectAll: false,
+    selectionRowHeaderWidth: 35,
+    rowHeight: 35,
+    treeIndent: 10,
+
+    columnDefs: [
+      {
+        name: 'groupName',
+        width: '20%',
+        displayName: 'Группы',
+        cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>"
+      },
+      {
+        name: 'statusName',
+        width: '40%',
+        displayName: 'Статус',
+        cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>"
+      }
+    ]*/
+
+
+
+
     showTreeExpandNoChildren: false,
     enableRowSelection: true,
     enableSelectAll: true,
@@ -151,6 +182,31 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     }
   };
 
+
+  var id = 0;
+  var writeoutNode = function (childArray, currentLevel, dataArray) {
+    childArray.forEach(function (childNode) {
+      console.log(childNode);
+
+      if (childNode.children.length > 0) {
+        childNode.$$treeLevel = currentLevel;
+        id = childNode.categoryId;
+        if (childNode.categoryId === childNode.parentCategoryId) {
+          childNode.parentCategoryName = '';
+        }
+      } else {
+        if ((id !== childNode.parentCategoryId) || (childNode.categoryId === childNode.parentCategoryId)) {
+          if (childNode.categoryId === childNode.parentCategoryId) {
+            childNode.parentCategoryName = '';
+          }
+          childNode.$$treeLevel = currentLevel;
+        }
+      }
+      dataArray.push(childNode);
+      writeoutNode(childNode.children, currentLevel + 1, dataArray);
+    });
+  };
+
   //Получение всех срезов
 
 
@@ -158,7 +214,9 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
   };
 
+
   $scope.toggleSecRow = function (index, col, rowEntity) {
+
     var params = rowEntity[0].row.entity;
     var groupCode = params.groupCode;
     var statusCode = params.statusCode;
@@ -169,23 +227,15 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       method: 'GET',
       url: 'http://18.140.232.52:8081/api/v1/RU/slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + ''
     }).then(function (value) {
-      $scope.showBtn = [];
-      console.log($scope.showBtn);
-
 
       $scope.showBtn = value.data;
-      console.log($scope.showBtn);
 
-      angular.forEach($scope.showBtn, function (data) {
-        $scope.gridOptions.data.push(data);
-      });
+      $scope.gridOptions.data = value.data;
 
-      // $scope.gridOptions.data = value.data;
-
-
-
+      /*angular.forEach(value.data, function (data) {
+        $scope.gridOptions.data = data;
+      });*/
       $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
-      // $scope.getAllSrez();
     }, function (reason) {
       console.log(reason)
     });
@@ -196,12 +246,12 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
   $scope.loader = false;
   $scope.getAllSrez = function () {
-    $scope.gridOptions.data = [];
     $scope.loader = true;
+    var dataSet = [];
     $http({
       method: 'GET',
-      // url: 'http://18.140.232.52:8081/api/v1/ru/slices'
-      url: 'http://18.140.232.52:8081/api/v1/RU/slices/groupsAndStatuses?deleted=false'
+      url: 'http://18.140.232.52:8081/api/v1/RU/slices/parents?deleted=false'
+      // url: './json/allSrez.json'
     }).then(function (response) {
       $scope.loader = false;
       $scope.allSrez = response.data;
@@ -213,8 +263,13 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       });
 
       $scope.showGrid = response.data;
-      $scope.gridOptions.data = data;
+      $scope.gridOptions.data = response.data;
     })
+  };
+
+  $scope.gridOptions.onRegisterApi = function (gridApi) {
+    //set gridApi on scope
+    $scope.gridApi = gridApi;
   };
 
   $scope.getAllSrez();
@@ -580,16 +635,3 @@ app.controller('DepartmentCtrl', ['$scope', '$http', '$log', 'uiGridConstants', 
   };
 }]);
 
-// app.factory('getRequestedReportsFctr', function(departmentEntity) {
-
-//   var thisIsPrivate = "Private";
-
-//   function getPrivate() {
-//     return thisIsPrivate;
-//   }
-
-//   return {
-//     variable: "This is public",
-//     getPrivate: getPrivate
-//   };
-// });

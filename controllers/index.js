@@ -19,6 +19,104 @@ app.config(['$qProvider', function ($qProvider) {
 app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGridTreeViewConstants', function ($scope, $http, $rootScope, uiGridTreeBaseService) {
 
 
+  $scope.gridOptions = {
+    enableColumnMenus: false,
+    showTreeExpandNoChildren: false,
+    enableHiding: false,
+
+    enableSorting: false,
+    enableFiltering: false,
+
+    enableRowSelection: true,
+    enableSelectAll: false,
+    selectionRowHeaderWidth: 35,
+    rowHeight: 35,
+    treeIndent: 10,
+
+    columnDefs: [
+      // { name: 'code', width: '20%',displayName: 'и/н', cellTemplate : "<div class=\"ui-grid-cell-contents\" title=\"TOOLTIP\"><div style=\"float:left;\" class=\"ui-grid-tree-base-row-header-buttons\" ng-class=\"{'ui-grid-tree-base-header': row.treeLevel > -1 }\" ng-click=\"grid.appScope.toggleRow(row,evt)\"><i ng-class=\"{'ui-grid-icon-minus-squared': ( ( grid.options.showTreeExpandNoChildren && row.treeLevel > -1 ) || ( row.treeNode.children && row.treeNode.children.length > 0 ) ) && row.treeNode.state === 'expanded', 'ui-grid-icon-plus-squared': ( ( grid.options.showTreeExpandNoChildren && row.treeLevel > -1 ) || ( row.treeNode.children && row.treeNode.children.length > 0 ) ) && row.treeNode.state === 'collapsed'}\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\"></i>&nbsp;</div>{{COL_FIELD CUSTOM_FILTERS}}</div>" },
+      // { name: 'code', width: '20%',displayName: 'и/н', cellTemplate : "<div class=\"ui-grid-cell-contents\" title=\"TOOLTIP\"><div style=\"float:left;\" class=\"ui-grid-tree-base-row-header-buttons\" ng-class=\"{'ui-grid-tree-base-header': row.treeLevel > -1 }\" ng-click=\"grid.appScope.toggleRow(row,evt)\"><i ng-class=\"{'ui-grid-icon-minus-squared': ( ( grid.options.showTreeExpandNoChildren && row.treeLevel > -1 ) || ( row.treeNode.children && row.treeNode.children.length > 0 ) ) && row.treeNode.state === 'expanded', 'ui-grid-icon-plus-squared': ( ( grid.options.showTreeExpandNoChildren && row.treeLevel > -1 ) || ( row.treeNode.children && row.treeNode.children.length > 0 ) ) && row.treeNode.state === 'collapsed'}\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\"></i> &nbsp;</div>{{COL_FIELD CUSTOM_FILTERS}}</div>"  },
+      {
+        name: 'name',
+        width: '*',
+        displayName: 'и/н',
+        cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>"
+      },
+      {
+        name: 'id',
+        width: '*',
+        displayName: 'Номер среза'
+      },
+      {
+        name: 'period',
+        width: '*',
+        displayName: 'Период'
+
+      }
+    ]
+  };
+
+  $scope.gridOptions.multiSelect = true;
+
+  var id = 0;
+  var writeoutNode = function (childArray, currentLevel, dataArray) {
+    childArray.forEach(function (childNode) {
+
+      if (childNode.children.length > 0) {
+        childNode.$$treeLevel = currentLevel;
+        id = childNode.categoryId;
+        if (childNode.categoryId == childNode.parentCategoryId) {
+          childNode.parentCategoryName = '';
+        }
+      } else {
+        if ((id != childNode.parentCategoryId) || (childNode.categoryId == childNode.parentCategoryId)) {
+          if (childNode.categoryId == childNode.parentCategoryId) {
+            childNode.parentCategoryName = '';
+          }
+          childNode.$$treeLevel = currentLevel;
+        }
+      }
+      dataArray.push(childNode);
+      writeoutNode(childNode.children, currentLevel + 1, dataArray);
+    });
+  };
+
+  var dataSet = [];
+
+  $http({
+    method: 'GET',
+    // url: 'http://18.140.232.52:8081/api/v1/RU/slices/regsTree'
+    url: './json/regions.json'
+  }).then(function (response) {
+    $scope.showGrid = response.data;
+    dataSet.push(response.data);
+
+    $scope.gridOptions.data = [];
+    writeoutNode(dataSet, 0, $scope.gridOptions.data);
+  });
+
+  $scope.info = {};
+  $scope.gridOptions.onRegisterApi = function (gridApi) {
+    //set gridApi on scope
+    $scope.gridApi = gridApi;
+
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   //Получение списка статусов
   $scope.getStatus = function () {
     $http({
@@ -60,7 +158,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     '</button> </div>';
 
 
-  $scope.gridOptions = {
+  /*$scope.gridOptions = {
 
     showTreeExpandNoChildren: false,
     enableRowSelection: true,
@@ -126,6 +224,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
       {
         name: 'id',
+        sort: {priority: 0, direction: 'asc'},
         displayName: 'Номер среза',
         width: '*',
         cellTemplate: '<div ' +
@@ -155,7 +254,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     onRegisterApi: function (gridApi) {
       $scope.gridApi = gridApi;
     }
-  };
+  };*/
 
 
   //Получение всех срезов
@@ -219,7 +318,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
 
 
-  $scope.getAllSrez();
+  // $scope.getAllSrez();
   //Получение всех срезов
 
 

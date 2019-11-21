@@ -45,16 +45,22 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
     columnDefs: [
       {
+        name: 'code',
+        width: "*",
+        displayName: 'Код группы',
+        visible: false
+      },
+      {
         name: 'name',
-        width: '*',
+        width: '500',
         displayName: 'Группы',
         cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">" +
           "<img id='changeImg' " +
           "ng-hide='row.treeLevel == 2' " +
-          "ng-click='grid.appScope.toggleFirstRow(rowRenderIndex);' " +
+          "ng-click='grid.appScope.toggleFirstRow(rowRenderIndex); grid.appScope.$parent.toggleSecRow(row.treeLevel, grid, row);' " +
           "style='width: 24px; margin: 0 10px' " +
           "src='./img/folder.png' " +
-          "alt=''>{{COL_FIELD CUSTOM_FILTERS}}</div>"
+          "alt=''>{{COL_FIELD CUSTOM_FILTERS}} - {{row.treeLevel}}</div>"
       },
       {
         name: 'id',
@@ -93,9 +99,70 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   };
 
 
+  $scope.gridOptions.multiSelect = true;
+
+  var id = 0;
+  var writeoutNode = function (childArray, currentLevel, dataArray) {
+    childArray.forEach(function (childNode) {
+
+      if (childNode.children.length > 0) {
+        childNode.$$treeLevel = currentLevel;
+
+      } else {
+        if ((id !== childNode.parentCategoryId) || (childNode.categoryId === childNode.parentCategoryId)) {
+
+          childNode.$$treeLevel = currentLevel;
+        }
+      }
+      dataArray.push(childNode);
+      writeoutNode(childNode.children, currentLevel + 1, dataArray);
+    });
+  };
 
 
-  $scope.changeImg = function() {
+  $scope.loader = false;
+  $scope.getAllSrez = function () {
+    $scope.loader = true;
+    var dataSet = [];
+
+    $http({
+      method: 'GET',
+      url: 'http://18.140.232.52:8081/api/v1/RU/slices/parents?deleted=false'
+      // url: './json/regions.json'
+    }).then(function (response) {
+      $scope.loader = false;
+      $scope.showGrid = response.data;
+      $scope.showGrid.forEach(function (data, index) {
+        dataSet.push(data);
+        // console.log(dataSet[index].children);
+
+
+        dataSet[index].children.forEach(function (status) {
+          // console.log(status);
+          status.groupCode = dataSet[index].code;
+
+        });
+
+
+        $scope.gridOptions.data = [];
+        writeoutNode(dataSet, 0, $scope.gridOptions.data);
+      });
+      console.log(dataSet)
+
+    });
+
+    $scope.info = {};
+    $scope.gridOptions.onRegisterApi = function (gridApi) {
+      $scope.gridApi = gridApi;
+
+    };
+  };
+
+
+  $scope.getAllSrez();
+
+
+  $scope.changeImg = function () {
 
 
     var img2 = 'https://www.freeiconspng.com/uploads/orange-folder-full-icon-png-13.png',
@@ -203,49 +270,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     }
   };*/
 
-  $scope.gridOptions.multiSelect = true;
-
-  var id = 0;
-  var writeoutNode = function (childArray, currentLevel, dataArray) {
-    childArray.forEach(function (childNode) {
-
-      if (childNode.children.length > 0) {
-        childNode.$$treeLevel = currentLevel;
-
-      } else {
-        if ((id != childNode.parentCategoryId) || (childNode.categoryId == childNode.parentCategoryId)) {
-          if (childNode.categoryId == childNode.parentCategoryId) {
-            childNode.parentCategoryName = '';
-          }
-          childNode.$$treeLevel = currentLevel;
-        }
-      }
-      dataArray.push(childNode);
-      writeoutNode(childNode.children, currentLevel + 1, dataArray);
-    });
-  };
-
-  var dataSet = [];
-
-  $http({
-    method: 'GET',
-    // url: 'http://18.140.232.52:8081/api/v1/RU/slices/regsTree'
-    url: './json/regions.json'
-  }).then(function (response) {
-    $scope.showGrid = response.data;
-    dataSet.push(response.data);
-
-    $scope.gridOptions.data = [];
-    writeoutNode(dataSet, 0, $scope.gridOptions.data);
-  });
-
-  $scope.info = {};
-  $scope.gridOptions.onRegisterApi = function (gridApi) {
-    //set gridApi on scope
-    $scope.gridApi = gridApi;
-
-  };
-
 
   //Получение списка статусов
   $scope.getStatus = function () {
@@ -273,9 +297,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   //Получение списка групп
 
 
-  //Получение всех срезов
-
-
   $scope.toggleFirstRow = function (index) {
 
 
@@ -283,60 +304,43 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   };
 
 
-  $scope.toggleSecRow = function (index, col, rowEntity) {
+  $scope.toggleSecRow = function (treeLevel, grid, row) {
 
-    var params = rowEntity[0].row.entity;
-    var groupCode = params.groupCode;
-    var statusCode = params.statusCode;
-    var year = params.year;
+    if (row.entity.$$treeLevel === 1) {
+      var params = row.entity;
 
-
-    $http({
-      method: 'GET',
-      url: 'http://18.140.232.52:8081/api/v1/RU/slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + ''
-    }).then(function (value) {
-
-      $scope.showBtn = value.data;
-
-      $scope.gridOptions.data = value.data;
-
-      $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
+      var groupCode = params.groupCode,
+        statusCode = params.code,
+        year = params.statusYear;
 
 
-    }, function (reason) {
-      console.log(reason)
-    });
 
 
-  };
+      $http({
+        method: 'GET',
+        url: 'http://18.140.232.52:8081/api/v1/RU/slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + ''
+      }).then(function (value) {
+
+        console.log(value.data);
 
 
-  $scope.loader = false;
-  $scope.getAllSrez = function () {
-    $scope.loader = true;
-    $scope.showGrid = false;
-    $http({
-      method: 'GET',
-      url: 'http://18.140.232.52:8081/api/v1/RU/slices/parents?deleted=false'
-      // url: './json/allSrez.json'
-    }).then(function (response) {
-      $scope.loader = false;
-      $scope.allSrez = response.data;
-      var data = response.data;
-      console.log(data);
-      angular.forEach(data, function (value, index) {
-        $scope.indexSrez = index;
-        $scope.valueSrez = value;
+        /*$scope.showBtn = value.data;
+
+        $scope.gridOptions.data = value.data;
+
+        $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);*/
+
+
+      }, function (reason) {
+        console.log(reason)
       });
+    }
 
-      $scope.showGrid = true;
-      $scope.gridOptions.data = response.data;
-    })
+
+
+
+
   };
-
-
-  // $scope.getAllSrez();
-  //Получение всех срезов
 
 
   $scope.user = [];

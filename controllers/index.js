@@ -477,62 +477,84 @@ app.controller('langDropdownCtrl', function ($scope, $log) {
 app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance,  value, $rootScope) {
 
   $scope.statSliceNum = 541;
-  $scope.reports_n_deps = [];
 
   $http({
     method: 'GET',
-    // url: 'http://18.140.232.52:8081/api/v1/ru/slices/reports?sliceId=' + $scope.statSliceNum
+    // url: 'http://18.140.232.52:8081/api/v1/ru/slices/reports?sliceId=' + $scope.statSliceNum+'&withOrgs=true'
     url: './json/test.json'
   }).then(function (response) {
     $scope.reports_n_deps = response.data;
+    $scope.reports_n_deps.forEach( function(item) {
+      $scope.gridOptionsDep = {
+        data : item.orgs,
+        showGridFooter: false,
+        enableColumnMenus: false,
+        showTreeExpandNoChildren: false,
+        enableHiding: false,
+        enableSorting: false,
+        enableFiltering: false,
+        enableRowSelection: true,
+        enableSelectAll: true,
+        rowHeight: 35,
+        multiSelect: true,
+        columnDefs : [
+          {name: 'code', width: '15%', displayName: 'и/н'},
+          {name: 'name', width: '70%', displayName: 'Ведомство'}
+        ]    
+      };
+      item.dataset = $scope.gridOptionsDep;
+    });
   }, function (reason) {
     console.log(reason);
   });
 
-  $scope.reportCodes = [
-    {
-      "code": "511",
-      "name": "1-М"
-    },
-    {
-      "code": "516",
-      "name": "1-E"
-    },
-    {
-      "code": "503",
-      "name": "3-К"
-    },
-    {
-      "code": "504",
-      "name": "1-Н"
-    }
-  ];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
-  $scope.gridOptionsDep = {
-    showGridFooter: false,
-    enableColumnMenus: false,
-    showTreeExpandNoChildren: false,
-    enableHiding: false,
+  // $scope.gridOptionsDep = {
+  //   showGridFooter: false,
+  //   enableColumnMenus: false,
+  //   showTreeExpandNoChildren: false,
+  //   enableHiding: false,
 
-    enableSorting: false,
-    enableFiltering: false,
+  //   enableSorting: false,
+  //   enableFiltering: false,
 
-    enableRowSelection: true,
-    enableSelectAll: true,
-    rowHeight: 35,
-    multiSelect: true
-  };
+  //   enableRowSelection: true,
+  //   enableSelectAll: true,
+  //   rowHeight: 35,
+  //   multiSelect: true,
+  //   columnDefs = [
+  //     {name: 'code', width: '15%', displayName: 'и/н'},
+  //     {name: 'name', width: '70%', displayName: 'Ведомство'}
+  //   ]    
+  // };
 
-  $scope.gridOptionsDep.columnDefs = [
-    {name: 'code', width: '15%', displayName: 'и/н'},
-    {name: 'name', width: '70%', displayName: 'Ведомство'}
-  ];
+  // $scope.gridOptionsDep.columnDefs = [
+  //   {name: 'code', width: '15%', displayName: 'и/н'},
+  //   {name: 'name', width: '70%', displayName: 'Ведомство'}
+  // ];
+  // console.log($scope.gridOptionsDep);
 
   $scope.info = {};
 
   $http.get('http://18.140.232.52:8081/api/v1/RU/slices/orgs?reportCode=' + 501).then(function (response) {
     $scope.deps = response.data;
-
     $scope.gridOptionsDep.data = $scope.deps;
     // $scope.gridApiDep.core.notifyDataChange( uiGridConstants.dataChange.ALL)
     // console.log($scope.gridApiDep.core.notifyDataChange( uiGridConstants.dataChange.ALL));

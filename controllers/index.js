@@ -15,14 +15,14 @@ app.config(['$qProvider', function ($qProvider) {
   $qProvider.errorOnUnhandledRejections(false);
 }]);
 
-app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGridTreeViewConstants', function ($scope, $http, $rootScope, uiGridTreeBaseService) {
+app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGridTreeViewConstants', '$interval', function ($scope, $http, $rootScope, uiGridTreeBaseService, $interval) {
 
 
   //Получение списка статусов
   $scope.getStatus = function () {
     $http({
       method: 'GET',
-      url: 'http://18.140.232.52:8081/api/v1/RU/slices/statuses'
+      url: 'https://18.140.232.52:8081/api/v1/RU/slices/statuses'
     }).then(function (value) {
       $scope.status = value.data;
     })
@@ -35,7 +35,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   $scope.getGroups = function () {
     $http({
       method: 'GET',
-      url: 'http://18.140.232.52:8081/api/v1/ru/slices/groups'
+      url: 'https://18.140.232.52:8081/api/v1/ru/slices/groups'
     }).then(function (value) {
       $scope.groups = value.data;
     })
@@ -48,7 +48,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   $scope.getStatSrez = function () {
     $http({
       method: 'GET',
-      url: 'http://18.140.232.52:8081/api/v1/ru/slices/max'
+      url: 'https://18.140.232.52:8081/api/v1/ru/slices/max'
     }).then(function (value) {
       $scope.statsrez = value.data.value;
       // console.log($scope.statsrez);
@@ -100,7 +100,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
           "ng-click='grid.appScope.toggleFirstRow(rowRenderIndex, row.treeLevel, row)' " +
           "style='width: 24px; margin: 0 10px' " +
           "src='./img/folder.png' " +
-          "alt=''>{{COL_FIELD CUSTOM_FILTERS}} - (TreeLevel) {{row.treeLevel}}</div>"
+          "alt=''>{{COL_FIELD CUSTOM_FILTERS}}</div>"
       },
       {
         name: 'id',
@@ -139,10 +139,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   };
   $scope.gridOptions.onRegisterApi = function (gridApi) {
     $scope.gridApi = gridApi;
-    $scope.gridApi.treeBase.on.rowExpanded($scope, function (row) {
-      console.log(row.entity)
-    })
-
   };
 
   $scope.gridOptions.multiSelect = true;
@@ -173,7 +169,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
     $http({
       method: 'GET',
-      url: 'http://18.140.232.52:8081/api/v1/RU/slices/parents?deleted=false'
+      url: 'https://18.140.232.52:8081/api/v1/RU/slices/parents?deleted=false'
       // url: './json/regions.json'
     }).then(function (response) {
       $scope.loader = false;
@@ -207,29 +203,48 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       // return $scope.toggleSecRow(index, treeLevel);
       $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
     } else {
+
+      $scope.gridApi.treeBase.on.rowExpanded($scope, function (row) {
+        if (!$scope.nodeLoaded) {
+          $interval(function () {
+            var selectedRowHashkey = row.entity.$$hashKey,
+              selectedRowIndex = 0;
+            $scope.gridOptions.data.forEach(function (value, index) {
+              if (selectedRowHashkey === value.$$hashKey) {
+                selectedRowIndex = index + 1;
+              }
+            });
+            $scope.gridOptions.data.splice(selectedRowIndex, 0,
+              {
+                name: 'Dynamic 1',
+                gender: 'female',
+                age: 53,
+                company: 'Griddable grids',
+                balance: 38000,
+                $$treeLevel: 2
+              },
+              {name: 'Dynamic 2', gender: 'male', age: 18, company: 'Griddable grids', balance: 29000, $$treeLevel: 2}
+            );
+            $scope.nodeLoaded = true;
+          }, 2000, 1);
+        }
+      });
+
+
       $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
 
-      var groupCode = row.entity.groupCode,
+      /*var groupCode = row.entity.groupCode,
         statusCode = row.entity.code,
         year = row.entity.statusYear;
       // подгружает данные http
       $http({
         method: 'GET',
-        url: 'http://18.140.232.52:8081/api/v1/RU/slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + ''
+        url: 'https://18.140.232.52:8081/api/v1/RU/slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + ''
       }).then(function (value) {
-        console.log(value.data);
-        var arr = $scope.gridOptions.data;
-        value.data.forEach(function (statusData) {
-          arr[0]['children'][0]['children'].push(statusData);
-        });
 
-        writeoutNode(arr, 0, $scope.gridOptions.data);
-
-        console.log($scope.gridOptions.data);
       }, function (reason) {
         console.log(reason)
-      });
-      // $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[1]);
+      });*/
     }
 
 
@@ -268,7 +283,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
     $http({
       method: 'POST',
-      url: 'http://18.140.232.52:8081/api/v1/ru/slices',
+      url: 'https://18.140.232.52:8081/api/v1/ru/slices',
       data: dataObj
     }).then(function (response) {
 
@@ -504,7 +519,7 @@ app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', '$log', 'uiGri
 
   $http({
     method: 'GET',
-    url: 'http://18.140.232.52:8081/api/v1/RU/slices/regsTree'
+    url: 'https://18.140.232.52:8081/api/v1/RU/slices/regsTree'
   }).then(function (response) {
     dataSet.push(response.data);
 

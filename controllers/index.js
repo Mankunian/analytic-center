@@ -215,6 +215,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
               }
             });
             $scope.gridOptions.data.splice(selectedRowIndex, 0,
+              //todo вставить живые данные
               {
                 name: 'Dynamic 1',
                 gender: 'female',

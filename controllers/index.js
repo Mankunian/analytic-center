@@ -200,7 +200,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
   $http({
     method: 'GET',
-    // url: 'http://18.140.232.52:8081/api/v1/RU/slices/regsTree'
+    // url: 'https://18.140.232.52:8081/api/v1/RU/slices/regsTree'
     url: './json/regions.json'
   }).then(function (response) {
     $scope.showGrid = response.data;
@@ -221,7 +221,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   $scope.getStatus = function () {
     $http({
       method: 'GET',
-      url: 'http://18.140.232.52:8081/api/v1/RU/slices/statuses'
+      url: 'https://18.140.232.52:8081/api/v1/RU/slices/statuses'
     }).then(function (value) {
       $scope.status = value.data;
     })
@@ -234,7 +234,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   $scope.getGroups = function () {
     $http({
       method: 'GET',
-      url: 'http://18.140.232.52:8081/api/v1/ru/slices/groups'
+      url: 'https://18.140.232.52:8081/api/v1/ru/slices/groups'
     }).then(function (value) {
       $scope.groups = value.data;
     })
@@ -258,7 +258,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
     $http({
       method: 'GET',
-      url: 'http://18.140.232.52:8081/api/v1/RU/slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + ''
+      url: 'https://18.140.232.52:8081/api/v1/RU/slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + ''
     }).then(function (value) {
       console.log(value.data) ;
 
@@ -283,7 +283,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     $scope.showGrid = false;
     $http({
       method: 'GET',
-      url: 'http://18.140.232.52:8081/api/v1/RU/slices/parents?deleted=false'
+      url: 'https://18.140.232.52:8081/api/v1/RU/slices/parents?deleted=false'
       // url: './json/allSrez.json'
     }).then(function (response) {
       $scope.loader = false;
@@ -329,7 +329,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
     $http({
       method: 'POST',
-      url: 'http://18.140.232.52:8081/api/v1/ru/slices',
+      url: 'https://18.140.232.52:8081/api/v1/ru/slices',
       data: dataObj
     }).then(function (response) {
 
@@ -358,7 +358,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   $scope.getStatSrez = function () {
     $http({
       method: 'GET',
-      url: 'http://18.140.232.52:8081/api/v1/ru/slices/max'
+      url: 'https://18.140.232.52:8081/api/v1/ru/slices/max'
     }).then(function (value) {
       $scope.statsrez = value.data.value;
       // console.log($scope.statsrez);
@@ -390,7 +390,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   $scope.getGroups = function () {
     $http({
       method: 'GET',
-      url: 'http://18.140.232.52:8081/api/v1/ru/slices/groups'
+      url: 'https://18.140.232.52:8081/api/v1/ru/slices/groups'
     }).then(function (value) {
       $scope.groups = value.data;
     })
@@ -480,11 +480,14 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance,  
 
   $http({
     method: 'GET',
-    // url: 'http://18.140.232.52:8081/api/v1/ru/slices/reports?sliceId=' + $scope.statSliceNum+'&withOrgs=true'
+    // url: 'https://18.140.232.52:8081/api/v1/ru/slices/reports?sliceId=' + $scope.statSliceNum+'&withOrgs=true'
     url: './json/test.json'
   }).then(function (response) {
     $scope.reports_n_deps = response.data;
-    $scope.reports_n_deps.forEach( function(item) {
+    $scope.gridApiList = [];
+    // Each function through reports with orgs
+    $scope.reports_n_deps.forEach( function(item, index) {
+      
       $scope.gridOptionsDep = {
         data : item.orgs,
         showGridFooter: false,
@@ -501,83 +504,51 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance,  
           {name: 'code', width: '15%', displayName: 'и/н'},
           {name: 'name', width: '70%', displayName: 'Ведомство'}
         ]    
+      };      
+      // Запись отчетов и ведомств в правильную структуру для Grid 
+      item.gridDataset = $scope.gridOptionsDep;
+      
+      console.log('reports_n_deps loop');
+      // $scope.gridApiList.push('gridApi_'+index);
+
+      $scope.gridApiDepsName = 'gridApiDeps_'+index;
+      console.log(gridApiName);
+      // Инициализация onRegisterApi для обработки событий
+      item.gridDataset.onRegisterApi = function (gridApi) {
+        
+        //gridApiList each function      
+        // $scope.gridApiList.foreach(function(gridApiListItem) {
+        $scope.gridApiDepsName = gridApi;
+        gridApi.selection.on.rowSelectionChanged($scope, function (row) {
+          console.log(row.entity);
+          console.log($scope.gridApiDepsName.selection.getSelectedRows());
+        });    
+          
+        // }); // END of gridApiList each function
       };
-      item.dataset = $scope.gridOptionsDep;
-    });
+      
+      $scope.selectAll = function() {
+        console.log('all selected');
+        $scope.gridApiS.selection.selectAllRows();
+      };
+
+    }); // END Each function for reports with orgs
+    console.log($scope.reports_n_deps);
+
   }, function (reason) {
     console.log(reason);
   });
 
 
+  // $scope.reports_n_deps[0].gridDataset.onRegisterApi = function (gridApi) {
+  //   //set gridApi on scope
+  //   $scope.gridApiS = gridApi;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  // $scope.gridOptionsDep = {
-  //   showGridFooter: false,
-  //   enableColumnMenus: false,
-  //   showTreeExpandNoChildren: false,
-  //   enableHiding: false,
-
-  //   enableSorting: false,
-  //   enableFiltering: false,
-
-  //   enableRowSelection: true,
-  //   enableSelectAll: true,
-  //   rowHeight: 35,
-  //   multiSelect: true,
-  //   columnDefs = [
-  //     {name: 'code', width: '15%', displayName: 'и/н'},
-  //     {name: 'name', width: '70%', displayName: 'Ведомство'}
-  //   ]    
+  //   gridApi.selection.on.rowSelectionChanged($scope, function (row) {
+  //     $scope.selectedDeps = $scope.gridApiS.selection.getSelectedRows();
+  //     console.log($scope.selectedDeps);
+  //   });
   // };
-
-  // $scope.gridOptionsDep.columnDefs = [
-  //   {name: 'code', width: '15%', displayName: 'и/н'},
-  //   {name: 'name', width: '70%', displayName: 'Ведомство'}
-  // ];
-  // console.log($scope.gridOptionsDep);
-
-  $scope.info = {};
-
-  $http.get('http://18.140.232.52:8081/api/v1/RU/slices/orgs?reportCode=' + 501).then(function (response) {
-    $scope.deps = response.data;
-    $scope.gridOptionsDep.data = $scope.deps;
-    // $scope.gridApiDep.core.notifyDataChange( uiGridConstants.dataChange.ALL)
-    // console.log($scope.gridApiDep.core.notifyDataChange( uiGridConstants.dataChange.ALL));
-  });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -592,7 +563,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance,  
   // $scope.statSlicePeriod = value['period'];
   
   // // Запрос список отчетов по номеру среза
-  // $http.get('http://18.140.232.52:8081/api/v1/ru/slices/reports?sliceId=' + $scope.statSliceNum)
+  // $http.get('https://18.140.232.52:8081/api/v1/ru/slices/reports?sliceId=' + $scope.statSliceNum)
   //   .then(function (response) {
   //     $scope.reportCodes = response.data;
   //     console.log($scope.reportCodes);
@@ -657,7 +628,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance,  
 
   // $scope.getDepartmentsList = function(reportName, reportCode) {
 
-  //   $http.get('http://18.140.232.52:8081/api/v1/RU/slices/orgs?reportCode=' + reportCode)
+  //   $http.get('https://18.140.232.52:8081/api/v1/RU/slices/orgs?reportCode=' + reportCode)
   //     .then(function (response) {
   //       $scope.deps = response.data;
   //       $scope.currentReportTab = {
@@ -687,12 +658,12 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance,  
 
   //   $http({
   //     method: 'POST',
-  //     url: 'http://18.140.232.52:8081/api/v1/RU/slices/reports/createReport',
+  //     url: 'https://18.140.232.52:8081/api/v1/RU/slices/reports/createReport',
   //     data: postData
   //   }).then(function (response) {
   //     var downloadFileId = response.data.value;
   //     $scope.readyReports = [];
-  //     var reportDownloadUrl = "http://18.140.232.52:8081/api/v1/{lang}/slices/reports/"+ downloadFileId +"/download";
+  //     var reportDownloadUrl = "https://18.140.232.52:8081/api/v1/{lang}/slices/reports/"+ downloadFileId +"/download";
   //     $scope.readyReports.push(reportDownloadUrl);
   //   }, function (reason) {
   //     console.log(reason)
@@ -722,8 +693,8 @@ app.controller('RegionTreeCtrl', ['$scope','$rootScope', '$http', '$interval', '
     treeIndent: 10,
 
     columnDefs: [
-    { name: 'code', width: '20%',displayName: 'и/н', cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>" },
-    { name: 'name', width: '40%',displayName: 'Регион/Орган' , cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>" }
+      { name: 'code', width: '20%',displayName: 'и/н', cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>" },
+      { name: 'name', width: '40%',displayName: 'Регион/Орган' , cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>" }
     ]
   };
 
@@ -756,7 +727,7 @@ app.controller('RegionTreeCtrl', ['$scope','$rootScope', '$http', '$interval', '
 
   $http({
     method: 'GET',
-    url: 'http://18.140.232.52:8081/api/v1/RU/slices/regsTree'
+    url: 'https://18.140.232.52:8081/api/v1/RU/slices/regsTree'
   }).then(function (response) {
     dataSet.push(response.data);
 
@@ -764,7 +735,6 @@ app.controller('RegionTreeCtrl', ['$scope','$rootScope', '$http', '$interval', '
     writeoutNode(dataSet, 0, $scope.gridOptions.data);
   });
 
-  $scope.info = {};
   $scope.gridOptions.onRegisterApi = function (gridApi) {
     //set gridApi on scope
     $scope.gridApi = gridApi;

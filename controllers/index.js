@@ -194,13 +194,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     });
 
     // $scope.info = {};
-    $scope.gridOptions.onRegisterApi = function (gridApi) {
-      $scope.gridApi = gridApi;
-      $scope.gridApi.treeBase.on.rowExpanded($scope, function (row) {
-        console.log(row.entity)
-      })
-
-    };
   };
 
 
@@ -214,10 +207,9 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       // return $scope.toggleSecRow(index, treeLevel);
       $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
     } else {
-      console.log(row.entity);
+      $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
 
-
-      /*var groupCode = row.entity.groupCode,
+      var groupCode = row.entity.groupCode,
         statusCode = row.entity.code,
         year = row.entity.statusYear;
       // подгружает данные http
@@ -237,7 +229,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       }, function (reason) {
         console.log(reason)
       });
-      $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[1]);*/
+      // $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[1]);
     }
 
 

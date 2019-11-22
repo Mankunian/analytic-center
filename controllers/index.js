@@ -217,21 +217,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
   };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   //Получение списка статусов
   $scope.getStatus = function () {
     $http({
@@ -257,16 +242,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   $scope.getGroups();
   //Получение списка групп
 
-
-
-
-
-
-
-
   //Получение всех срезов
-
-
   $scope.toggleFirstRow = function (index) {
     $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
   };
@@ -284,6 +260,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       method: 'GET',
       url: 'http://18.140.232.52:8081/api/v1/RU/slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + ''
     }).then(function (value) {
+      console.log(value.data) ;
 
       $scope.showBtn = value.data;
 
@@ -391,13 +368,11 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   $scope.getStatSrez();
   //Получить № статсреза
 
-
   //Дата начала отчета по умолчанию 1 января 2019
   var fromTimestamp = 1546322400;
   $scope.dateFrom = new Date(fromTimestamp * 1000);
 
   $scope.dateTo = new Date();
-
 
   var dd = ('0' + $scope.dateFrom.getDate()).slice(-2);
   var mm = ('0' + ($scope.dateFrom.getMonth() + 1)).slice(-2);
@@ -405,13 +380,11 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
   var dateFromString = dd + '.' + mm + '.' + yy;
 
-
   var dd = ('0' + $scope.dateTo.getDate()).slice(-2);
   var mm = ('0' + ($scope.dateTo.getMonth() + 1)).slice(-2);
   var yy = $scope.dateTo.getFullYear();
 
   var dateToString = dd + '.' + mm + '.' + yy;
-
 
   //Получение списка групп
   $scope.getGroups = function () {
@@ -424,7 +397,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   };
   $scope.getGroups();
   //Получение списка групп
-
 
 }]);
 
@@ -504,17 +476,17 @@ app.controller('langDropdownCtrl', function ($scope, $log) {
  *  ModalContentCtrl
  */
 app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance,  value, $rootScope) {
-      
   // $scope.statSliceNum = value['maxRecNum'];
-  $scope.statSliceNum = 542;
+  $scope.statSliceNum = 541;
   $scope.statSlicePeriod = value['period'];
   
+  // Запрос список отчетов по номеру среза
   $http.get('http://18.140.232.52:8081/api/v1/ru/slices/reports?sliceId=' + $scope.statSliceNum)
     .then(function (response) {
       $scope.reportCodes = response.data;
+      console.log($scope.reportCodes);
     });
 
-  $scope.obj = {};
   $scope.showRequestedReports = function() {
     var counter=0;
     $scope.requestedReports = [];
@@ -523,7 +495,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance,  
       angular.forEach($rootScope.selectedRegionsArray, function (value, index) {
         val1 = value.name;
         angular.forEach($rootScope.selectedDepartmentsArray, function (value, index) {
-          $scope.requestedReports[counter] = val1 + value.name;
+          $scope.requestedReports[counter] = val1 + " - " + value.name + " - " + $scope.currentReportTab.name;
           counter++;
         });
       });
@@ -554,8 +526,6 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance,  
     {name: 'name', width: '70%', displayName: 'Ведомство'}
   ];
 
-  // $scope.gridOptionsDep.data = [];
-
   $scope.info = {};
   
   $scope.gridOptionsDep.onRegisterApi = function (gridApi) {
@@ -575,17 +545,24 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance,  
   };
 
   $scope.getDepartmentsList = function(reportName, reportCode) {
-    $scope.currentReportTab = {
-      'name' : reportName,
-      'code' : reportCode,
-    };
-    $scope.isTab = true;
 
-    $http.get('http://18.140.232.52:8081/api/v1/RU/slices/orgs?reportCode=' + $scope.currentReportTab.code)
+    $http.get('http://18.140.232.52:8081/api/v1/RU/slices/orgs?reportCode=' + reportCode)
       .then(function (response) {
+        $scope.deps = response.data;
+        $scope.currentReportTab = {
+          'name' : reportName,
+          'code' : reportCode,
+          'data' : $scope.deps
+        };
+        $scope.hideGrid = true;
+
         if ($scope.gridOptionsDep.data.length == 0) {
-          $scope.gridOptionsDep.data = response.data;
+          $scope.gridOptionsDep.data = $scope.deps;
         }
+        // $scope.gridApiDep.grid.refresh();
+        // $scope.gridApiDep.core.refresh();
+        $scope.gridApiDep.core.notifyDataChange( uiGridConstants.dataChange.ALL)
+        console.log($scope.gridApiDep.core.notifyDataChange( uiGridConstants.dataChange.ALL));
       });
   };
 
@@ -602,40 +579,16 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance,  
       url: 'http://18.140.232.52:8081/api/v1/RU/slices/reports/createReport',
       data: postData
     }).then(function (response) {
-      $scope.reportData = response.data;
-      return $scope.reportData;
-      console.log(response);
+      var downloadFileId = response.data.value;
+      $scope.readyReports = [];
+      var reportDownloadUrl = "http://18.140.232.52:8081/api/v1/{lang}/slices/reports/"+ downloadFileId +"/download";
+      $scope.readyReports.push(reportDownloadUrl);
     }, function (reason) {
       console.log(reason)
     })
   }
 
 });
-
-// app.factory('ReportFact', function($http) {
-
-//   var data = {},
-//       departments = [];
-
-//   return {
-//     getCode: function () {
-//       return data;
-//     },
-//     setCode: function (code) {
-//       data = code;
-//     },
-//     setDepartments: function (code) {    
-//       $http.get('http://18.140.232.52:8081/api/v1/RU/slices/orgs?reportCode=' + code)
-//         .then(function (response) {
-//           departments = response.data;
-//         });
-//     },
-//     getDepartments: function () {
-//       return departments;
-//     },
-//   };
-
-// });
 
 app.controller('requestStatusCtrl', function ($scope) {
 

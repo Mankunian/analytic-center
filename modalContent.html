@@ -38,29 +38,36 @@
       		<div class="col-md-12">
    	   		<div class="requested-reports" ng-controller="requestedReportsCtrl">
    	   			<h4>Запрошенные отчеты</h4>
-                  <ul>
-                     <li ng-repeat="item in requestedReports" >
-                        {{item}}
-                     </li>
-                  </ul>
+                  <div class="box">
+                    <label class="containerLabel" ng-repeat="group in requestedReports">
+                      <input ng-checked="vChecked" type="checkbox" checklist-model="user"
+                             checklist-value="group.code">{{group}}
+                      <span class="checkmark"></span>
+                    </label>
+                  </div>
    	   		</div>
       		</div>
       	</div>
       	<div class="row">
-      		<div class="request-status" ng-controller="requestStatusCtrl">
-               <h4>Отчеты</h4>
-               <!-- <p>{{getReports()}}</p> -->
+            <div class="col-md-12">
+         		<div class="ready-reports" ng-controller="requestStatusCtrl">
+                  <h4>Отчеты</h4>
+                  <ul>
+                     <li ng-repeat="item in readyReports" >
+                        <a href="{{item}}" target="_blank">Скачать отчет</a>
+                     </li>
+                  </ul>                  
+               </div>
             </div>
       	</div>
       </uib-tab>
-      <uib-tab ng-repeat="reportCode in reportCodes track by reportCode.code" heading="{{ reportCode.name }}" select="getDepartmentsList(reportCode.name, reportCode.code)">
-         <a href="" ng-click="exportData()">download xlsx</a>
+      <uib-tab ng-repeat="reportCode in reportCodes track by reportCode.code" heading="{{ reportCode.name }}" select="getDepartmentsList(reportCode.name, reportCode.code)" deselect="">
          <div class="row">
             <div class="col-md-6" ng-controller="RegionTreeCtrl" >
                <div id="grid1" ui-grid="gridOptions" ui-grid-selection ui-grid-cellnav  ui-grid-grouping class="grid"></div>
             </div>
             <div class="col-md-6">
-               <div id="grid1Selection" ui-grid="gridOptionsDep" ui-grid-selection class="grid"></div>
+               <div id="grid1" ui-grid="gridOptionsDep" ui-grid-selection class="grid"></div>
             </div>
          </div>
    	 </uib-tab>

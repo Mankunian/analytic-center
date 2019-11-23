@@ -216,15 +216,17 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
       $scope.gridApi.treeBase.on.rowExpanded($scope, function (row) {
 
-        if (row.entity.isDataLoaded === undefined) {
+        if (row.entity.isDataLoaded === undefined && row.entity.$$treeLevel !== 0) {
           $interval(function () {
             var selectedRowHashkey = row.entity.$$hashKey,
                 selectedRowIndex = 0;
+
             $scope.gridOptions.data.forEach(function (value, index) {
               if (selectedRowHashkey === value.$$hashKey) {
                 selectedRowIndex = index + 1;
               }
             });
+
             $scope.showGrid.forEach(function (statusData) {
               $scope.dataByStatus = statusData;
               $scope.gridOptions.data.splice(selectedRowIndex, 0, $scope.dataByStatus);

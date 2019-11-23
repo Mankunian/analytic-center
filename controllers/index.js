@@ -200,28 +200,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
     } else {
 
-      $scope.gridApi.treeBase.on.rowExpanded($scope, function (row) {
-        if (!$scope.nodeLoaded) {
-          $interval(function () {
-            var selectedRowHashkey = row.entity.$$hashKey,
-              selectedRowIndex = 0;
-            $scope.gridOptions.data.forEach(function (value, index) {
-              if (selectedRowHashkey === value.$$hashKey) {
-                selectedRowIndex = index + 1;
-              }
-            });
-            $scope.gridOptions.data.splice(selectedRowIndex, 0,
-              $scope.dataByStatus
-              //todo вставить живые данные
-            );
-            $scope.nodeLoaded = true;
-          }, 2000, 1);
-        }
-      });
-
-
-      $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
-
       var groupCode = row.entity.groupCode,
         statusCode = row.entity.code,
         year = row.entity.statusYear;
@@ -230,14 +208,51 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
         method: 'GET',
         url: 'https://Analytic-centre.tk:8081/api/v1/RU/slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + ''
       }).then(function (value) {
-        console.log(value.data);
-        value.data.forEach(function (statusData) {
-          $scope.dataByStatus = statusData;
-        })
-
+        $scope.showGrid = value.data;
       }, function (reason) {
         console.log(reason)
       });
+
+
+
+      $scope.gridApi.treeBase.on.rowExpanded($scope, function (row) {
+        if (!$scope.nodeLoaded) {
+
+          $interval(function () {
+            var selectedRowHashkey = row.entity.$$hashKey,
+              selectedRowIndex = 0;
+            $scope.gridOptions.data.forEach(function (value, index) {
+              if (selectedRowHashkey === value.$$hashKey) {
+                selectedRowIndex = index + 1;
+              }
+            });
+            console.log($scope.showGrid);
+            $scope.showGrid.forEach(function (statusData) {
+              $scope.dataByStatus = statusData;
+
+
+              $scope.gridOptions.data.splice(selectedRowIndex, 0,
+                $scope.dataByStatus
+                //todo вставить живые данные
+              );
+
+            });
+
+
+            $scope.nodeLoaded = true;
+          }, 2000, 1);
+        }
+      });
+
+
+
+
+
+
+      $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
+
+
+
     }
 
 

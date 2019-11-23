@@ -220,7 +220,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
         if (row.entity.isDataLoaded === undefined && row.entity.$$treeLevel !== 0) {
           $interval(function () {
             var selectedRowHashkey = row.entity.$$hashKey,
-                selectedRowIndex = 0;
+              selectedRowIndex = 0;
 
             $scope.gridOptions.data.forEach(function (value, index) {
               if (selectedRowHashkey === value.$$hashKey) {
@@ -278,17 +278,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     }).then(function (response) {
 
       $scope.user = [];
-
-
-      var data = response.data;
       $scope.showGrid = response.data;
-
-      console.log(data);
-
-      angular.forEach(data, function (value) {
-        console.log(value);
-        $scope.gridOptions.data.unshift(value)
-      })
 
 
     }, function (reason) {

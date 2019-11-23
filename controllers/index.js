@@ -214,50 +214,37 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       });
 
 
-
       $scope.gridApi.treeBase.on.rowExpanded($scope, function (row) {
-        if (!$scope.nodeLoaded) {
 
+        if (row.entity.isDataLoaded === undefined) {
           $interval(function () {
             var selectedRowHashkey = row.entity.$$hashKey,
-              selectedRowIndex = 0;
+                selectedRowIndex = 0;
             $scope.gridOptions.data.forEach(function (value, index) {
               if (selectedRowHashkey === value.$$hashKey) {
                 selectedRowIndex = index + 1;
               }
             });
-            console.log($scope.showGrid);
             $scope.showGrid.forEach(function (statusData) {
               $scope.dataByStatus = statusData;
-
-
-              $scope.gridOptions.data.splice(selectedRowIndex, 0,
-                $scope.dataByStatus
-                //todo вставить живые данные
-              );
-
+              $scope.gridOptions.data.splice(selectedRowIndex, 0, $scope.dataByStatus);
             });
 
-
-            $scope.nodeLoaded = true;
+            row.entity.isDataLoaded = true;
           }, 2000, 1);
+        } else {
+          console.log('This row already has data')
         }
       });
 
 
-
-
-
-
       $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
-
 
 
     }
 
 
   };
-
 
 
   $scope.user = [];
@@ -492,23 +479,12 @@ app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', '$log', 'uiGri
 
   $scope.gridOptions.multiSelect = true;
 
-  var id = 0;
   var writeoutNode = function (childArray, currentLevel, dataArray) {
     childArray.forEach(function (childNode) {
-
       if (childNode.children.length > 0) {
         childNode.$$treeLevel = currentLevel;
-        id = childNode.categoryId;
-        if (childNode.categoryId == childNode.parentCategoryId) {
-          childNode.parentCategoryName = '';
-        }
       } else {
-        if ((id != childNode.parentCategoryId) || (childNode.categoryId == childNode.parentCategoryId)) {
-          if (childNode.categoryId == childNode.parentCategoryId) {
-            childNode.parentCategoryName = '';
-          }
-          childNode.$$treeLevel = currentLevel;
-        }
+        childNode.$$treeLevel = currentLevel;
       }
       dataArray.push(childNode);
       writeoutNode(childNode.children, currentLevel + 1, dataArray);

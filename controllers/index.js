@@ -25,6 +25,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       url: 'https://Analytic-centre.tk:8081/api/v1/RU/slices/statuses'
     }).then(function (value) {
       $scope.status = value.data;
+      console.log($scope.status)
     })
   };
   $scope.getStatus();
@@ -410,13 +411,30 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
 
 app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalInstance, value) {
 
+  $scope.srezNo = value.id;
+  $scope.period = value.period;
+  $scope.srezToNum = value.maxRecNum;
+  $scope.statusCode = value.statusCode;
+
   $scope.statuses = [
-    {'id': 0, 'name': 'Сформирован с ошибкой'},
-    {'id': 1, 'name': 'Удален'}
+    {'id': value.statusCode, 'name': value.statusName},
+    {'id': '03', 'name': 'На согласовании 2014'}
   ];
 
 
-  $scope.srezInfo = value;
+  $scope.getInfoByStatus = function () {
+    $scope.infoByStatus = [
+      {
+        'statusCode': '2',
+        'statusName': 'Предварительный',
+        'sliceByOrder': 'Капитанов Юрий',
+        'orderSrezTime': '19.11.2019 18:32',
+        'startTime': '19.11.2019 18:35',
+        'endTime': '19.11.2019 18:40'
+      }
+    ]
+  };
+  $scope.getInfoByStatus();
 
 
   $scope.cancel = function () {

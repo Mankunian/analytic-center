@@ -15,11 +15,51 @@ app.config(['$qProvider', function ($qProvider) {
   $qProvider.errorOnUnhandledRejections(false);
 }]);
 
-app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGridTreeViewConstants', function ($scope, $http, $rootScope, uiGridTreeBaseService) {
+app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGridTreeViewConstants', '$interval', function ($scope, $http, $rootScope, uiGridTreeBaseService, $interval) {
+
+
+  //Получение списка статусов
+  $scope.getStatus = function () {
+    $http({
+      method: 'GET',
+      url: 'https://Analytic-centre.tk:8081/api/v1/RU/slices/statuses'
+    }).then(function (value) {
+      $scope.status = value.data;
+      console.log($scope.status)
+    })
+  };
+  $scope.getStatus();
+  //Получение списка статусов
+
+
+  // Получение списка групп
+  $scope.getGroups = function () {
+    $http({
+      method: 'GET',
+      url: 'https://Analytic-centre.tk:8081/api/v1/ru/slices/groups'
+    }).then(function (value) {
+      $scope.groups = value.data;
+    })
+  };
+  $scope.getGroups();
+  //Получение списка групп
+
+
+  //Получить № статсреза
+  $scope.getStatSrez = function () {
+    $http({
+      method: 'GET',
+      url: 'https://Analytic-centre.tk:8081/api/v1/ru/slices/max'
+    }).then(function (value) {
+      $scope.statsrez = value.data.value;
+    })
+  };
+
+  $scope.getStatSrez();
+  //Получить № статсреза
 
 
   var operBySrez = '<div  ' +
-    /* 'ng-hide="row.entity.statusCode == 0 || row.entity.statusCode == 6" ' +*/
     'ng-controller="modalOperBySrezCtrl" ' +
     'ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" ' +
     'class="ui-grid-cell-contents"> ' +
@@ -31,7 +71,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
   $scope.gridOptions = {
     enableColumnMenus: false,
-    showTreeExpandNoChildren: false,
+    showTreeExpandNoChildren: true,
     enableHiding: false,
 
     enableSorting: false,
@@ -45,16 +85,28 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
     columnDefs: [
       {
+        name: 'code',
+        width: "*",
+        displayName: 'Код группы',
+        visible: false
+      },
+      {
         name: 'name',
-        width: '*',
+        width: '450',
         displayName: 'Группы',
-        cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\"><img ng-hide='row.treeLevel == 2' ng-click='grid.appScope.toggleFirstRow(rowRenderIndex)' style='width: 24px; margin: 0 10px' src='./img/folder.png' alt=''>{{COL_FIELD CUSTOM_FILTERS}}</div>"
+        cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">" +
+          "<img id='changeImg' " +
+          "ng-hide='row.treeLevel == undefined' " +
+          "ng-click='grid.appScope.toggleFirstRow(rowRenderIndex, row.treeLevel, row)' " +
+          "style='width: 24px; margin: 0 10px' " +
+          "src='./img/folder.png' " +
+          "alt=''>{{COL_FIELD CUSTOM_FILTERS}}</div>"
       },
       {
         name: 'id',
-        width: '*',
+        width: '130',
         displayName: 'Номер среза',
-        cellTemplate: '<div ng-controller="ModalControlCtrl"><button ng-click="grid.appScope.open(row.entity)">{{COL_FIELD CUSTOM_FILTERS}}</button></div>'
+        cellTemplate: '<div class="text-center" ng-controller="ModalControlCtrl"><button style="margin: 5px 0" class="btn btn-primary" ng-hide="row.treeLevel==0 || row.treeLevel == 1" ng-click="grid.appScope.open(row.entity)">{{COL_FIELD CUSTOM_FILTERS}}</button></div>'
       },
       {
         name: 'period',
@@ -67,112 +119,28 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
         displayName: 'Сформирован',
         width: '*'
       },
+
+      {
+        name: 'maxRecNum',
+        displayName: 'На номер',
+        width: '*'
+      },
+      {
+        name: 'region',
+        displayName: 'По органу',
+        width: '130'
+      },
       {
         name: 'button',
+        width: '*',
         displayName: 'Действие',
         cellTemplate: operBySrez
       }
     ]
   };
-
-
-  /*$scope.gridOptions = {
-
-    showTreeExpandNoChildren: false,
-    enableRowSelection: true,
-    enableSelectAll: true,
-    selectionRowHeaderWidth: 35,
-    rowHeight: 45,
-    enableFiltering: false,
-    treeRowHeaderAlwaysVisible: false,
-    columnDefs: [
-
-      {
-        name: 'groupCode',
-        displayName: 'Код группы',
-        visible: false,
-        sort: {priority: 0, direction: 'asc'}
-      },
-      {
-        name: 'groupName',
-        displayName: 'Группы',
-        grouping: {groupPriority: 0},
-        sort: {priority: 0, direction: 'asc'},
-        width: '450',
-        cellTemplate: '<div><div ' +
-          'ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" ' +
-          'class="ui-grid-cell-contents" ' +
-          'title="TOOLTIP">' +
-          '<button class="btn btn-primary" ' +
-          'ng-click="grid.appScope.toggleFirstRow(rowRenderIndex, row.entity)">' +
-          '<i class="fa fa-folder"></i></button> {{COL_FIELD CUSTOM_FILTERS}}</div></div>'
-      },
-      {
-        name: 'statusCode',
-        displayName: 'Код статуса',
-        visible: false
-      },
-
-      {
-        name: 'year',
-        displayName: 'Год',
-        visible: false
-      },
-
-
-      {
-        name: 'statusName',
-        displayName: 'Статус',
-        grouping: {groupPriority: 0},
-        sort: {priority: 0, direction: 'desc'},
-        width: '250',
-        cellTemplate:
-          '<div>' + '<div  ' +
-          'ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" ' +
-          'class="ui-grid-cell-contents" ' +
-          'title="TOOLTIP">' +
-          '<button class="btn btn-primary" ' +
-          'ng-click="grid.appScope.$parent.toggleSecRow(rowRenderIndex, COL_FIELD, row.treeNode.children)"> ' +
-          '<i class="fa fa-folder"></i>' +
-          '</button> {{COL_FIELD CUSTOM_FILTERS}}' +
-          '</div>' +
-          '</div>'
-      },
-
-
-      {
-        name: 'id',
-        sort: {priority: 0, direction: 'asc'},
-        displayName: 'Номер среза',
-        width: '*',
-        cellTemplate: '<div ' +
-          ' ' +
-          'ng-controller="ModalControlCtrl" ' +
-          'ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" ' +
-          'class="ui-grid-cell-contents text-center"> <button ng-click="grid.appScope.open(row.entity)" ng-hide="row.treeLevel==0 || row.treeLevel == 1" type="button" class="btn btn-primary"> {{COL_FIELD CUSTOM_FILTERS}} </button> </div>'
-      },
-      {
-        name: 'period',
-        displayName: 'Период',
-        width: '*'
-      },
-      {
-        name: 'created',
-        displayName: 'Сформирован',
-        width: '*'
-      },
-      {
-        name: 'button',
-        displayName: 'Действие',
-        cellTemplate: operBySrez
-      }
-
-    ],
-
-    onRegisterApi: function (gridApi) {
-      $scope.gridApi = gridApi;
-    }
-  };*/
+  $scope.gridOptions.onRegisterApi = function (gridApi) {
+    $scope.gridApi = gridApi;
+  };
 
   $scope.gridOptions.multiSelect = true;
 
@@ -184,10 +152,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
         childNode.$$treeLevel = currentLevel;
 
       } else {
-        if ((id != childNode.parentCategoryId) || (childNode.categoryId == childNode.parentCategoryId)) {
-          if (childNode.categoryId == childNode.parentCategoryId) {
-            childNode.parentCategoryName = '';
-          }
+        if ((id !== childNode.parentCategoryId) || (childNode.categoryId === childNode.parentCategoryId)) {
+
           childNode.$$treeLevel = currentLevel;
         }
       }
@@ -196,137 +162,93 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     });
   };
 
-  var dataSet = [];
-
-  $http({
-    method: 'GET',
-    // url: 'http://18.140.232.52:8081/api/v1/RU/slices/regsTree'
-    url: './json/regions.json'
-  }).then(function (response) {
-    $scope.showGrid = response.data;
-    dataSet.push(response.data);
-
-    $scope.gridOptions.data = [];
-    writeoutNode(dataSet, 0, $scope.gridOptions.data);
-  });
-
-  $scope.info = {};
-  $scope.gridOptions.onRegisterApi = function (gridApi) {
-    //set gridApi on scope
-    $scope.gridApi = gridApi;
-
-  };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  //Получение списка статусов
-  $scope.getStatus = function () {
-    $http({
-      method: 'GET',
-      url: 'http://18.140.232.52:8081/api/v1/RU/slices/statuses'
-    }).then(function (value) {
-      $scope.status = value.data;
-    })
-  };
-  $scope.getStatus();
-  //Получение списка статусов
-
-
-  // Получение списка групп
-  $scope.getGroups = function () {
-    $http({
-      method: 'GET',
-      url: 'http://18.140.232.52:8081/api/v1/ru/slices/groups'
-    }).then(function (value) {
-      $scope.groups = value.data;
-    })
-  };
-  $scope.getGroups();
-  //Получение списка групп
-
-
-
-
-
-
-
-
-  //Получение всех срезов
-
-
-  $scope.toggleFirstRow = function (index) {
-    $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
-  };
-
-
-  $scope.toggleSecRow = function (index, col, rowEntity) {
-
-    var params = rowEntity[0].row.entity;
-    var groupCode = params.groupCode;
-    var statusCode = params.statusCode;
-    var year = params.year;
-
-
-    $http({
-      method: 'GET',
-      url: 'http://18.140.232.52:8081/api/v1/RU/slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + ''
-    }).then(function (value) {
-
-      $scope.showBtn = value.data;
-
-      $scope.gridOptions.data = value.data;
-
-      $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
-
-
-    }, function (reason) {
-      console.log(reason)
-    });
-
-
-  };
-
 
   $scope.loader = false;
   $scope.getAllSrez = function () {
     $scope.loader = true;
-    $scope.showGrid = false;
+    var dataSet = [];
+
     $http({
       method: 'GET',
-      url: 'http://18.140.232.52:8081/api/v1/RU/slices/parents?deleted=false'
-      // url: './json/allSrez.json'
+      url: 'https://Analytic-centre.tk:8081/api/v1/RU/slices/parents?deleted=false'
+      // url: './json/regions.json'
     }).then(function (response) {
       $scope.loader = false;
-      $scope.allSrez = response.data;
-      var data = response.data;
-      console.log(data);
-      angular.forEach(data, function (value, index) {
-        $scope.indexSrez = index;
-        $scope.valueSrez = value;
-      });
+      $scope.showGrid = response.data;
+      $scope.showGrid.forEach(function (data, index) {
+        dataSet.push(data);
+        dataSet[index].children.forEach(function (status) {
+          status.groupCode = dataSet[index].code;
+        });
 
-      $scope.showGrid = true;
-      $scope.gridOptions.data = response.data;
-    })
+
+        $scope.gridOptions.data = [];
+        writeoutNode(dataSet, 0, $scope.gridOptions.data);
+      });
+      console.log(dataSet);
+
+
+    });
+
+    // $scope.info = {};
   };
 
 
+  $scope.getAllSrez();
 
-  // $scope.getAllSrez();
-  //Получение всех срезов
+
+  $scope.toggleFirstRow = function (index, treeLevel, row) {
+    if (treeLevel === 0) {
+      $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
+    } else {
+
+      var groupCode = row.entity.groupCode,
+        statusCode = row.entity.code,
+        year = row.entity.statusYear;
+      // подгружает данные http
+      $http({
+        method: 'GET',
+        url: 'https://Analytic-centre.tk:8081/api/v1/RU/slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + ''
+      }).then(function (value) {
+        $scope.showGrid = value.data;
+      }, function (reason) {
+        console.log(reason)
+      });
+
+
+      $scope.gridApi.treeBase.on.rowExpanded($scope, function (row) {
+
+        if (row.entity.isDataLoaded === undefined && row.entity.$$treeLevel !== 0) {
+          $interval(function () {
+            var selectedRowHashkey = row.entity.$$hashKey,
+              selectedRowIndex = 0;
+
+            $scope.gridOptions.data.forEach(function (value, index) {
+              if (selectedRowHashkey === value.$$hashKey) {
+                selectedRowIndex = index + 1;
+              }
+            });
+
+            $scope.showGrid.forEach(function (statusData) {
+              $scope.dataByStatus = statusData;
+              $scope.gridOptions.data.splice(selectedRowIndex, 0, $scope.dataByStatus);
+            });
+
+            row.entity.isDataLoaded = true;
+          }, 2000, 1);
+        } else {
+          console.log('This row already has data')
+        }
+      });
+
+
+      $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
+
+
+    }
+
+
+  };
 
 
   $scope.user = [];
@@ -352,22 +274,12 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
     $http({
       method: 'POST',
-      url: 'http://18.140.232.52:8081/api/v1/ru/slices',
+      url: 'https://Analytic-centre.tk:8081/api/v1/ru/slices',
       data: dataObj
     }).then(function (response) {
 
       $scope.user = [];
-
-
-      var data = response.data;
       $scope.showGrid = response.data;
-
-      console.log(data);
-
-      angular.forEach(data, function (value) {
-        console.log(value);
-        $scope.gridOptions.data.unshift(value)
-      })
 
 
     }, function (reason) {
@@ -375,21 +287,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     })
 
   };
-
-
-  //Получить № статсреза
-  $scope.getStatSrez = function () {
-    $http({
-      method: 'GET',
-      url: 'http://18.140.232.52:8081/api/v1/ru/slices/max'
-    }).then(function (value) {
-      $scope.statsrez = value.data.value;
-      // console.log($scope.statsrez);
-    })
-  };
-
-  $scope.getStatSrez();
-  //Получить № статсреза
 
 
   //Дата начала отчета по умолчанию 1 января 2019
@@ -413,20 +310,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   var dateToString = dd + '.' + mm + '.' + yy;
 
 
-  //Получение списка групп
-  $scope.getGroups = function () {
-    $http({
-      method: 'GET',
-      url: 'http://18.140.232.52:8081/api/v1/ru/slices/groups'
-    }).then(function (value) {
-      $scope.groups = value.data;
-    })
-  };
-  $scope.getGroups();
-  //Получение списка групп
-
-
 }]);
+
 
 /**
  *  ModalControlCtrl
@@ -526,13 +411,30 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
 
 app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalInstance, value) {
 
+  $scope.srezNo = value.id;
+  $scope.period = value.period;
+  $scope.srezToNum = value.maxRecNum;
+  $scope.statusCode = value.statusCode;
+
   $scope.statuses = [
-    {'id': 0, 'name': 'Сформирован с ошибкой'},
-    {'id': 1, 'name': 'Удален'}
+    {'id': value.statusCode, 'name': value.statusName},
+    {'id': '03', 'name': 'На согласовании 2014'}
   ];
 
 
-  $scope.srezInfo = value;
+  $scope.getInfoByStatus = function () {
+    $scope.infoByStatus = [
+      {
+        'statusCode': '2',
+        'statusName': 'Предварительный',
+        'sliceByOrder': 'Капитанов Юрий',
+        'orderSrezTime': '19.11.2019 18:32',
+        'startTime': '19.11.2019 18:35',
+        'endTime': '19.11.2019 18:40'
+      }
+    ]
+  };
+  $scope.getInfoByStatus();
 
 
   $scope.cancel = function () {
@@ -588,23 +490,12 @@ app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', '$log', 'uiGri
 
   $scope.gridOptions.multiSelect = true;
 
-  var id = 0;
   var writeoutNode = function (childArray, currentLevel, dataArray) {
     childArray.forEach(function (childNode) {
-
       if (childNode.children.length > 0) {
         childNode.$$treeLevel = currentLevel;
-        id = childNode.categoryId;
-        if (childNode.categoryId == childNode.parentCategoryId) {
-          childNode.parentCategoryName = '';
-        }
       } else {
-        if ((id != childNode.parentCategoryId) || (childNode.categoryId == childNode.parentCategoryId)) {
-          if (childNode.categoryId == childNode.parentCategoryId) {
-            childNode.parentCategoryName = '';
-          }
-          childNode.$$treeLevel = currentLevel;
-        }
+        childNode.$$treeLevel = currentLevel;
       }
       dataArray.push(childNode);
       writeoutNode(childNode.children, currentLevel + 1, dataArray);
@@ -615,7 +506,7 @@ app.controller('RegionTreeCtrl', ['$scope', '$http', '$interval', '$log', 'uiGri
 
   $http({
     method: 'GET',
-    url: 'http://18.140.232.52:8081/api/v1/RU/slices/regsTree'
+    url: 'https://Analytic-centre.tk:8081/api/v1/RU/slices/regsTree'
   }).then(function (response) {
     dataSet.push(response.data);
 

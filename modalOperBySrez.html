@@ -21,15 +21,34 @@
     background: #A5C3E6;
   }
 
+
   h5 {
     line-height: 1.5em;
     font-weight: normal;
   }
+
+  .modal-body {
+    background: linear-gradient(#fff, #a8a8a8);
+  }
+
+  .statusTree {
+    border: 2px solid #a7a4a4;
+    border-radius: 1.5px;
+    height: auto;
+    margin: 15px 0;
+    min-height: 45vh;
+    background: #fff
+  }
+
+  /*uib-tab{
+    color: #000;
+    border: 1px solid #b1b6bb;
+  }*/
 </style>
 
 <div class="modal-header" style="text-align: left">
   <button type="button" class="close" data-dismiss="modal" ng-click="cancel()">×</button>
-  <h5><b>Операции со срезами</b></h5>
+  <h4><b>Операции со срезами</b></h4>
 </div>
 <div class="modal-body" ng-controller="modalOperBySrezCtrl">
   <div class="row">
@@ -37,34 +56,42 @@
       <div>
         <div class="col-md-5">
           <div
-            style="border: 1px solid; border-radius: 2px; min-height: 70vh; height: 100%; background: #f3f3f1; padding: 10px">
+            style="min-height: 70vh; height: 100%; padding: 10px">
 
-            <h5><b>№ среза</b> {{info.maxRecNum}}</h5>
-            <h5><b>Период:</b> {{info.period}}</h5>
-            <h5><b>Срез на №</b> 6231155 (stat)</h5>
+            <h5><b>№ среза:</b> {{srezNo}}</h5>
+            <h5><b>Период:</b> {{period}}</h5>
+            <h5><b>Срез на №</b> {{srezToNum}}</h5>
 
-            <div style="border: 2px solid #a7a4a4; border-radius: 2px; height: auto; margin: 15px 0; min-height: 45vh">
-              <ul ng-repeat="status in statuses" class="operBySrez">
-                <li ng-style="{'margin-left': $index*15 + 'px'}"><a href="#">- {{status.statusName}}</a></li>
-                <!--<li><a href="#">-  Сформирован с ошибкой</a></li>
-                <li><a href="#">-  Удален</a></li>-->
+            <div class="statusTree">
+              <ul class="operBySrez">
+                <!--<li class="active" ng-repeat="status in statuses" ng-style="{'margin-left': $index*15 + 'px'}">
+                  <a ng-click="getInfo()">- {{ status.name}}</a>
+                </li>-->
               </ul>
+              <uib-tabset  active="activePill" vertical="true" type="pills">
+                <uib-tab ng-repeat="status in statuses" ng-click="getInfoByStatus()" style="float: left; margin: 5px" index=$index
+                         heading="{{status.name.slice(0,-4)}}"></uib-tab>
+              </uib-tabset>
             </div>
 
             <button class="btn btn-default">Удалить</button>
           </div>
         </div>
         <div class="col-md-7">
-          <div style="border: 1px solid; border-radius: 2px; min-height: 70vh; height: 100%; background: #f3f3f1; padding: 10px">
-            <h5><b>Статус:</b> сформирован с ошибкой</h5>
-            <h5><b>Срез заказал:</b> ФИО</h5>
-            <h5><b>Время заказа среза:</b>  19.11.2019 18:32</h5>
-            <h5><b>Время начала формирования:</b>  	19.11.2019 18:35</h5>
-            <h5><b>Время окончания формирования: </b> 	19.11.2019 18:40</h5>
-            <h5><b>Сообщение об ошибке</b></h5>
+          <div ng-repeat="info in infoByStatus"
+               style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
+            <h5><b>Статус:</b> {{info.statusName}}</h5>
+            <h5><b>Срез заказал:</b> {{info.sliceByOrder}}</h5>
+            <h5><b>Время заказа среза:</b> {{info.orderSrezTime}}</h5>
+            <h5><b>Время начала формирования:</b> {{info.startTime}}</h5>
+            <h5><b>Время окончания формирования: </b> {{info.endTime}}</h5>
+            <div ng-if="statusCode == '5'">
+              <h5><b>Сообщение об ошибке</b></h5>
 
-            <div style="border: 1px solid #a7a4a4; padding: 10px">
-              <h5 style="color: red">В ходе формирования среза возникла ошибка код С023, отсутствует поле FE1R01P1</h5>
+              <div style="border: 1px solid #a7a4a4; padding: 10px">
+                <h5 style="color: red">В ходе формирования среза возникла ошибка код С023, отсутствует поле
+                  FE1R01P1</h5>
+              </div>
             </div>
           </div>
         </div>

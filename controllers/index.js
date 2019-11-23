@@ -91,19 +91,19 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       },
       {
         name: 'name',
-        width: '470',
+        width: '450',
         displayName: 'Группы',
         cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">" +
           "<img id='changeImg' " +
-          "ng-hide='row.treeLevel == 2' " +
+          "ng-hide='row.treeLevel == undefined' " +
           "ng-click='grid.appScope.toggleFirstRow(rowRenderIndex, row.treeLevel, row)' " +
           "style='width: 24px; margin: 0 10px' " +
           "src='./img/folder.png' " +
-          "alt=''>{{COL_FIELD CUSTOM_FILTERS}} - {{row.treeLevel}}</div>"
+          "alt=''>{{COL_FIELD CUSTOM_FILTERS}}</div>"
       },
       {
         name: 'id',
-        width: '*',
+        width: '130',
         displayName: 'Номер среза',
         cellTemplate: '<div class="text-center" ng-controller="ModalControlCtrl"><button style="margin: 5px 0" class="btn btn-primary" ng-hide="row.treeLevel==0 || row.treeLevel == 1" ng-click="grid.appScope.open(row.entity)">{{COL_FIELD CUSTOM_FILTERS}}</button></div>'
       },
@@ -127,10 +127,11 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       {
         name: 'region',
         displayName: 'По органу',
-        width: '*'
+        width: '130'
       },
       {
         name: 'button',
+        width: '*',
         displayName: 'Действие',
         cellTemplate: operBySrez
       }

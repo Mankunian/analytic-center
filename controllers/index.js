@@ -99,7 +99,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
           "ng-hide='row.treeLevel == undefined' " +
           "ng-click='grid.appScope.toggleFirstRow(rowRenderIndex, row.treeLevel, row)' " +
           "style='width: 24px; margin: 0 10px' " +
-          "src='./img/folder.png' " +
+          "src='./img/folder-cl.png' " +
           "alt=''>{{COL_FIELD CUSTOM_FILTERS}}</div>"
       },
       {
@@ -198,6 +198,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
 
   $scope.toggleFirstRow = function (index, treeLevel, row) {
+
+
     if (treeLevel === 0) {
       $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
     } else {
@@ -417,24 +419,27 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   $scope.statusCode = value.statusCode;
 
   $scope.statuses = [
-    {'id': value.statusCode, 'name': value.statusName},
-    {'id': '03', 'name': 'На согласовании 2014'}
+    {'id': value.statusCode, 'name': value.statusName}
   ];
 
 
-  $scope.getInfoByStatus = function () {
-    $scope.infoByStatus = [
-      {
-        'statusCode': '2',
-        'statusName': 'Предварительный',
-        'sliceByOrder': 'Капитанов Юрий',
-        'orderSrezTime': '19.11.2019 18:32',
-        'startTime': '19.11.2019 18:35',
-        'endTime': '19.11.2019 18:40'
-      }
-    ]
-  };
-  $scope.getInfoByStatus();
+  if ($scope.statusCode === '2') {
+    $scope.getInfoByStatus = function () {
+      $http({
+        method: 'GET',
+        url: './json/role.json'
+      }).then(function (response) {
+        console.log(response);
+        $scope.infoByStatus = response.data;
+
+      }, function (reason) {
+        console.log(reason)
+      });
+
+
+    };
+    $scope.getInfoByStatus();
+  }
 
 
   $scope.cancel = function () {

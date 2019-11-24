@@ -83,37 +83,36 @@
               </uib-tabset>
             </div>
 
-            <button class="btn btn-default">На солгасование</button>
-            <button class="btn btn-default">Удалить</button>
-            <button class="btn btn-default">Утвердить</button>
+            <button ng-if="userRole.depCode != 1" class="btn btn-default">На солгасование</button>
+            <button ng-if="userRole.depCode === 1 && statusCode === 5" class="btn btn-default">Удалить</button>
+            <button ng-if="userRole.depCode != 1" class="btn btn-default">Утвердить</button>
           </div>
         </div>
 
 
         <div ng-if="statusCode == '2'" class="col-md-7 noPadding">
-          <div ng-repeat="info in infoByStatus"
-               style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
-            <h5><b>Статус:</b> {{info.statusName}}</h5>
-            <h5><b>Срез заказал:</b> {{info.sliceByOrder}}</h5>
-            <h5><b>Время заказа среза:</b> {{info.orderSrezTime}}</h5>
-            <h5><b>Время начала формирования:</b> {{info.startTime}}</h5>
-            <h5><b>Время окончания формирования: </b> {{info.endTime}}</h5>
+          <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
+            <h5><b>Статус:</b> {{preliminaryData.statusName}}</h5>
+            <h5><b>Срез заказал:</b> {{preliminaryData.sliceByOrder}}</h5>
+            <h5><b>Время заказа среза:</b> {{preliminaryData.orderSrezTime}}</h5>
+            <h5><b>Время начала формирования:</b> {{preliminaryData.startTime}}</h5>
+            <h5><b>Время окончания формирования: </b> {{preliminaryData.endTime}}</h5>
           </div>
         </div>
 
 
         <div ng-if="statusCode == '5'" class="col-md-7 noPadding">
-          <div ng-repeat="info in infoByStatus"
-               style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
-            <h5><b>Статус:</b> {{info.statusName}}</h5>
-            <h5><b>Срез удалил:</b> {{info.sliceByOrder}}</h5>
-            <h5><b>Время удаления среза:</b> {{info.orderSrezTime}}</h5>
+          <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
+            <h5><b>Статус:</b> {{formedWithError.statusName}}</h5>
+            <h5><b>Срез заказал:</b> {{formedWithError.orderedBy}}</h5>
+            <h5><b>Время заказа среза:</b> {{formedWithError.orderDate}}</h5>
+            <h5><b>Время начала формирования:</b> {{formedWithError.startTime}}</h5>
+            <h5><b>Время окончания формирования: </b> {{formedWithError.endTime}}</h5>
 
             <h5><b>Сообщение об ошибке</b></h5>
 
             <div style="border: 1px solid #a7a4a4; padding: 10px">
-              <h5 style="color: red">В ходе формирования среза возникла ошибка код С023, отсутствует поле
-                FE1R01P1</h5>
+              <h5 style="color: red">{{formedWithError.errorMessage}}</h5>
             </div>
 
           </div>

@@ -189,11 +189,3 @@ div:hover {
 .ui-icon-minus:before {
     content: '' !important;
 }
-
-.expand {
-    content: url("../img/folder.png");
-}
-
-.collapse {
-    content: url("../img/folder-open.png");
-}

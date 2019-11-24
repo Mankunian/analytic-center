@@ -32,7 +32,7 @@
   }
 
   .statusTree {
-    border: 2px solid #a7a4a4;
+    border: 1px solid #a7a4a4;
     border-radius: 1.5px;
     height: auto;
     margin: 15px 0;
@@ -40,10 +40,18 @@
     background: #fff
   }
 
-  /*uib-tab{
-    color: #000;
-    border: 1px solid #b1b6bb;
-  }*/
+  .noPadding {
+    padding: 0;
+  }
+
+  .nav-pills > li > a {
+    color: black;
+    border: 1px solid #b5a8a8;
+  }
+
+  .nav {
+    padding-left: 10px;
+  }
 </style>
 
 <div class="modal-header" style="text-align: left">
@@ -54,7 +62,7 @@
   <div class="row">
     <div class="col-md-12">
       <div>
-        <div class="col-md-5">
+        <div class="col-md-5 noPadding">
           <div
             style="min-height: 70vh; height: 100%; padding: 10px">
 
@@ -68,16 +76,21 @@
                   <a ng-click="getInfo()">- {{ status.name}}</a>
                 </li>-->
               </ul>
-              <uib-tabset  active="activePill" vertical="true" type="pills">
-                <uib-tab ng-repeat="status in statuses" ng-click="getInfoByStatus()" style="float: left; margin: 5px" index=$index
+              <uib-tabset active="activePill" vertical="true" type="pills">
+                <uib-tab ng-style="{'margin-left': $index*15 + 'px'}" ng-repeat="status in statuses"
+                         ng-click="getInfoByStatus()" style="width: fit-content; margin: 5px" index=$index
                          heading="{{status.name.slice(0,-4)}}"></uib-tab>
               </uib-tabset>
             </div>
 
+            <button class="btn btn-default">На солгасование</button>
             <button class="btn btn-default">Удалить</button>
+            <button class="btn btn-default">Утвердить</button>
           </div>
         </div>
-        <div class="col-md-7">
+
+
+        <div ng-if="statusCode == '2'" class="col-md-7 noPadding">
           <div ng-repeat="info in infoByStatus"
                style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
             <h5><b>Статус:</b> {{info.statusName}}</h5>
@@ -85,16 +98,28 @@
             <h5><b>Время заказа среза:</b> {{info.orderSrezTime}}</h5>
             <h5><b>Время начала формирования:</b> {{info.startTime}}</h5>
             <h5><b>Время окончания формирования: </b> {{info.endTime}}</h5>
-            <div ng-if="statusCode == '5'">
-              <h5><b>Сообщение об ошибке</b></h5>
-
-              <div style="border: 1px solid #a7a4a4; padding: 10px">
-                <h5 style="color: red">В ходе формирования среза возникла ошибка код С023, отсутствует поле
-                  FE1R01P1</h5>
-              </div>
-            </div>
           </div>
         </div>
+
+
+        <div ng-if="statusCode == '5'" class="col-md-7 noPadding">
+          <div ng-repeat="info in infoByStatus"
+               style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
+            <h5><b>Статус:</b> {{info.statusName}}</h5>
+            <h5><b>Срез удалил:</b> {{info.sliceByOrder}}</h5>
+            <h5><b>Время удаления среза:</b> {{info.orderSrezTime}}</h5>
+
+            <h5><b>Сообщение об ошибке</b></h5>
+
+            <div style="border: 1px solid #a7a4a4; padding: 10px">
+              <h5 style="color: red">В ходе формирования среза возникла ошибка код С023, отсутствует поле
+                FE1R01P1</h5>
+            </div>
+
+          </div>
+        </div>
+
+
       </div>
     </div>
   </div>

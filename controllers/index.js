@@ -480,7 +480,6 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance,  
   // $scope.statSliceNum = value['maxRecNum'];
   $scope.statSlicePeriod = value.period;
 
-
   $http({
     method: 'GET',
     url: 'https://18.140.232.52:8081/api/v1/ru/slices/reports?sliceId=' + $scope.statSliceNum
@@ -625,23 +624,14 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance,  
   };
   /*=====  Sets correct $$treeLevel end ======*/
 
-  /*=====  Generate requested reports array ======*/
-  $scope.getRequestedReports = function(){
-    
-  };
-  /*=====  Generate requested reports array end ======*/
-
-  /*=====  get reqquested reports ======*/
-  $scope.requestedReportsFn = function() {
-    $reqReports = [];
+  /*=====  Generate and get requested reports ======*/
+  $scope.getRequestedReports = function() {
     $scope.requestedReports=[];
     $scope.requestedReportsQuery =[];
     var reportInfo,
         counter=0;
 
     if ($scope.selectedRegions != undefined && $scope.selectedDeps != undefined) {
-      // console.log('selected_regions',$scope.selectedRegions);
-      console.log('selected_deps', $scope.selectedDeps);
 
       $scope.selectedRegions.forEach( function(element, index) {
         var regionsTabIndex = index;
@@ -667,65 +657,29 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance,  
         });
       });
     }
-
-    // $scope.gridOptionsReports = {
-    //   showGridFooter: false,
-    //   enableColumnMenus: false,
-    //   showTreeExpandNoChildren: false,
-    //   enableHiding: false,
-    //   enableSorting: false,
-    //   enableFiltering: false,
-    //   enableRowSelection: true,
-    //   enableSelectAll: false,
-    //   rowHeight: 35,
-    //   multiSelect: true,
-    //   columnDefs : [
-    //     {name: 'requestedReport', width: '15%', displayName: 'Отчет'},
-    //   ]
-    // };
-
-    // $scope.gridOptionsReports.data = $scope.selectedRegions;
-
-
   };
-  /*=====  get reqquested reports end ======*/
-
-
-  // $scope.showRequestedReports = function() {
-  //   var counter=0;
-  //   $scope.requestedReports = [];
-
-  //   if ($rootScope.selectedDepartmentsArray != undefined && $rootScope.selectedRegionsArray != undefined) {
-  //     angular.forEach($rootScope.selectedRegionsArray, function (value, index) {
-  //       val1 = value.name;
-  //       angular.forEach($rootScope.selectedDepartmentsArray, function (value, index) {
-  //         $scope.requestedReports[counter] = val1 + " - " + value.name + " - " + $scope.currentReportTab.name;
-  //         counter++;
-  //       });
-  //     });
-  //   }
-  // };
-
+  /*=====  Generate and get requested reports end ======*/
+ 
+  /*=====  Get reports ======*/
   $scope.getReports = function () {
-    var postData = {
-      "sliceId": 542,
-      "reportCode": $scope.currentReportTab.code,
-      "orgCode": "00",
-      "regCode": 19
-    };
-
-    $http({
-      method: 'POST',
-      url: 'https://18.140.232.52:8081/api/v1/RU/slices/reports/createReport',
-      data: postData
-    }).then(function (response) {
-      var downloadFileId = response.data.value;
+    if ($scope.requestedReportsQuery != undefined && $scope.requestedReportsQuery.length > 0) {
       $scope.readyReports = [];
-      var reportDownloadUrl = "https://18.140.232.52:8081/api/v1/{lang}/slices/reports/"+ downloadFileId +"/download";
-      $scope.readyReports.push(reportDownloadUrl);
-    }, function (reason) {
-      console.log(reason);
-    });
+      $http({
+        method: 'POST',
+        url: 'https://18.140.232.52:8081/api/v1/RU/slices/reports/createReports',
+        data: $scope.requestedReportsQuery
+      }).then(function (response) {
+        var reportValues = response.data; 
+        reportValues.forEach( function(element, index) {
+          var reportDownloadUrl = "https://18.140.232.52:8081/api/v1/{lang}/slices/reports/"+ element.value +"/download";
+          $scope.readyReports.push(reportDownloadUrl);
+        });
+      }, function (reason) {
+        console.log(reason);
+      });
+
+    }
   };
+  /*=====  Get reports end ======*/
 
 });

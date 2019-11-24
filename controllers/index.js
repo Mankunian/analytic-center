@@ -478,7 +478,20 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance,  
 
   $scope.statSliceNum = 541;
   // $scope.statSliceNum = value['maxRecNum'];
-  $scope.statSlicePeriod = value['period'];
+  $scope.statSlicePeriod = value.period;
+
+
+  $http({
+    method: 'GET',
+    url: 'https://18.140.232.52:8081/api/v1/ru/slices/reports?sliceId=' + $scope.statSliceNum
+  }).then(function (response) {
+    $scope.reportTabs = response.data;
+  });
+
+  $scope.getReportInfo = function(index){
+    return $scope.reportTabs[index];
+    // console.log($scope.reportTabs[index]);
+  };
 
   /*=====  Regions grid - get data from backend ======*/
   $http({
@@ -550,7 +563,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance,  
       console.log(reason);
     });
     /*=====  Deps grid - get data from backend ======*/
-  })
+  });
   /*=====  Regions grid - get data from backend end ======*/
   
   /*=====  Set datasets and dynamically generate names for grid api ======*/
@@ -564,33 +577,33 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance,  
     gridApiRegionsName = 'gridApiRegions_'+index;
     $scope.depsGridApiOptions[index] = {gridApiDepDataset, gridApiDepsName};
     $scope.regionsGridApiOptions[index] = {gridRegionsDataset, gridApiRegionsName};
-  }
+  };
   /*=====  Set datasets and dynamically generate names for grid api end ======*/
 
   /*=====  Initialize onRegisterApi event handler function with dynamic data ======*/
   $scope.onRegisterApiInit = function() {
     $scope.selectedDeps = [];  
-    $scope.depsGridApiOptions.forEach(function (item) {
+    $scope.depsGridApiOptions.forEach(function (item, index) {
       item.gridApiDepDataset.onRegisterApi = function (gridApi) {
         item.gridApiDepsName = gridApi;
         gridApi.selection.on.rowSelectionChanged($scope, function (row) {
-          $scope.selectedDeps[$scope.currentReportTab.name] = item.gridApiDepsName.selection.getSelectedRows();
+          $scope.selectedDeps[index] = item.gridApiDepsName.selection.getSelectedRows();
           console.log('selectedDeps', $scope.selectedDeps);
-        });    
+        });
       };
-    })
+    });
 
     $scope.selectedRegions = [];
-    $scope.regionsGridApiOptions.forEach(function (item) {
+    $scope.regionsGridApiOptions.forEach(function (item,index) {
       item.gridRegionsDataset.onRegisterApi = function (gridApi) {
         item.gridApiRegionsName = gridApi;
         gridApi.selection.on.rowSelectionChanged($scope, function (row) {
-          $scope.selectedRegions[$scope.currentReportTab.name] = item.gridApiRegionsName.selection.getSelectedRows()
+          $scope.selectedRegions[index] = item.gridApiRegionsName.selection.getSelectedRows()
           console.log('selectedRegions',$scope.selectedRegions);
-        });    
+        });
       };
-    })
-  }
+    });
+  };
   /*=====  Initialize onRegisterApi event handler function with dynamic data end ======*/
   
   /*=====  Get and save current reports's name, code ======*/
@@ -599,9 +612,9 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance,  
       'name' : name,
       'code' : code,
     };
-  }
+  };
   /*=====  Get and save current reports's name, code end ======*/
-  
+
   /*=====  Sets correct $$treeLevel ======*/
   var writeoutNodeRegions = function (childArray, currentLevel, dataArray) {
     childArray.forEach(function (childNode) {
@@ -614,35 +627,64 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance,  
 
   /*=====  Generate requested reports array ======*/
   $scope.getRequestedReports = function(){
-    $reqReports = [];
-    $scope.selectedRegions.forEach(function(item) {
-      console.log(item);
-    })
-  }
+    
+  };
   /*=====  Generate requested reports array end ======*/
 
   /*=====  get reqquested reports ======*/
-  $scope.requestedReports = function() {
-    $scope.getRequestedReports();
-    $scope.isShow = true;
+  $scope.requestedReportsFn = function() {
+    $reqReports = [];
+    $scope.requestedReports=[];
+    $scope.requestedReportsQuery =[];
+    var reportInfo,
+        counter=0;
 
-    $scope.gridOptionsReports = {
-      showGridFooter: false,
-      enableColumnMenus: false,
-      showTreeExpandNoChildren: false,
-      enableHiding: false,
-      enableSorting: false,
-      enableFiltering: false,
-      enableRowSelection: true,
-      enableSelectAll: false,
-      rowHeight: 35,
-      multiSelect: true,
-      columnDefs : [
-        {name: 'requestedReport', width: '15%', displayName: 'Отчет'},
-      ]
-    };
+    if ($scope.selectedRegions != undefined && $scope.selectedDeps != undefined) {
+      // console.log('selected_regions',$scope.selectedRegions);
+      console.log('selected_deps', $scope.selectedDeps);
 
-    $scope.gridOptionsReports.data = $scope.selectedRegions;
+      $scope.selectedRegions.forEach( function(element, index) {
+        var regionsTabIndex = index;
+        reportInfo = $scope.getReportInfo(regionsTabIndex);
+
+        element.forEach( function(region, index) {
+          if($scope.selectedDeps[regionsTabIndex] != undefined) {
+            $scope.selectedDeps[regionsTabIndex].forEach( function(department, index) {
+
+              $scope.department = department;
+              $scope.requestedReports[counter] = reportInfo.name + " - " + region.name + "-" + $scope.department.name;
+              $scope.requestedReportsQuery[counter] = {
+                "sliceId": $scope.statSliceNum,
+                "reportCode": reportInfo.code,
+                "orgCode": $scope.department.code,
+                "regCode": region.code
+              };
+              counter++;
+            });
+          }
+          console.log($scope.requestedReports);
+          console.log($scope.requestedReportsQuery);
+        });
+      });
+    }
+
+    // $scope.gridOptionsReports = {
+    //   showGridFooter: false,
+    //   enableColumnMenus: false,
+    //   showTreeExpandNoChildren: false,
+    //   enableHiding: false,
+    //   enableSorting: false,
+    //   enableFiltering: false,
+    //   enableRowSelection: true,
+    //   enableSelectAll: false,
+    //   rowHeight: 35,
+    //   multiSelect: true,
+    //   columnDefs : [
+    //     {name: 'requestedReport', width: '15%', displayName: 'Отчет'},
+    //   ]
+    // };
+
+    // $scope.gridOptionsReports.data = $scope.selectedRegions;
 
 
   };
@@ -682,8 +724,8 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance,  
       var reportDownloadUrl = "https://18.140.232.52:8081/api/v1/{lang}/slices/reports/"+ downloadFileId +"/download";
       $scope.readyReports.push(reportDownloadUrl);
     }, function (reason) {
-      console.log(reason)
-    })
-  }
+      console.log(reason);
+    });
+  };
 
 });

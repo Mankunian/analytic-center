@@ -4,7 +4,7 @@
 </div>
 <div class="modal-body">
    <uib-tabset active="active">
-      <uib-tab  heading="Каталог" index="0"  select="requestedReports()">
+      <uib-tab  heading="Каталог" index="0"  select="requestedReportsFn()">
       	<div class="row">
       		<div class="col-md-6">
    		   	
@@ -38,11 +38,10 @@
       		<div class="col-md-12">
    	   		<div class="requested-reports">
    	   			<h4>Запрошенные отчеты</h4>
-                  <div id="gridRequestedReports" ui-grid="gridOptionsReports" ui-grid-selection class="grid"></div>
+                  <!-- <div id="gridRequestedReports" ui-grid="gridOptionsReports" ui-grid-selection class="grid"></div> -->
                   <div class="box">
-                    <label class="containerLabel" ng-repeat="group in requestedReports">
-                      <input ng-checked="vChecked" type="checkbox" checklist-model="user"
-                             checklist-value="group.code">{{group}}
+                    <label class="containerLabel" ng-repeat="item in requestedReports">
+                      <input ng-checked="vChecked" type="checkbox" checklist-model="user" checklist-value="item.code">{{item}}
                       <span class="checkmark"></span>
                     </label>
                   </div>

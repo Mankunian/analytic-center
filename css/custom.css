@@ -36,11 +36,41 @@ form.tab-form-demo .tab-pane {
 .getReportModal form .form-group {
     margin-bottom: 10px;
 }
-
+.requested-reports .box {
+	border: none;
+}
 .requested-reports {
     min-height: 100px;
 }
-
+.requested-reports ul {
+	list-style: none;
+}
+.requested-reports ul li {
+	float: none;
+}
+.ready-reports {
+	min-height: 100px;
+}
+.ready-reports ul {
+	list-style: square;
+	padding-left: 20px;
+}
+.ready-reports ul li {
+	float: none;
+}
+.ready-reports ul li a {
+	display: inline-block;
+	padding: 5px;
+  color: green;
+  text-decoration: underline;
+}
+.ready-reports ul li a:hover {
+	display: inline-block;
+  color: #000;
+	padding: 5px;
+  text-decoration: none;
+  background: none;
+}
 .request-status {
     min-height: 100px;
 }

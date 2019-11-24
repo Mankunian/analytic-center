@@ -4,7 +4,7 @@
 </div>
 <div class="modal-body">
    <uib-tabset active="active">
-      <uib-tab  heading="Каталог" index="0">
+      <uib-tab  heading="Каталог" index="0"  select="getRequestedReports()">
       	<div class="row">
       		<div class="col-md-6">
    		   	
@@ -36,37 +36,38 @@
       	</div>
       	<div class="row">
       		<div class="col-md-12">
-   	   		<div class="requested-reports" ng-controller="requestedReportsCtrl">
-   	   			<h5>Запрошенные отчеты</h5>
-               {{$root.test.id}}
-                  <!-- <div id="grid1" ui-grid="gridOptions" ui-grid-selection class="grid"></div> -->
-               
-      
+   	   		<div class="requested-reports">
+   	   			<h4>Запрошенные отчеты</h4>
+                  <!-- <div id="gridRequestedReports" ui-grid="gridOptionsReports" ui-grid-selection class="grid"></div> -->
+                  <div class="box">
+                    <label class="containerLabel" ng-repeat="item in requestedReports">
+                      <input ng-checked="vChecked" type="checkbox" checklist-model="user" checklist-value="item.code">{{item}}
+                      <span class="checkmark"></span>
+                    </label>
+                  </div>
    	   		</div>
       		</div>
       	</div>
       	<div class="row">
-      		<div class="request-status" ng-controller="requestStatusCtrl"></div>
-      	</div>
-      </uib-tab>
-      <uib-tab  heading="1-М">
-      	<div class="row">
-      		<div class="col-md-6" ng-controller="RegionTreeCtrl" >
-               <div id="grid1" ui-grid="gridOptions" ui-grid-selection ui-grid-cellnav  ui-grid-grouping class="grid"></div>
-      		</div>
-      		<div class="col-md-6" ng-controller="DepartmentCtrl">
-               
-      			<div id="grid1Selection" ui-grid="gridOptions" ui-grid-selection ui-grid-cellnav class="grid"></div>
-      		</div>
-      	</div>
-      </uib-tab>
-      <uib-tab ng-repeat="reportCode in reportCodes track by reportCode.code" heading="{{ reportCode.name }}" code="{{ reportCode.code }}"  select="getDepartmentsList(reportCode.code)">
-         <div class="row">
-            <div class="col-md-6" ng-controller="RegionTreeCtrl" >
-               <div id="grid1" ui-grid="gridOptions" ui-grid-selection ui-grid-cellnav  ui-grid-grouping class="grid"></div>
+            <div class="col-md-12">
+         		<div class="ready-reports">
+                  <h4>Отчеты</h4>
+                  <ul>
+                     <li ng-repeat="item in readyReports" >
+                        <a href="{{item}}" target="_blank">Скачать отчет</a>
+                     </li>
+                  </ul>                  
+               </div>
             </div>
-            <div class="col-md-6" ng-controller="DepartmentCtrl">
-               <div id="grid1Selection" ui-grid="gridOptions" ui-grid-selection class="grid"></div>
+      	</div>
+      </uib-tab>
+      <uib-tab ng-repeat="item in reports_n_deps track by $index" heading="{{ item.name }}" select="getCurrentReportTab(item.name, item.code)" deselect="">
+         <div class="row">
+            <div class="col-md-6">
+               <div id="gridRegions" ui-grid="item.gridRegionsDataset" ui-grid-selection ui-grid-grouping class="grid"></div>
+            </div>
+            <div class="col-md-6">
+               <div id="{{grid-$index}}" ui-grid="item.gridDataset" ui-grid-selection ui-grid-cellnav  ui-grid-grouping class="grid"></div>
             </div>
          </div>
    	 </uib-tab>
@@ -75,12 +76,3 @@
 <div class="modal-footer">
     <button class="btn btn-warning" ng-click="cancel()">Отмена</button>
 </div>
-
-<div class="ui-grid-cell-contents" title="TOOLTIP">
-   <div style="float:left;" class="ui-grid-tree-base-row-header-buttons" ng-class="{'ui-grid-tree-base-header': row.treeLevel > -1 }" ng-click="grid.appScope.toggleRow(row,evt)">
-      <i ng-class="{'ui-grid-icon-minus-squared': ( ( grid.options.showTreeExpandNoChildren && row.treeLevel > -1 ) || ( row.treeNode.children && row.treeNode.children.length > 0 ) ) && row.treeNode.state === 'expanded', 'ui-grid-icon-plus-squared': ( ( grid.options.showTreeExpandNoChildren && row.treeLevel > -1 ) || ( row.treeNode.children && row.treeNode.children.length > 0 ) ) && row.treeNode.state === 'collapsed'}" ng-style="{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}"></i> &nbsp;
-   </div>
-   
-</div>
-
-<div class="ui-grid-cell-contents ng-binding ng-scope" ng-style="{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}"></div>

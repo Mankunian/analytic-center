@@ -91,13 +91,13 @@
 
 
         <div ng-if="statusCode == '2'" class="col-md-7 noPadding">
-          <div ng-repeat="info in infoByStatus"
-               style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
-            <h5><b>Статус:</b> {{info.statusName}}</h5>
-            <h5><b>Срез заказал:</b> {{info.sliceByOrder}}</h5>
-            <h5><b>Время заказа среза:</b> {{info.orderSrezTime}}</h5>
-            <h5><b>Время начала формирования:</b> {{info.startTime}}</h5>
-            <h5><b>Время окончания формирования: </b> {{info.endTime}}</h5>
+          <div
+            style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
+            <h5><b>Статус:</b> {{preliminaryData.statusName}}</h5>
+            <h5><b>Срез заказал:</b> {{preliminaryData.sliceByOrder}}</h5>
+            <h5><b>Время заказа среза:</b> {{preliminaryData.orderSrezTime}}</h5>
+            <h5><b>Время начала формирования:</b> {{preliminaryData.startTime}}</h5>
+            <h5><b>Время окончания формирования: </b> {{preliminaryData.endTime}}</h5>
           </div>
         </div>
 

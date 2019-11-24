@@ -427,10 +427,10 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
     $scope.getInfoByStatus = function () {
       $http({
         method: 'GET',
-        url: './json/role.json'
+        url: './json/preliminary.json'
       }).then(function (response) {
         console.log(response);
-        $scope.infoByStatus = response.data;
+        $scope.preliminaryData = response.data;
 
       }, function (reason) {
         console.log(reason)
@@ -439,6 +439,17 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
 
     };
     $scope.getInfoByStatus();
+  } else if ($scope.statusCode === '5') {
+    $scope.getWithErrorData = function () {
+      $http({
+        method: 'GET',
+        url: './json/withError.json'
+      }).then(function (response) {
+        $scope.formedWithError = response.data;
+      }, function (reason) {
+
+      })
+    }
   }
 
 

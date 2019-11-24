@@ -18,6 +18,16 @@ app.config(['$qProvider', function ($qProvider) {
 app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGridTreeViewConstants', '$interval', function ($scope, $http, $rootScope, uiGridTreeBaseService, $interval) {
 
 
+  $scope.getRoles = function () {
+    $http({
+      method: 'GET',
+      url: './json/roles.json'
+    }).then(function (response) {
+      $scope.userRole = response.data;
+    })
+  };
+  $scope.getRoles();
+
   //Получение списка статусов
   $scope.getStatus = function () {
     $http({
@@ -199,7 +209,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
   $scope.toggleFirstRow = function (index, treeLevel, row) {
 
-  //Получение всех срезов
+    //Получение всех срезов
 
     if (treeLevel === 0) {
       $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
@@ -390,7 +400,7 @@ app.controller('langDropdownCtrl', function ($scope, $log) {
 /**
  *  ModalContentCtrl
  */
-app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance,  value, $rootScope) {
+app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, value, $rootScope) {
 
   $scope.statSliceNum = 541;
   // $scope.statSliceNum = value['maxRecNum'];
@@ -403,7 +413,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance,  
     $scope.reportTabs = response.data;
   });
 
-  $scope.getReportInfo = function(index){
+  $scope.getReportInfo = function (index) {
     return $scope.reportTabs[index];
     // console.log($scope.reportTabs[index]);
   };
@@ -429,9 +439,9 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance,  
       $scope.reports_n_deps = response.data;
 
       // Each function through reports with orgs
-      $scope.reports_n_deps.forEach( function(item, index) {
+      $scope.reports_n_deps.forEach(function (item, index) {
         $scope.gridOptionsDep = {
-          data : item.orgs,
+          data: item.orgs,
           showGridFooter: false,
           enableColumnMenus: false,
           showTreeExpandNoChildren: false,
@@ -442,10 +452,10 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance,  
           enableSelectAll: false,
           rowHeight: 35,
           multiSelect: true,
-          columnDefs : [
+          columnDefs: [
             {name: 'code', width: '15%', displayName: 'и/н'},
             {name: 'name', width: '70%', displayName: 'Ведомство'}
-          ]    
+          ]
         };
         // Запись отчетов и ведомств в правильную структуру для Grid 
         item.gridDataset = $scope.gridOptionsDep;
@@ -464,40 +474,50 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance,  
           treeIndent: 10,
           multiSelect: true,
           columnDefs: [
-            { name: 'code', width: '20%',displayName: 'и/н', cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>" },
-            { name: 'name', width: '40%',displayName: 'Регион/Орган' , cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>" }
+            {
+              name: 'code',
+              width: '20%',
+              displayName: 'и/н',
+              cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>"
+            },
+            {
+              name: 'name',
+              width: '40%',
+              displayName: 'Регион/Орган',
+              cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>"
+            }
           ]
         };
         // Запись отчетов и ведомств в правильную структуру для Grid 
         item.gridRegionsDataset = $scope.gridOptionsRegion;
         $scope.setGridApiOptions(index, item.gridRegionsDataset, item.gridDataset);
-      }); 
+      });
       // END Each function for reports with orgs
-      $scope.onRegisterApiInit(); 
+      $scope.onRegisterApiInit();
     }, function (reason) {
       console.log(reason);
     });
     /*=====  Deps grid - get data from backend ======*/
   });
   /*=====  Regions grid - get data from backend end ======*/
-  
+
   /*=====  Set datasets and dynamically generate names for grid api ======*/
   $scope.regionsGridApiOptions = [];
   $scope.depsGridApiOptions = [];
   $scope.setGridApiOptions = function (index, gridRegionsDataset, gridApiDepDataset) {
     var gridApiRegionsName,
-        gridApiDepsName;
-  
-    gridApiDepsName = 'gridApiDeps_'+index;
-    gridApiRegionsName = 'gridApiRegions_'+index;
+      gridApiDepsName;
+
+    gridApiDepsName = 'gridApiDeps_' + index;
+    gridApiRegionsName = 'gridApiRegions_' + index;
     $scope.depsGridApiOptions[index] = {gridApiDepDataset, gridApiDepsName};
     $scope.regionsGridApiOptions[index] = {gridRegionsDataset, gridApiRegionsName};
   };
   /*=====  Set datasets and dynamically generate names for grid api end ======*/
 
   /*=====  Initialize onRegisterApi event handler function with dynamic data ======*/
-  $scope.onRegisterApiInit = function() {
-    $scope.selectedDeps = [];  
+  $scope.onRegisterApiInit = function () {
+    $scope.selectedDeps = [];
     $scope.depsGridApiOptions.forEach(function (item, index) {
       item.gridApiDepDataset.onRegisterApi = function (gridApi) {
         item.gridApiDepsName = gridApi;
@@ -509,23 +529,23 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance,  
     });
 
     $scope.selectedRegions = [];
-    $scope.regionsGridApiOptions.forEach(function (item,index) {
+    $scope.regionsGridApiOptions.forEach(function (item, index) {
       item.gridRegionsDataset.onRegisterApi = function (gridApi) {
         item.gridApiRegionsName = gridApi;
         gridApi.selection.on.rowSelectionChanged($scope, function (row) {
           $scope.selectedRegions[index] = item.gridApiRegionsName.selection.getSelectedRows()
-          console.log('selectedRegions',$scope.selectedRegions);
+          console.log('selectedRegions', $scope.selectedRegions);
         });
       };
     });
   };
   /*=====  Initialize onRegisterApi event handler function with dynamic data end ======*/
-  
+
   /*=====  Get and save current reports's name, code ======*/
-  $scope.getCurrentReportTab = function(name, code) {
+  $scope.getCurrentReportTab = function (name, code) {
     $scope.currentReportTab = {
-      'name' : name,
-      'code' : code,
+      'name': name,
+      'code': code,
     };
   };
   /*=====  Get and save current reports's name, code end ======*/
@@ -541,21 +561,21 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance,  
   /*=====  Sets correct $$treeLevel end ======*/
 
   /*=====  Generate and get requested reports ======*/
-  $scope.getRequestedReports = function() {
-    $scope.requestedReports=[];
-    $scope.requestedReportsQuery =[];
+  $scope.getRequestedReports = function () {
+    $scope.requestedReports = [];
+    $scope.requestedReportsQuery = [];
     var reportInfo,
-        counter=0;
+      counter = 0;
 
     if ($scope.selectedRegions != undefined && $scope.selectedDeps != undefined) {
 
-      $scope.selectedRegions.forEach( function(element, index) {
+      $scope.selectedRegions.forEach(function (element, index) {
         var regionsTabIndex = index;
         reportInfo = $scope.getReportInfo(regionsTabIndex);
 
-        element.forEach( function(region, index) {
-          if($scope.selectedDeps[regionsTabIndex] != undefined) {
-            $scope.selectedDeps[regionsTabIndex].forEach( function(department, index) {
+        element.forEach(function (region, index) {
+          if ($scope.selectedDeps[regionsTabIndex] != undefined) {
+            $scope.selectedDeps[regionsTabIndex].forEach(function (department, index) {
 
               $scope.department = department;
               $scope.requestedReports[counter] = reportInfo.name + " - " + region.name + "-" + $scope.department.name;
@@ -575,7 +595,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance,  
     }
   };
   /*=====  Generate and get requested reports end ======*/
- 
+
   /*=====  Get reports ======*/
   $scope.getReports = function () {
     if ($scope.requestedReportsQuery != undefined && $scope.requestedReportsQuery.length > 0) {
@@ -585,9 +605,9 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance,  
         url: 'https://18.140.232.52:8081/api/v1/RU/slices/reports/createReports',
         data: $scope.requestedReportsQuery
       }).then(function (response) {
-        var reportValues = response.data; 
-        reportValues.forEach( function(element, index) {
-          var reportDownloadUrl = "https://18.140.232.52:8081/api/v1/{lang}/slices/reports/"+ element.value +"/download";
+        var reportValues = response.data;
+        reportValues.forEach(function (element, index) {
+          var reportDownloadUrl = "https://18.140.232.52:8081/api/v1/{lang}/slices/reports/" + element.value + "/download";
           $scope.readyReports.push(reportDownloadUrl);
         });
       }, function (reason) {
@@ -619,8 +639,8 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         method: 'GET',
         url: './json/preliminary.json'
       }).then(function (response) {
-        console.log(response);
         $scope.preliminaryData = response.data;
+
 
       }, function (reason) {
         console.log(reason)
@@ -639,7 +659,8 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
       }, function (reason) {
 
       })
-    }
+    };
+    $scope.getWithErrorData();
   }
 
 

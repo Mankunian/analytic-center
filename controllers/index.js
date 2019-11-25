@@ -180,7 +180,10 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
     $http({
       method: 'GET',
-      url: 'https://Analytic-centre.tk:8081/api/v1/RU/slices/parents?deleted=false'
+      url: 'https://Analytic-centre.tk:8081/api/v1/RU/slices/parents?deleted=false',
+      headers : {
+        sessionKey: 'admin'
+      }
       // url: './json/regions.json'
     }).then(function (response) {
       $scope.loader = false;
@@ -212,8 +215,21 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     //Получение всех срезов
 
     if (treeLevel === 0) {
+      var img = document.getElementById('changeImg').src;
+      console.log(img);
+
+      if (img.indexOf('folder-cl.png')!=-1){
+        document.getElementById('changeImg').src = 'img/folder-op.png'
+      } else {
+        document.getElementById('changeImg').src = 'img/folder-cl.png'
+      }
+
+
+      console.log(index);
+      console.log(row);
       $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
     } else {
+
 
       var groupCode = row.entity.groupCode,
         statusCode = row.entity.code,

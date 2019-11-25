@@ -422,7 +422,8 @@ app.controller('langDropdownCtrl', function ($scope, $log) {
 app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, value, $rootScope, $sce) {
 
   $scope.statSliceNum = 541;
-  // $scope.statSliceNum = value.maxRecNum;
+  // $scope.statSliceNum = value.id;
+  console.log(value);
   $scope.statSlicePeriod = value.period;
 
   $http({
@@ -434,7 +435,6 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
 
   $scope.getReportInfo = function (index) {
     return $scope.reportTabs[index];
-    // console.log($scope.reportTabs[index]);
   };
 
   /*=====  Regions grid - get data from backend ======*/

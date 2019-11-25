@@ -108,7 +108,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
           "<img id='{{row.entity.$$hashKey}}' " +
           "ng-hide='row.treeLevel == undefined' " +
           "ng-click='grid.appScope.toggleFirstRow(rowRenderIndex, row.treeLevel, row)' " +
-          "style='width: 24px; margin: 0 10px' " +
+          "style='width: 24px; margin: 0 10px; cursor: pointer' " +
           "src='./img/folder-cl.png' " +
           "alt=''>{{COL_FIELD CUSTOM_FILTERS}}</div>"
       },
@@ -181,7 +181,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     $http({
       method: 'GET',
       url: 'https://Analytic-centre.tk:8081/api/v1/RU/slices/parents?deleted=false',
-      headers : {
+      headers: {
         sessionKey: 'admin'
       }
       // url: './json/regions.json'
@@ -217,7 +217,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     if (treeLevel === 0) {
       var groupFolderImg = document.getElementById(row.entity.$$hashKey);
 
-      if (groupFolderImg.src.indexOf('folder-cl.png')!=-1){
+      if (groupFolderImg.src.indexOf('folder-cl.png') != -1) {
         groupFolderImg.src = 'img/folder-op.png'
       } else {
         groupFolderImg.src = 'img/folder-cl.png'
@@ -226,12 +226,11 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     } else {
 
       var statusFolderImg = document.getElementById(row.entity.$$hashKey);
-      if (statusFolderImg.src.indexOf('folder-cl.png')!=-1){
+      if (statusFolderImg.src.indexOf('folder-cl.png') != -1) {
         statusFolderImg.src = 'img/folder-op.png'
       } else {
         statusFolderImg.src = 'img/folder-cl.png'
       }
-
 
 
       var groupCode = row.entity.groupCode,

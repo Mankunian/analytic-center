@@ -604,6 +604,8 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
               counter++;
             });
           }
+          console.log($scope.requestedReports);
+          console.log($scope.requestedReportsQuery);
         });
       });
     }
@@ -636,6 +638,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
     }
   };
   /*=====  Get reports end ======*/
+
 });
 
 
@@ -661,7 +664,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
 
 
       }, function (reason) {
-        console.log(reason);
+        console.log(reason)
       });
 
 
@@ -676,7 +679,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         $scope.formedWithError = response.data;
       }, function (reason) {
 
-      });
+      })
     };
     $scope.getWithErrorData();
   }
@@ -684,6 +687,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
 
   $scope.cancel = function () {
     $uibModalInstance.dismiss();
-  };
+  }
 
 });

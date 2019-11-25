@@ -105,7 +105,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
         width: '450',
         displayName: 'Группы',
         cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">" +
-          "<img id='changeImg' " +
+          "<img id='{{row.entity.$$hashKey}}' " +
           "ng-hide='row.treeLevel == undefined' " +
           "ng-click='grid.appScope.toggleFirstRow(rowRenderIndex, row.treeLevel, row)' " +
           "style='width: 24px; margin: 0 10px' " +
@@ -180,7 +180,10 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
     $http({
       method: 'GET',
-      url: 'https://Analytic-centre.tk:8081/api/v1/RU/slices/parents?deleted=false'
+      url: 'https://Analytic-centre.tk:8081/api/v1/RU/slices/parents?deleted=false',
+      headers : {
+        sessionKey: 'admin'
+      }
       // url: './json/regions.json'
     }).then(function (response) {
       $scope.loader = false;
@@ -212,8 +215,24 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     //Получение всех срезов
 
     if (treeLevel === 0) {
+      var groupFolderImg = document.getElementById(row.entity.$$hashKey);
+
+      if (groupFolderImg.src.indexOf('folder-cl.png')!=-1){
+        groupFolderImg.src = 'img/folder-op.png'
+      } else {
+        groupFolderImg.src = 'img/folder-cl.png'
+      }
       $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
     } else {
+
+      var statusFolderImg = document.getElementById(row.entity.$$hashKey);
+      if (statusFolderImg.src.indexOf('folder-cl.png')!=-1){
+        statusFolderImg.src = 'img/folder-op.png'
+      } else {
+        statusFolderImg.src = 'img/folder-cl.png'
+      }
+
+
 
       var groupCode = row.entity.groupCode,
         statusCode = row.entity.code,

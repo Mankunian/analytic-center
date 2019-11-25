@@ -35,26 +35,24 @@
       		</div>
       	</div>
       	<div class="row">
-      		<div class="col-md-12">
+      		<div class="col-md-6">
    	   		<div class="requested-reports">
    	   			<h4>Запрошенные отчеты</h4>
-                  <!-- <div id="gridRequestedReports" ui-grid="gridOptionsReports" ui-grid-selection class="grid"></div> -->
                   <div class="box">
-                    <label class="containerLabel" ng-repeat="item in requestedReports">
-                      <input ng-checked="vChecked" type="checkbox" checklist-model="user" checklist-value="item.code">{{item}}
+                    <label class="containerLabel" ng-init="val=true" ng-repeat="item in requestedReports">
+                      <input ng-checked="{{val}}" type="checkbox" checklist-model="user" checklist-value="item.code">
+                      {{item}}
                       <span class="checkmark"></span>
                     </label>
                   </div>
    	   		</div>
       		</div>
-      	</div>
-      	<div class="row">
-            <div class="col-md-12">
+            <div class="col-md-6">
          		<div class="ready-reports">
                   <h4>Отчеты</h4>
                   <ul>
-                     <li ng-repeat="item in readyReports" >
-                        <a href="{{item}}" target="_blank">Скачать отчет</a>
+                     <li ng-repeat="item in readyReports">
+                        <div ng-bind-html="item"></div>
                      </li>
                   </ul>                  
                </div>

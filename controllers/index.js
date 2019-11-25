@@ -400,10 +400,10 @@ app.controller('langDropdownCtrl', function ($scope, $log) {
 /**
  *  ModalContentCtrl
  */
-app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, value, $rootScope) {
+app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, value, $rootScope, $sce) {
 
   $scope.statSliceNum = 541;
-  // $scope.statSliceNum = value['maxRecNum'];
+  // $scope.statSliceNum = value.maxRecNum;
   $scope.statSlicePeriod = value.period;
 
   $http({
@@ -422,7 +422,6 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
   $http({
     method: 'GET',
     url: 'https://18.140.232.52:8081/api/v1/RU/slices/regsTree'
-    // url: './json/regsTree.json'
   }).then(function (response) {
     var responseData = [];
     $scope.regionsDataset = [];
@@ -433,8 +432,8 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
     /*=====  Deps grid - get data from backend ======*/
     $http({
       method: 'GET',
-      // url: 'https://18.140.232.52:8081/api/v1/ru/slices/reports?sliceId=' + $scope.statSliceNum+'&withOrgs=true'
-      url: './json/test.json'
+      url: 'https://18.140.232.52:8081/api/v1/ru/slices/reports?sliceId=' + $scope.statSliceNum+'&withOrgs=true'
+      // url: './json/test.json'
     }).then(function (response) {
       $scope.reports_n_deps = response.data;
 
@@ -523,7 +522,6 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
         item.gridApiDepsName = gridApi;
         gridApi.selection.on.rowSelectionChanged($scope, function (row) {
           $scope.selectedDeps[index] = item.gridApiDepsName.selection.getSelectedRows();
-          console.log('selectedDeps', $scope.selectedDeps);
         });
       };
     });
@@ -534,7 +532,6 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
         item.gridApiRegionsName = gridApi;
         gridApi.selection.on.rowSelectionChanged($scope, function (row) {
           $scope.selectedRegions[index] = item.gridApiRegionsName.selection.getSelectedRows()
-          console.log('selectedRegions', $scope.selectedRegions);
         });
       };
     });
@@ -588,8 +585,6 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
               counter++;
             });
           }
-          console.log($scope.requestedReports);
-          console.log($scope.requestedReportsQuery);
         });
       });
     }
@@ -606,9 +601,14 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
         data: $scope.requestedReportsQuery
       }).then(function (response) {
         var reportValues = response.data;
+        var counter=0;
         reportValues.forEach(function (element, index) {
+
           var reportDownloadUrl = "https://18.140.232.52:8081/api/v1/{lang}/slices/reports/" + element.value + "/download";
-          $scope.readyReports.push(reportDownloadUrl);
+          var readyReportItem = "<a href=" + reportDownloadUrl + " target='_blank'>Скачать отчет ("+ $scope.requestedReports[counter] +")</a>";
+
+          $scope.readyReports.push( $sce.trustAsHtml(readyReportItem));
+          counter++;
         });
       }, function (reason) {
         console.log(reason);
@@ -617,7 +617,6 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
     }
   };
   /*=====  Get reports end ======*/
-
 });
 
 
@@ -643,7 +642,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
 
 
       }, function (reason) {
-        console.log(reason)
+        console.log(reason);
       });
 
 
@@ -658,7 +657,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         $scope.formedWithError = response.data;
       }, function (reason) {
 
-      })
+      });
     };
     $scope.getWithErrorData();
   }
@@ -666,6 +665,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
 
   $scope.cancel = function () {
     $uibModalInstance.dismiss();
-  }
+  };
 
 });

@@ -50,6 +50,8 @@ form.tab-form-demo .tab-pane {
 }
 .ready-reports {
 	min-height: 100px;
+	border-top: 1px solid #e5e5e5;
+	margin-top: 15px;
 }
 .ready-reports ul {
 	list-style: square;
@@ -81,7 +83,6 @@ form.tab-form-demo .tab-pane {
 
 .grid {
     width: 100%;
-    /*height: 400px;*/
 }
 
 .requested-reports {

@@ -24,7 +24,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       url: './json/roles.json'
     }).then(function (response) {
       $scope.userRole = response.data;
-    })
+    });
   };
   $scope.getRoles();
 
@@ -35,8 +35,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       url: 'https://Analytic-centre.tk:8081/api/v1/RU/slices/statuses'
     }).then(function (value) {
       $scope.status = value.data;
-      console.log($scope.status)
-    })
+      console.log($scope.status);
+    });
   };
   $scope.getStatus();
   //Получение списка статусов
@@ -49,7 +49,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       url: 'https://Analytic-centre.tk:8081/api/v1/ru/slices/groups'
     }).then(function (value) {
       $scope.groups = value.data;
-    })
+    });
   };
   $scope.getGroups();
   //Получение списка групп
@@ -62,7 +62,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       url: 'https://Analytic-centre.tk:8081/api/v1/ru/slices/max'
     }).then(function (value) {
       $scope.statsrez = value.data.value;
-    })
+    });
   };
 
   $scope.getStatSrez();
@@ -244,7 +244,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       }).then(function (value) {
         $scope.showGrid = value.data;
       }, function (reason) {
-        console.log(reason)
+        console.log(reason);
       });
 
 
@@ -269,7 +269,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
             row.entity.isDataLoaded = true;
           }, 2000, 1);
         } else {
-          console.log('This row already has data')
+          console.log('This row already has data');
         }
       });
 
@@ -315,8 +315,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
 
     }, function (reason) {
-      console.log(reason)
-    })
+      console.log(reason);
+    });
 
   };
 

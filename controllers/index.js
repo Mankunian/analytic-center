@@ -32,7 +32,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   $scope.getStatus = function () {
     $http({
       method: 'GET',
-      url: 'https://Analytic-centre.tk:8081/api/v1/RU/slices/statuses'
+      url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/statuses'
     }).then(function (value) {
       $scope.status = value.data;
       console.log($scope.status);
@@ -46,7 +46,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   $scope.getGroups = function () {
     $http({
       method: 'GET',
-      url: 'https://Analytic-centre.tk:8081/api/v1/ru/slices/groups'
+      url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/groups'
     }).then(function (value) {
       $scope.groups = value.data;
     });
@@ -59,7 +59,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   $scope.getStatSrez = function () {
     $http({
       method: 'GET',
-      url: 'https://Analytic-centre.tk:8081/api/v1/ru/slices/max'
+      url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/max'
     }).then(function (value) {
       $scope.statsrez = value.data.value;
     });
@@ -180,7 +180,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
     $http({
       method: 'GET',
-      url: 'https://Analytic-centre.tk:8081/api/v1/RU/slices/parents?deleted=false',
+      url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/parents?deleted=false',
       headers : {
         sessionKey: 'admin'
       }
@@ -240,7 +240,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       // подгружает данные http
       $http({
         method: 'GET',
-        url: 'https://Analytic-centre.tk:8081/api/v1/RU/slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + ''
+        url: 'https://analytic-centre.tk:8081/api/v1/RU/slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + ''
       }).then(function (value) {
         $scope.showGrid = value.data;
       }, function (reason) {
@@ -306,7 +306,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
     $http({
       method: 'POST',
-      url: 'https://Analytic-centre.tk:8081/api/v1/ru/slices',
+      url: 'https://analytic-centre.tk:8081/api/v1/ru/slices',
       data: dataObj
     }).then(function (response) {
 
@@ -427,7 +427,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
 
   $http({
     method: 'GET',
-    url: 'https://18.140.232.52:8081/api/v1/ru/slices/reports?sliceId=' + $scope.statSliceNum
+    url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/reports?sliceId=' + $scope.statSliceNum
   }).then(function (response) {
     $scope.reportTabs = response.data;
   });
@@ -440,7 +440,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
   /*=====  Regions grid - get data from backend ======*/
   $http({
     method: 'GET',
-    url: 'https://18.140.232.52:8081/api/v1/RU/slices/regsTree'
+    url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/regsTree'
   }).then(function (response) {
     var responseData = [];
     $scope.regionsDataset = [];
@@ -451,7 +451,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
     /*=====  Deps grid - get data from backend ======*/
     $http({
       method: 'GET',
-      url: 'https://18.140.232.52:8081/api/v1/ru/slices/reports?sliceId=' + $scope.statSliceNum+'&withOrgs=true'
+      url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/reports?sliceId=' + $scope.statSliceNum+'&withOrgs=true'
       // url: './json/test.json'
     }).then(function (response) {
       $scope.reports_n_deps = response.data;
@@ -616,14 +616,14 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
       $scope.readyReports = [];
       $http({
         method: 'POST',
-        url: 'https://18.140.232.52:8081/api/v1/RU/slices/reports/createReports',
+        url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/reports/createReports',
         data: $scope.requestedReportsQuery
       }).then(function (response) {
         var reportValues = response.data;
         var counter=0;
         reportValues.forEach(function (element, index) {
 
-          var reportDownloadUrl = "https://18.140.232.52:8081/api/v1/{lang}/slices/reports/" + element.value + "/download";
+          var reportDownloadUrl = "https://analytic-centre.tk:8081/api/v1/{lang}/slices/reports/" + element.value + "/download";
           var readyReportItem = "<a href=" + reportDownloadUrl + " target='_blank'>Скачать отчет ("+ $scope.requestedReports[counter] +")</a>";
 
           $scope.readyReports.push( $sce.trustAsHtml(readyReportItem));

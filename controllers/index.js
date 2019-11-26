@@ -38,7 +38,10 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   $scope.getStatus = function () {
     $http({
       method: 'GET',
-      url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/statuses'
+      url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/statuses',
+      headers : {
+        sessionKey: 'admin'
+      }
     }).then(function (value) {
       $scope.status = value.data;
       console.log($scope.status);
@@ -52,7 +55,10 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   $scope.getGroups = function () {
     $http({
       method: 'GET',
-      url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/groups'
+      url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/groups',
+      headers : {
+        sessionKey: 'admin'
+      }
     }).then(function (value) {
       $scope.groups = value.data;
     });
@@ -65,7 +71,10 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   $scope.getStatSrez = function () {
     $http({
       method: 'GET',
-      url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/max'
+      url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/max',
+      headers : {
+        sessionKey: 'admin'
+      }
     }).then(function (value) {
       $scope.statsrez = value.data.value;
     });
@@ -245,7 +254,10 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       // подгружает данные http
       $http({
         method: 'GET',
-        url: 'https://analytic-centre.tk:8081/api/v1/RU/slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + ''
+        url: 'https://analytic-centre.tk:8081/api/v1/RU/slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + '',
+        headers : {
+          sessionKey: 'admin'
+        }
       }).then(function (value) {
         $scope.showGrid = value.data;
       }, function (reason) {
@@ -310,6 +322,9 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     $http({
       method: 'POST',
       url: 'https://analytic-centre.tk:8081/api/v1/ru/slices',
+      headers : {
+        sessionKey: 'admin'
+      },
       data: dataObj
     }).then(function (response) {
 
@@ -427,7 +442,10 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
 
   $http({
     method: 'GET',
-    url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/reports?sliceId=' + $scope.statSliceNum
+    url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/reports?sliceId=' + $scope.statSliceNum,
+    headers : {
+      sessionKey: 'admin'
+    }
   }).then(function (response) {
     $scope.reportTabs = response.data;
   });
@@ -439,7 +457,10 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
   /*=====  Regions grid - get data from backend ======*/
   $http({
     method: 'GET',
-    url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/regsTree'
+    url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/regsTree',
+    headers : {
+      sessionKey: 'admin'
+    }
   }).then(function (response) {
     var responseData = [];
     $scope.regionsDataset = [];
@@ -450,7 +471,10 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
     /*=====  Deps grid - get data from backend ======*/
     $http({
       method: 'GET',
-      url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/reports?sliceId=' + $scope.statSliceNum+'&withOrgs=true'
+      url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/reports?sliceId=' + $scope.statSliceNum+'&withOrgs=true',
+      headers : {
+        sessionKey: 'admin'
+      }
       // url: './json/test.json'
     }).then(function (response) {
       $scope.reports_n_deps = response.data;
@@ -618,6 +642,9 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
       $http({
         method: 'POST',
         url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/reports/createReports',
+        headers : {
+          sessionKey: 'admin'
+        },
         data: $scope.requestedReportsQuery
       }).then(function (response) {
         var reportValues = response.data;
@@ -663,6 +690,13 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
     {'code': '2', 'name': 'Предварительный'}
   ];
   /*=====  Получение данных end ======*/
+
+  /*=====  Remove numbers from string ======*/
+    $scope.getOnlyLetters = function(string){
+      var stringWithoutNumbers = string.replace(/[0-9]/g, '');
+      return stringWithoutNumbers;
+    };
+  /*=====  Remove numbers from string end ======*/
 
   /*=====  Получаем код статуса после клика на статус 
   в дереве статусов и перезаписываем полученный из row.entity ======*/
@@ -710,7 +744,10 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   if ($scope.url != '') {
     $http({
       method: 'GET',
-      url: './json/'+$scope.url
+      url: './json/'+$scope.url,
+      headers : {
+        sessionKey: 'admin'
+      }
     }).then(function (response) {
       $scope.statusInfoData = response.data;
     }, function (reason) {
@@ -731,7 +768,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
     - Генерация пустой таблицы
     - Процесс согласования в таблице - изменение данных в таблице по мере согласования
     - Причина отказа - вводить/смотреть причину отказа 
-
   */
 
 

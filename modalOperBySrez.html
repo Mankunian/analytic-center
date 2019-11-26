@@ -77,7 +77,7 @@
                 </li>-->
               </ul>
               <uib-tabset active="activePill" vertical="true" type="pills">
-                <uib-tab ng-style="{'margin-left': $index*15 + 'px'}" ng-repeat="status in statuses" ng-click="getStatusCode(status.code)"style="width: fit-content; margin: 5px" index="$index" heading="{{status.name.slice(0,-4)}}"></uib-tab>
+                <uib-tab ng-style="{'margin-left': $index*15 + 'px'}" ng-repeat="status in statuses" ng-click="getStatusCode(status.code)"style="width: fit-content; margin: 5px" index="$index" heading="{{getOnlyLetters(status.name)}}"></uib-tab>
               </uib-tabset>
             </div>
 

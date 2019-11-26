@@ -375,6 +375,7 @@ app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope) {
       templateUrl: "modalContent.html",
       controller: "ModalContentCtrl",
       size: 'lg',
+      backdrop : 'static',
       windowTopClass: 'getReportModal',
       resolve: {
         value: function () {
@@ -401,7 +402,8 @@ app.controller('modalOperBySrezCtrl', function ($scope, $uibModal, $rootScope, $
     var modalInstance = $uibModal.open({
       templateUrl: 'modalOperBySrez.html',
       controller: 'modalContentOperBySrezCtrl',
-      size: 'lg',
+      size: 'xlg',
+      backdrop : 'static',
       windowTopClass: 'getReportModal',
       resolve: {
         value: function () {
@@ -686,6 +688,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   // $scope.statusCode = value.statusCode;
   $scope.statusCode = STATUS_CODES.IN_AGREEMENT;
   // Определяем роль пользователя
+
   $scope.userRole = USER_ROLES.ONE;
   $scope.statuses = [
     {'code': value.statusCode, 'name': value.statusName}
@@ -735,7 +738,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
       break;
     case STATUS_CODES.IN_AGREEMENT: // На согласовании
       url = 'inAgreement.json';
-      // if ($scope.statusInfoData.data != undefined) $scope.agreementData = $scope.statusInfoData.data;
       break;
     default:
       // statements_def
@@ -755,8 +757,8 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         $scope.statusInfoData = response.data;
       } else { // Если статус "НА СОГЛАСОВАНИИ"
         $scope.statusInfoData = response.data;
-        $scope.gridOptions1 = {
-          data: response.data.dataset,
+        $scope.gridOptionsAgreement = {
+          data: response.data.data,
           showGridFooter: false,
           enableColumnMenus: false,
           showTreeExpandNoChildren: false,
@@ -767,9 +769,9 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
           enableSelectAll: false,
           rowHeight: 35,
           columnDefs: [
-            {name: 'regionName', width: '35%', displayName: 'Терр.управление'},
-            {name: 'agreementDate', width: '15%', displayName: 'Дата-время согласования'},
-            {name: 'status', width: '15%', displayName: 'Статус'},
+            {name: 'regionName', width: '33%', displayName: 'Терр.управление'},
+            {name: 'agreementDate', width: '25%', displayName: 'Дата-время согласования'},
+            {name: 'status', width: '20%', displayName: 'Статус', cellTemplate: '<a href="#" class="deletedSliceLink agreeedSliceLink btn btn-danger" ng-hide="{{COL_FIELD CUSTOM_FILTERS}} == 1">{{COL_FIELD CUSTOM_FILTERS}}</a> <a href="#" class="agreeedSliceLink" ng-show="{{COL_FIELD CUSTOM_FILTERS}} == 1">{{COL_FIELD CUSTOM_FILTERS}}</a>'},
             {name: 'fullName', width: '35%', displayName: 'ФИО'}
           ]
         };
@@ -780,47 +782,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
     });
   }
 
-  /*=====  Генерация таблицы согласования из данных ======*/
-    // $scope.getInAgreementGrid = function(data){
-    //   $scope.inAgreementGridOptions = {
-    //     showGridFooter: false,
-    //     enableColumnMenus: false,
-    //     showTreeExpandNoChildren: false,
-    //     enableHiding: false,
-    //     enableSorting: false,
-    //     enableFiltering: false,
-    //     enableRowSelection: true,
-    //     enableSelectAll: false,
-    //     rowHeight: 35,
-    //     multiSelect: true,
-    //     columnDefs: [
-    //       {name: 'regionName', width: '35%', displayName: 'Терр.управление'},
-    //       {name: 'agreementDate', width: '15%', displayName: 'Дата-время согласования'},
-    //       {name: 'status', width: '15%', displayName: 'Статус'},
-    //       {name: 'fullName', width: '35%', displayName: 'ФИО'}
-    //     ]
-    //   };
-    //   $scope.inAgreementGridOptions.data = data;
-    //   console.log($scope.inAgreementGridOptions);
-    //   return $scope.inAgreementGridOptions;
-    // };
-  /*=====  Генерация таблицы согласования из данных end ======*/
-
-  /*Получаем дерево статусов в зависимости от Номера среза*/
-  // $scope.getStatusTree = function () {
-  //   $http({
-  //     method: 'GET',
-  //     url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/' + $scope.srezNo + '/history',
-  //     headers: {
-  //       sessionKey: 'admin'
-  //     }
-  //   }).then(function (response) {
-  //     console.log('statuses tree', response.data);
-  //   });
-  // };
-  /*Получаем дерево статусов в зависимости от Номера среза*/
-
-
   /*
     Реализовано:
     - Видимость кнопок в зависимости от роли пользователя
@@ -828,10 +789,10 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
       при открытии модалки и при клике на статус в дереве статусов
     - Переделал отображение данных, теперь данные собираются в один массив.
       HTML получат данные из одного массива
+    - Генерация пустой таблицы
 
     Осталось:
     - Правильная генерация дерева статусов
-    - Генерация пустой таблицы
     - Процесс согласования в таблице - изменение данных в таблице по мере согласования
     - Причина отказа - вводить/смотреть причину отказа
   */

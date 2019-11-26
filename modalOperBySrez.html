@@ -77,42 +77,57 @@
                 </li>-->
               </ul>
               <uib-tabset active="activePill" vertical="true" type="pills">
-                <uib-tab ng-style="{'margin-left': $index*15 + 'px'}" ng-repeat="status in statuses"
-                         ng-click="getInfoByStatus()" style="width: fit-content; margin: 5px" index=$index
-                         heading="{{status.name.slice(0,-4)}}"></uib-tab>
+                <uib-tab ng-style="{'margin-left': $index*15 + 'px'}" ng-repeat="status in statuses" ng-click="getStatusCode(status.code)"style="width: fit-content; margin: 5px" index="$index" heading="{{getOnlyLetters(status.name)}}"></uib-tab>
               </uib-tabset>
             </div>
 
-            <button class="btn btn-default">На солгасование</button>
-            <button class="btn btn-default">Удалить</button>
-            <button class="btn btn-default">Утвердить</button>
+            <div ng-if="userRole == USER_ROLES.ONE">
+              <button class="btn btn-default" ng-if="
+              statusCode == STATUS_CODES.PRELIMINARY">На согласование</button>
+
+              <button class="btn btn-default" ng-if="
+              statusCode == STATUS_CODES.FORMED_WITH_ERROR 
+              || statusCode == STATUS_CODES.PRELIMINARY 
+              || statusCode == STATUS_CODES.IN_AGREEMENT">Удалить</button>
+              
+              <button class="btn btn-default" ng-if="
+              statusCode == STATUS_CODES.APPROVED">Перевести в Предварительный</button>
+              
+              <button class="btn btn-default" ng-if="
+              statusCode == STATUS_CODES.PRELIMINARY
+              || statusCode == STATUS_CODES.IN_AGREEMENT">Утвердить</button>
+            </div>
+            <div ng-if="userRole == USER_ROLES.ZERO">
+              <button class="btn btn-default" ng-if="
+              statusCode == STATUS_CODES.IN_AGREEMENT">Согласовать</button>
+            </div>
           </div>
         </div>
 
 
-        <div ng-if="statusCode == '2'" class="col-md-7 noPadding">
+        <div ng-if="statusCode == STATUS_CODES.PRELIMINARY" class="col-md-7 noPadding">
           <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
-            <h5><b>Статус:</b> {{preliminaryData.statusName}}</h5>
-            <h5><b>Срез заказал:</b> {{preliminaryData.sliceByOrder}}</h5>
-            <h5><b>Время заказа среза:</b> {{preliminaryData.orderSrezTime}}</h5>
-            <h5><b>Время начала формирования:</b> {{preliminaryData.startTime}}</h5>
-            <h5><b>Время окончания формирования: </b> {{preliminaryData.endTime}}</h5>
+            <h5><b>Статус:</b> {{statusInfoData.statusName}}</h5>
+            <h5><b>Срез заказал:</b> {{statusInfoData.sliceByOrder}}</h5>
+            <h5><b>Время заказа среза:</b> {{statusInfoData.orderSrezTime}}</h5>
+            <h5><b>Время начала формирования:</b> {{statusInfoData.startTime}}</h5>
+            <h5><b>Время окончания формирования: </b> {{statusInfoData.endTime}}</h5>
           </div>
         </div>
 
-
-        <div ng-if="statusCode == '5'" class="col-md-7 noPadding">
+        
+        <div ng-if="statusCode == STATUS_CODES.FORMED_WITH_ERROR" class="col-md-7 noPadding">
           <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
-            <h5><b>Статус:</b> {{formedWithError.statusName}}</h5>
-            <h5><b>Срез заказал:</b> {{formedWithError.orderedBy}}</h5>
-            <h5><b>Время заказа среза:</b> {{formedWithError.orderDate}}</h5>
-            <h5><b>Время начала формирования:</b> {{formedWithError.startTime}}</h5>
-            <h5><b>Время окончания формирования: </b> {{formedWithError.endTime}}</h5>
+            <h5><b>Статус:</b> {{statusInfoData.statusName}}</h5>
+            <h5><b>Срез заказал:</b> {{statusInfoData.orderedBy}}</h5>
+            <h5><b>Время заказа среза:</b> {{statusInfoData.orderDate}}</h5>
+            <h5><b>Время начала формирования:</b> {{statusInfoData.startTime}}</h5>
+            <h5><b>Время окончания формирования: </b> {{statusInfoData.endTime}}</h5>
 
             <h5><b>Сообщение об ошибке</b></h5>
 
             <div style="border: 1px solid #a7a4a4; padding: 10px">
-              <h5 style="color: red">{{formedWithError.errorMessage}}</h5>
+              <h5 style="color: red">{{statusInfoData.errorMessage}}</h5>
             </div>
 
           </div>

@@ -18,7 +18,7 @@ app.constant('STATUS_CODES', {
   CANCELED_BY_USER: '4', // Отменен пользователем
   FORMED_WITH_ERROR: '5', // Сформирован с ошибкой
   WAITING_FOR_PROCESSING: '6', // В ожидании обработки
-  IN_AGREEMENT: '8' // На согласовании
+  IN_AGREEMENT: '7' // На согласовании
 }).constant('USER_ROLES', {
   ONE: '1',
   ZERO: '0'
@@ -800,10 +800,56 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
     }).then(function (response) {
       console.log('statuses tree', response.data);
       $scope.statuses = response.data;
+      $scope.statuses = [
+        {
+          "code": "7", "name": "На согласовании"
+        },
+        {
+          "code": "1", "name": "Окончательный"
+        }
+      ]
     });
   };
   /*Получаем дерево статусов в зависимости от Номера среза*/
 
+
+
+  $scope.statusAction = function (btnNum) {
+
+    var btnActionUrl = '';
+    switch (btnNum) {
+      case btnNum = BUTTONS.PRELIMINARY:
+        btnActionUrl = 'preliminary';
+        break;
+      case btnNum = BUTTONS.DELETE:
+        btnActionUrl = 'delete';
+        break;
+      case btnNum = BUTTONS.SEND_TO_PRELIMINARY:
+        btnActionUrl = 'send';
+        break;
+      case btnNum = BUTTONS.APPROVE:
+        btnActionUrl = 'approve';
+        break;
+      case btnNum = BUTTONS.TO_AGREEMENT:
+        btnActionUrl = 'confirm';
+        break;
+    }
+
+
+    $http({
+      method: 'PUT',
+      url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/' + $scope.srezNo + '/' + btnActionUrl,
+      headers: {
+        sessionKey: 'admin'
+      }
+    }).then(function (response) {
+      console.log(response);
+      $scope.getStatusTree();
+    }, function (reason) {
+      console.log(reason)
+    })
+
+  };
 
   /*
     Реализовано:

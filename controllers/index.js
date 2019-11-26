@@ -136,7 +136,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       {
         name: 'id',
         width: '130',
-        sort: 'desc',
+        sort: 'asc',
         displayName: 'Номер среза',
         cellTemplate: '<div class="text-center" ng-controller="ModalControlCtrl"><button style="margin: 5px 0" class="btn btn-primary" ng-hide="row.treeLevel==0 || row.treeLevel == 1" ng-click="grid.appScope.open(row.entity)">{{COL_FIELD CUSTOM_FILTERS}}</button></div>'
       },
@@ -383,6 +383,7 @@ app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope) {
       templateUrl: "modalContent.html",
       controller: "ModalContentCtrl",
       size: 'lg',
+      backdrop : 'static',
       windowTopClass: 'getReportModal',
       resolve: {
         value: function () {
@@ -409,7 +410,8 @@ app.controller('modalOperBySrezCtrl', function ($scope, $uibModal, $rootScope, $
     var modalInstance = $uibModal.open({
       templateUrl: 'modalOperBySrez.html',
       controller: 'modalContentOperBySrezCtrl',
-      size: 'lg',
+      size: 'xlg',
+      backdrop : 'static',
       windowTopClass: 'getReportModal',
       resolve: {
         value: function () {
@@ -687,12 +689,9 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   /*=====  Получение данных ======*/
   $scope.statusInfoData = [];
   var url = '';
-  var method = '';
   $scope.srezNo = value.id;
   $scope.period = value.period;
   $scope.srezToNum = value.maxRecNum;
-
-
   // Получаем код статуса со строки - row.entity
   $scope.statusCode = value.statusCode;
   // $scope.statusCode = STATUS_CODES.FORMED_WITH_ERROR;
@@ -761,12 +760,12 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         sessionKey: 'admin'
       }
     }).then(function (response) {
-      if ($scope.statusCode !== STATUS_CODES.IN_AGREEMENT) {
+      if ($scope.statusCode != STATUS_CODES.IN_AGREEMENT) {
         $scope.statusInfoData = response.data;
       } else { // Если статус "НА СОГЛАСОВАНИИ"
         $scope.statusInfoData = response.data;
-        $scope.gridOptions1 = {
-          data: response.data.dataset,
+        $scope.gridOptionsAgreement = {
+          data: response.data.data,
           showGridFooter: false,
           enableColumnMenus: false,
           showTreeExpandNoChildren: false,
@@ -777,9 +776,9 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
           enableSelectAll: false,
           rowHeight: 35,
           columnDefs: [
-            {name: 'regionName', width: '35%', displayName: 'Терр.управление'},
-            {name: 'agreementDate', width: '15%', displayName: 'Дата-время согласования'},
-            {name: 'status', width: '15%', displayName: 'Статус'},
+            {name: 'regionName', width: '33%', displayName: 'Терр.управление'},
+            {name: 'agreementDate', width: '25%', displayName: 'Дата-время согласования'},
+            {name: 'status', width: '20%', displayName: 'Статус', cellTemplate: '<a href="#" class="deletedSliceLink agreeedSliceLink btn btn-danger" ng-hide="{{COL_FIELD CUSTOM_FILTERS}} == 1">{{COL_FIELD CUSTOM_FILTERS}}</a> <a href="#" class="agreeedSliceLink" ng-show="{{COL_FIELD CUSTOM_FILTERS}} == 1">{{COL_FIELD CUSTOM_FILTERS}}</a>'},
             {name: 'fullName', width: '35%', displayName: 'ФИО'}
           ]
         };
@@ -813,6 +812,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
       при открытии модалки и при клике на статус в дереве статусов
     - Переделал отображение данных, теперь данные собираются в один массив.
       HTML получат данные из одного массива
+    - Генерация пустой таблицы
 
     Осталось:
     - Правильная генерация дерева статусов
@@ -820,44 +820,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
     - Процесс согласования в таблице - изменение данных в таблице по мере согласования
     - Причина отказа - вводить/смотреть причину отказа
   */
-
-
-  $scope.statusAction = function (btnNum) {
-
-    var btnActionUrl = '';
-    switch (btnNum) {
-      case btnNum = BUTTONS.PRELIMINARY:
-        btnActionUrl = 'preliminary';
-        break;
-      case btnNum = BUTTONS.DELETE:
-        btnActionUrl = 'delete';
-        break;
-      case btnNum = BUTTONS.SEND_TO_PRELIMINARY:
-        btnActionUrl = 'send';
-        break;
-      case btnNum = BUTTONS.APPROVE:
-        btnActionUrl = 'approve';
-        break;
-      case btnNum = BUTTONS.TO_AGREEMENT:
-        btnActionUrl = 'confirm';
-        break;
-    }
-
-
-    $http({
-      method: 'PUT',
-      url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/' + $scope.srezNo + '/' + btnActionUrl,
-      headers: {
-        sessionKey: 'admin'
-      }
-    }).then(function (response) {
-      console.log(response);
-      $scope.getStatusTree();
-    }, function (reason) {
-      console.log(reason)
-    })
-
-  };
 
 
   $scope.cancel = function () {

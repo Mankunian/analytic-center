@@ -220,3 +220,36 @@ div:hover {
 .ui-icon-minus:before {
     content: '' !important;
 }
+.modal-xlg {
+  width: 1050px;
+}
+.agreeedSliceLink {
+    height: 35px;
+    justify-content: center;
+    padding: 5px;
+    text-align: center;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    color: #003F59;
+    text-decoration: none;
+    cursor: default;
+}
+.agreeedSliceLink:hover {
+    text-decoration: none;
+}
+.deletedSliceLink {
+    color: #fff;
+    padding: 0 10px;
+    height: auto;
+    margin-top: 5px;
+    display: inline-block;
+    display: block;
+    width: 80%;
+    margin: 5px auto 0 auto;
+}
+.deletedSliceLink:hover {
+    cursor: pointer;
+}

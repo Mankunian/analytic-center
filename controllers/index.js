@@ -687,8 +687,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   // Определяем роль пользователя
   $scope.userRole = USER_ROLES.ONE;
   $scope.statuses = [
-    {'code': value.statusCode, 'name': value.statusName},
-    {'code': '2', 'name': 'Предварительный'}
+    {'code': value.statusCode, 'name': value.statusName}
   ];
   /*=====  Получение данных end ======*/
 
@@ -709,32 +708,32 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
 
   /*=====  Сравниваем полученный код статуса и меняем URL HTTP запроса ======*/
   switch ($scope.statusCode) {
-    case STATUS_CODES.FORMED_WITH_ERROR:
+    case STATUS_CODES.FORMED_WITH_ERROR: // Сформирован с ошибкой
       url = 'withError.json';
       break;
-    case STATUS_CODES.PRELIMINARY:
+    case STATUS_CODES.PRELIMINARY: // Предварительный
       url = 'preliminary.json';
       break;
-    case STATUS_CODES.IN_PROCESSING:
+    case STATUS_CODES.DELETED: // Удален
+      url = 'deleted.json';
+      break;
+    case STATUS_CODES.IN_PROCESSING: // В обработке
       url = 'preliminary.json';
       break;
-    case STATUS_CODES.FINAL:
-      url = 'preliminary.json';
+    case STATUS_CODES.FINAL: // Окончательный
+      url = 'final.json';
       break;
-    case STATUS_CODES.DELETED:
-      url = 'preliminary.json';
+    case STATUS_CODES.CANCELED_BY_USER: // Отменен пользователем
+      url = 'canceledByUser.json';
       break;
-    case STATUS_CODES.CANCELED_BY_USER:
-      url = 'preliminary.json';
+    case STATUS_CODES.WAITING_FOR_PROCESSING: // В ожидании обработки
+      url = 'waitingForProcess.json';
       break;
-    case STATUS_CODES.WAITING_FOR_PROCESSING:
-      url = 'preliminary.json';
+    case STATUS_CODES.APPROVED: // Утвержден
+      url = 'approved.json';
       break;
-    case STATUS_CODES.APPROVED:
-      url = 'preliminary.json';
-      break;
-    case STATUS_CODES.IN_AGREEMENT:
-      url = 'preliminary.json';
+    case STATUS_CODES.IN_AGREEMENT: // На согласовании
+      url = 'inAgreement.json';
       break;
     default:
       // statements_def
@@ -742,22 +741,23 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   }
   /*=====  Сравниваем полученный код статуса и меняем URL HTTP запроса end ======*/
 
-  if ($scope.url != '') {
+  if (url !== '') {
     $http({
       method: 'GET',
-      url: './json/' + $scope.url,
+      url: './json/' + url,
       headers: {
         sessionKey: 'admin'
       }
     }).then(function (response) {
       $scope.statusInfoData = response.data;
+      console.log($scope.statusInfoData);
       $scope.getStatusTree();
     }, function (reason) {
       console.log(reason);
     });
   }
 
-
+  /*Получаем дерево статусов в зависимости от Номера среза*/
   $scope.getStatusTree = function () {
     $http({
       method: 'GET',
@@ -769,6 +769,9 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
       console.log(response.data)
     })
   };
+  $scope.getStatusTree();
+  /*Получаем дерево статусов в зависимости от Номера среза*/
+
 
   /*
     Реализовано:

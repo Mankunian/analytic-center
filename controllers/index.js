@@ -32,7 +32,10 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   $scope.getStatus = function () {
     $http({
       method: 'GET',
-      url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/statuses'
+      url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/statuses',
+      headers: {
+        sessionKey: 'admin'
+      }
     }).then(function (value) {
       $scope.status = value.data;
       console.log($scope.status);
@@ -46,7 +49,10 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   $scope.getGroups = function () {
     $http({
       method: 'GET',
-      url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/groups'
+      url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/groups',
+      headers: {
+        sessionKey: 'admin'
+      }
     }).then(function (value) {
       $scope.groups = value.data;
     });
@@ -59,7 +65,10 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   $scope.getStatSrez = function () {
     $http({
       method: 'GET',
-      url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/max'
+      url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/max',
+      headers: {
+        sessionKey: 'admin'
+      }
     }).then(function (value) {
       $scope.statsrez = value.data.value;
     });
@@ -181,7 +190,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     $http({
       method: 'GET',
       url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/parents?deleted=false',
-      headers : {
+      headers: {
         sessionKey: 'admin'
       }
       // url: './json/regions.json'
@@ -217,7 +226,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     if (treeLevel === 0) {
       var groupFolderImg = document.getElementById(row.entity.$$hashKey);
 
-      if (groupFolderImg.src.indexOf('folder-cl.png')!=-1){
+      if (groupFolderImg.src.indexOf('folder-cl.png') != -1) {
         groupFolderImg.src = 'img/folder-op.png'
       } else {
         groupFolderImg.src = 'img/folder-cl.png'
@@ -226,12 +235,11 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     } else {
 
       var statusFolderImg = document.getElementById(row.entity.$$hashKey);
-      if (statusFolderImg.src.indexOf('folder-cl.png')!=-1){
+      if (statusFolderImg.src.indexOf('folder-cl.png') != -1) {
         statusFolderImg.src = 'img/folder-op.png'
       } else {
         statusFolderImg.src = 'img/folder-cl.png'
       }
-
 
 
       var groupCode = row.entity.groupCode,
@@ -240,7 +248,10 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       // подгружает данные http
       $http({
         method: 'GET',
-        url: 'https://analytic-centre.tk:8081/api/v1/RU/slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + ''
+        url: 'https://analytic-centre.tk:8081/api/v1/RU/slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + '',
+        headers: {
+          sessionKey: 'admin'
+        }
       }).then(function (value) {
         $scope.showGrid = value.data;
       }, function (reason) {
@@ -307,7 +318,10 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     $http({
       method: 'POST',
       url: 'https://analytic-centre.tk:8081/api/v1/ru/slices',
-      data: dataObj
+      data: dataObj,
+      headers: {
+        sessionKey: 'admin'
+      }
     }).then(function (response) {
 
       $scope.user = [];
@@ -378,7 +392,7 @@ app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope) {
  */
 app.controller('modalOperBySrezCtrl', function ($scope, $uibModal, $rootScope) {
   $rootScope.openOperBySrez = function (rowEntity) {
-    console.log(rowEntity);
+
     $scope.dataSendByModal = rowEntity;
 
 
@@ -427,7 +441,10 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
 
   $http({
     method: 'GET',
-    url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/reports?sliceId=' + $scope.statSliceNum
+    url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/reports?sliceId=' + $scope.statSliceNum,
+    headers: {
+      sessionKey: 'admin'
+    }
   }).then(function (response) {
     $scope.reportTabs = response.data;
   });
@@ -440,7 +457,10 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
   /*=====  Regions grid - get data from backend ======*/
   $http({
     method: 'GET',
-    url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/regsTree'
+    url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/regsTree',
+    headers: {
+      sessionKey: 'admin'
+    }
   }).then(function (response) {
     var responseData = [];
     $scope.regionsDataset = [];
@@ -451,8 +471,10 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
     /*=====  Deps grid - get data from backend ======*/
     $http({
       method: 'GET',
-      url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/reports?sliceId=' + $scope.statSliceNum+'&withOrgs=true'
-      // url: './json/test.json'
+      url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/reports?sliceId=' + $scope.statSliceNum + '&withOrgs=true',
+      headers: {
+        sessionKey: 'admin'
+      }
     }).then(function (response) {
       $scope.reports_n_deps = response.data;
 
@@ -619,16 +641,19 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
       $http({
         method: 'POST',
         url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/reports/createReports',
-        data: $scope.requestedReportsQuery
+        data: $scope.requestedReportsQuery,
+        headers: {
+          sessionKey: 'admin'
+        }
       }).then(function (response) {
         var reportValues = response.data;
-        var counter=0;
+        var counter = 0;
         reportValues.forEach(function (element, index) {
 
           var reportDownloadUrl = "https://analytic-centre.tk:8081/api/v1/{lang}/slices/reports/" + element.value + "/download";
-          var readyReportItem = "<a href=" + reportDownloadUrl + " target='_blank'>Скачать отчет ("+ $scope.requestedReports[counter] +")</a>";
+          var readyReportItem = "<a href=" + reportDownloadUrl + " target='_blank'>Скачать отчет (" + $scope.requestedReports[counter] + ")</a>";
 
-          $scope.readyReports.push( $sce.trustAsHtml(readyReportItem));
+          $scope.readyReports.push($sce.trustAsHtml(readyReportItem));
           counter++;
         });
       }, function (reason) {
@@ -642,51 +667,14 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
 });
 
 
-app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalInstance, value) {
-
-  $scope.srezNo = value.id;
-  $scope.period = value.period;
-  $scope.srezToNum = value.maxRecNum;
-  $scope.statusCode = value.statusCode;
-
-  $scope.statuses = [
-    {'id': value.statusCode, 'name': value.statusName}
-  ];
+app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModal, $uibModalInstance, value) {
 
 
-  if ($scope.statusCode === '2') {
-    $scope.getInfoByStatus = function () {
-      $http({
-        method: 'GET',
-        url: './json/preliminary.json'
-      }).then(function (response) {
-        $scope.preliminaryData = response.data;
 
+    $scope.cancel = function () {
+      $uibModalInstance.dismiss();
+    }
 
-      }, function (reason) {
-        console.log(reason)
-      });
-
-
-    };
-    $scope.getInfoByStatus();
-  } else if ($scope.statusCode === '5') {
-    $scope.getWithErrorData = function () {
-      $http({
-        method: 'GET',
-        url: './json/withError.json'
-      }).then(function (response) {
-        $scope.formedWithError = response.data;
-      }, function (reason) {
-
-      })
-    };
-    $scope.getWithErrorData();
   }
-
-
-  $scope.cancel = function () {
-    $uibModalInstance.dismiss();
-  }
-
-});
+)
+;

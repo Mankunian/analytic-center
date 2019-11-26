@@ -72,20 +72,17 @@
 
             <div class="statusTree">
               <ul class="operBySrez">
-                <!--<li class="active" ng-repeat="status in statuses" ng-style="{'margin-left': $index*15 + 'px'}">
-                  <a ng-click="getInfo()">- {{ status.name}}</a>
-                </li>-->
               </ul>
               <uib-tabset active="activePill" vertical="true" type="pills">
                 <uib-tab ng-style="{'margin-left': $index*15 + 'px'}" ng-repeat="status in statuses"
-                         ng-click="getInfoByStatus()" style="width: fit-content; margin: 5px" index=$index
+                         ng-click="getInfoByStatusTree(status.id)" style="width: fit-content; margin: 5px" index=$index
                          heading="{{status.name.slice(0,-4)}}"></uib-tab>
               </uib-tabset>
             </div>
 
-            <button class="btn btn-default">На солгасование</button>
-            <button class="btn btn-default">Удалить</button>
-            <button class="btn btn-default">Утвердить</button>
+            <button ng-if="role.depCode != 1" class="btn btn-default">На солгасование</button>
+            <button ng-if="role.depCode == 1" class="btn btn-default" ng-click="deleteStatus()">Удалить</button>
+            <button ng-if="role.depCode != 1" class="btn btn-default">Утвердить</button>
           </div>
         </div>
 
@@ -119,12 +116,24 @@
         </div>
 
 
+        <div ng-if="statusCode == '3'" class="col-md-7 noPadding">
+          <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
+            <h5><b>Статус:</b> {{formedWithDeleted.statusName}}</h5>
+            <h5><b>Срез удалил:</b> {{formedWithDeleted.sliceDeleteBy}}</h5>
+            <h5><b>Время удаления среза:</b> {{formedWithDeleted.sliceDeleteTime}}</h5>
+
+          </div>
+        </div>
+
+
       </div>
     </div>
   </div>
 </div>
+
+
 <div class="modal-footer">
-  <button class="btn btn-warning" ng-click="cancel()">Отмена</button>
+  <button class="btn btn-danger" ng-click="cancel()">Отмена</button>
 </div>
 
 

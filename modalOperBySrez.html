@@ -77,34 +77,41 @@
                 </li>-->
               </ul>
               <uib-tabset active="activePill" vertical="true" type="pills">
-                <uib-tab ng-style="{'margin-left': $index*15 + 'px'}" ng-repeat="status in statuses" ng-click="getStatusCode(status.code)"style="width: fit-content; margin: 5px" index="$index" heading="{{getOnlyLetters(status.name)}}"></uib-tab>
+                <uib-tab ng-style="{'margin-left': $index*15 + 'px'}" ng-repeat="status in statuses"
+                         ng-click="getStatusCode(status.code)" style="width: fit-content; margin: 5px" index="$index"
+                         heading="{{getOnlyLetters(status.name)}}"></uib-tab>
               </uib-tabset>
             </div>
 
             <div ng-if="userRole == USER_ROLES.ONE">
               <button class="btn btn-default" ng-if="
-              statusCode == STATUS_CODES.PRELIMINARY">На согласование</button>
+              statusCode == STATUS_CODES.PRELIMINARY">На согласование
+              </button>
 
               <button class="btn btn-default" ng-if="
               statusCode == STATUS_CODES.FORMED_WITH_ERROR
               || statusCode == STATUS_CODES.PRELIMINARY
-              || statusCode == STATUS_CODES.IN_AGREEMENT">Удалить</button>
+              || statusCode == STATUS_CODES.IN_AGREEMENT">Удалить
+              </button>
 
               <button class="btn btn-default" ng-if="
-              statusCode == STATUS_CODES.APPROVED">Перевести в Предварительный</button>
+              statusCode == STATUS_CODES.APPROVED">Перевести в Предварительный
+              </button>
 
               <button class="btn btn-default" ng-if="
               statusCode == STATUS_CODES.PRELIMINARY
-              || statusCode == STATUS_CODES.IN_AGREEMENT">Утвердить</button>
+              || statusCode == STATUS_CODES.IN_AGREEMENT">Утвердить
+              </button>
             </div>
             <div ng-if="userRole == USER_ROLES.ZERO">
               <button class="btn btn-default" ng-if="
-              statusCode == STATUS_CODES.IN_AGREEMENT">Согласовать</button>
+              statusCode == STATUS_CODES.IN_AGREEMENT">Согласовать
+              </button>
             </div>
           </div>
         </div>
 
-
+        <!--Инфо по статусу Предварительный-->
         <div ng-if="statusCode == STATUS_CODES.PRELIMINARY" class="col-md-7 noPadding">
           <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
             <h5><b>Статус:</b> {{statusInfoData.statusName}}</h5>
@@ -114,8 +121,12 @@
             <h5><b>Время окончания формирования: </b> {{statusInfoData.endTime}}</h5>
           </div>
         </div>
+        <!--Инфо по статусу Предварительный-->
 
 
+
+
+        <!--Инфо по статусу Сформирован с ошибкой-->
         <div ng-if="statusCode == STATUS_CODES.FORMED_WITH_ERROR" class="col-md-7 noPadding">
           <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
             <h5><b>Статус:</b> {{statusInfoData.statusName}}</h5>
@@ -132,6 +143,34 @@
 
           </div>
         </div>
+        <!--Инфо по статусу Сформирован с ошибкой-->
+
+
+        <!--Инфо по статусу Удален-->
+        <div ng-if="statusCode == STATUS_CODES.DELETED" class="col-md-7 noPadding">
+          <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
+            <h5><b>Статус:</b> {{statusInfoData.statusName}}</h5>
+            <h5><b>Срез удалил:</b> {{statusInfoData.sliceDeleteBy}}</h5>
+            <h5><b>Время удаления среза:</b> {{statusInfoData.sliceDeleteTime}}</h5>
+          </div>
+        </div>
+
+        <!--Инфо по статусу Удален-->
+
+
+        <!--Инфо по статусу Утвержден-->
+        <div ng-if="statusCode == STATUS_CODES.APPROVED" class="col-md-7 noPadding">
+          <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
+            <h5><b>Статус:</b> {{statusInfoData.statusName}}</h5>
+            <h5><b>Срез утвердил:</b> {{statusInfoData.approvedBy}}</h5>
+            <h5><b>Время утверждения:</b> {{statusInfoData.approvedTime}}</h5>
+          </div>
+        </div>
+        <!--Инфо по статусу Утвержден-->
+
+
+
+
 
 
       </div>

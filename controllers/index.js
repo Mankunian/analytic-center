@@ -11,18 +11,18 @@ var app = angular.module('app', [
 ]);
 
 app.constant('STATUS_CODES', {
-  IN_PROCESSING          : '0', // В обработке
-  FINAL                  : '1', // Окончательный
-  PRELIMINARY            : '2', // Предварительный
-  DELETED                : '3', // Удален
-  CANCELED_BY_USER       : '4', // Отменен пользователем
-  FORMED_WITH_ERROR      : '5', // Сформирован с ошибкой
-  WAITING_FOR_PROCESSING : '6', // В ожидании обработки
-  APPROVED               : '7', // Утвержден
-  IN_AGREEMENT           : '8', // На согласовании
+  IN_PROCESSING: '0', // В обработке
+  FINAL: '1', // Окончательный
+  PRELIMINARY: '2', // Предварительный
+  DELETED: '3', // Удален
+  CANCELED_BY_USER: '4', // Отменен пользователем
+  FORMED_WITH_ERROR: '5', // Сформирован с ошибкой
+  WAITING_FOR_PROCESSING: '6', // В ожидании обработки
+  APPROVED: '7', // Утвержден
+  IN_AGREEMENT: '8', // На согласовании
 }).constant('USER_ROLES', {
-  ONE  : '1',
-  ZERO : '0',
+  ONE: '1',
+  ZERO: '0',
 }).run(function ($rootScope, STATUS_CODES, USER_ROLES) {
   $rootScope.STATUS_CODES = STATUS_CODES;
   $rootScope.USER_ROLES = USER_ROLES;
@@ -39,7 +39,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     $http({
       method: 'GET',
       url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/statuses',
-      headers : {
+      headers: {
         sessionKey: 'admin'
       }
     }).then(function (value) {
@@ -56,7 +56,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     $http({
       method: 'GET',
       url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/groups',
-      headers : {
+      headers: {
         sessionKey: 'admin'
       }
     }).then(function (value) {
@@ -72,7 +72,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     $http({
       method: 'GET',
       url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/max',
-      headers : {
+      headers: {
         sessionKey: 'admin'
       }
     }).then(function (value) {
@@ -195,7 +195,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     $http({
       method: 'GET',
       url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/parents?deleted=false',
-      headers : {
+      headers: {
         sessionKey: 'admin'
       }
       // url: './json/regions.json'
@@ -231,7 +231,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     if (treeLevel === 0) {
       var groupFolderImg = document.getElementById(row.entity.$$hashKey);
 
-      if (groupFolderImg.src.indexOf('folder-cl.png')!=-1){
+      if (groupFolderImg.src.indexOf('folder-cl.png') != -1) {
         groupFolderImg.src = 'img/folder-op.png'
       } else {
         groupFolderImg.src = 'img/folder-cl.png'
@@ -240,12 +240,11 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     } else {
 
       var statusFolderImg = document.getElementById(row.entity.$$hashKey);
-      if (statusFolderImg.src.indexOf('folder-cl.png')!=-1){
+      if (statusFolderImg.src.indexOf('folder-cl.png') != -1) {
         statusFolderImg.src = 'img/folder-op.png'
       } else {
         statusFolderImg.src = 'img/folder-cl.png'
       }
-
 
 
       var groupCode = row.entity.groupCode,
@@ -255,7 +254,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       $http({
         method: 'GET',
         url: 'https://analytic-centre.tk:8081/api/v1/RU/slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + '',
-        headers : {
+        headers: {
           sessionKey: 'admin'
         }
       }).then(function (value) {
@@ -295,6 +294,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
 
     }
+
+
   };
 
 
@@ -322,7 +323,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     $http({
       method: 'POST',
       url: 'https://analytic-centre.tk:8081/api/v1/ru/slices',
-      headers : {
+      headers: {
         sessionKey: 'admin'
       },
       data: dataObj
@@ -392,7 +393,7 @@ app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope) {
 /**
  *  ModalOperBySrezCtrl
  */
-app.controller('modalOperBySrezCtrl', function ($scope, $uibModal, $rootScope, $http,STATUS_CODES) {
+app.controller('modalOperBySrezCtrl', function ($scope, $uibModal, $rootScope, $http, STATUS_CODES) {
 
   $rootScope.openOperBySrez = function (rowEntity) {
     $scope.dataSendByModal = rowEntity;
@@ -443,7 +444,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
   $http({
     method: 'GET',
     url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/reports?sliceId=' + $scope.statSliceNum,
-    headers : {
+    headers: {
       sessionKey: 'admin'
     }
   }).then(function (response) {
@@ -458,7 +459,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
   $http({
     method: 'GET',
     url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/regsTree',
-    headers : {
+    headers: {
       sessionKey: 'admin'
     }
   }).then(function (response) {
@@ -471,8 +472,8 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
     /*=====  Deps grid - get data from backend ======*/
     $http({
       method: 'GET',
-      url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/reports?sliceId=' + $scope.statSliceNum+'&withOrgs=true',
-      headers : {
+      url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/reports?sliceId=' + $scope.statSliceNum + '&withOrgs=true',
+      headers: {
         sessionKey: 'admin'
       }
       // url: './json/test.json'
@@ -642,19 +643,19 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
       $http({
         method: 'POST',
         url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/reports/createReports',
-        headers : {
+        headers: {
           sessionKey: 'admin'
         },
         data: $scope.requestedReportsQuery
       }).then(function (response) {
         var reportValues = response.data;
-        var counter=0;
+        var counter = 0;
         reportValues.forEach(function (element, index) {
 
           var reportDownloadUrl = "https://analytic-centre.tk:8081/api/v1/{lang}/slices/reports/" + element.value + "/download";
-          var readyReportItem = "<a href=" + reportDownloadUrl + " target='_blank'>Скачать отчет ("+ $scope.requestedReports[counter] +")</a>";
+          var readyReportItem = "<a href=" + reportDownloadUrl + " target='_blank'>Скачать отчет (" + $scope.requestedReports[counter] + ")</a>";
 
-          $scope.readyReports.push( $sce.trustAsHtml(readyReportItem));
+          $scope.readyReports.push($sce.trustAsHtml(readyReportItem));
           counter++;
         });
       }, function (reason) {
@@ -666,9 +667,9 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
   /*=====  Get reports end ======*/
 
   /*=====  Close modal ======*/
-    $scope.cancel = function () {
-      $uibModalInstance.dismiss();
-    };
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss();
+  };
   /*=====  Close modal end ======*/
 
 });
@@ -677,14 +678,14 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
 app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalInstance, value, STATUS_CODES, USER_ROLES) {
   /*=====  Получение данных ======*/
   $scope.statusInfo = [];
-  $scope.url        = '';
-  $scope.srezNo     = value.id;
-  $scope.period     = value.period;
-  $scope.srezToNum  = value.maxRecNum;
+  var url = '';
+  $scope.srezNo = value.id;
+  $scope.period = value.period;
+  $scope.srezToNum = value.maxRecNum;
   // Получаем код статуса со строки - row.entity
   $scope.statusCode = value.statusCode;
   // Определяем роль пользователя
-  $scope.userRole   = USER_ROLES.ONE;
+  $scope.userRole = USER_ROLES.ONE;
   $scope.statuses = [
     {'code': value.statusCode, 'name': value.statusName},
     {'code': '2', 'name': 'Предварительный'}
@@ -692,48 +693,48 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   /*=====  Получение данных end ======*/
 
   /*=====  Remove numbers from string ======*/
-    $scope.getOnlyLetters = function(string){
-      var stringWithoutNumbers = string.replace(/[0-9]/g, '');
-      return stringWithoutNumbers;
-    };
+  $scope.getOnlyLetters = function (string) {
+    var stringWithoutNumbers = string.replace(/[0-9]/g, '');
+    return stringWithoutNumbers;
+  };
   /*=====  Remove numbers from string end ======*/
 
-  /*=====  Получаем код статуса после клика на статус 
+  /*=====  Получаем код статуса после клика на статус
   в дереве статусов и перезаписываем полученный из row.entity ======*/
-  $scope.getStatusCode = function(selectedStatusCode) {
+  $scope.getStatusCode = function (selectedStatusCode) {
     $scope.statusCode = selectedStatusCode;
   };
-  /*=====  Получаем код статуса после клика на статус 
+  /*=====  Получаем код статуса после клика на статус
   в дереве статусов и перезаписываем полученный из row.entity ======*/
 
   /*=====  Сравниваем полученный код статуса и меняем URL HTTP запроса ======*/
   switch ($scope.statusCode) {
     case STATUS_CODES.FORMED_WITH_ERROR:
-      $scope.url = 'withError.json';
+      url = 'withError.json';
       break;
     case STATUS_CODES.PRELIMINARY:
-      $scope.url = 'preliminary.json';
+      url = 'preliminary.json';
       break;
     case STATUS_CODES.IN_PROCESSING:
-      $scope.url = 'preliminary.json';
+      url = 'preliminary.json';
       break;
     case STATUS_CODES.FINAL:
-      $scope.url = 'preliminary.json';
+      url = 'preliminary.json';
       break;
     case STATUS_CODES.DELETED:
-      $scope.url = 'preliminary.json';
+      url = 'preliminary.json';
       break;
     case STATUS_CODES.CANCELED_BY_USER:
-      $scope.url = 'preliminary.json';
+      url = 'preliminary.json';
       break;
     case STATUS_CODES.WAITING_FOR_PROCESSING:
-      $scope.url = 'preliminary.json';
+      url = 'preliminary.json';
       break;
     case STATUS_CODES.APPROVED:
-      $scope.url = 'preliminary.json';
+      url = 'preliminary.json';
       break;
     case STATUS_CODES.IN_AGREEMENT:
-      $scope.url = 'preliminary.json';
+      url = 'preliminary.json';
       break;
     default:
       // statements_def
@@ -744,21 +745,35 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   if ($scope.url != '') {
     $http({
       method: 'GET',
-      url: './json/'+$scope.url,
-      headers : {
+      url: './json/' + $scope.url,
+      headers: {
         sessionKey: 'admin'
       }
     }).then(function (response) {
       $scope.statusInfoData = response.data;
+      $scope.getStatusTree();
     }, function (reason) {
       console.log(reason);
     });
   }
 
+
+  $scope.getStatusTree = function () {
+    $http({
+      method: 'GET',
+      url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/' + $scope.srezNo + '/history',
+      headers: {
+        sessionKey: 'admin'
+      }
+    }).then(function (response) {
+      console.log(response.data)
+    })
+  };
+
   /*
     Реализовано:
     - Видимость кнопок в зависимости от роли пользователя
-    - Изменение данных справа в модалка в зависимости от статус кода 
+    - Изменение данных справа в модалка в зависимости от статус кода
       при открытии модалки и при клике на статус в дереве статусов
     - Переделал отображение данных, теперь данные собираются в один массив.
       HTML получат данные из одного массива
@@ -767,7 +782,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
     - Правильная генерация дерева статусов
     - Генерация пустой таблицы
     - Процесс согласования в таблице - изменение данных в таблице по мере согласования
-    - Причина отказа - вводить/смотреть причину отказа 
+    - Причина отказа - вводить/смотреть причину отказа
   */
 
 

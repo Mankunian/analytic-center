@@ -86,13 +86,13 @@
               statusCode == STATUS_CODES.PRELIMINARY">На согласование</button>
 
               <button class="btn btn-default" ng-if="
-              statusCode == STATUS_CODES.FORMED_WITH_ERROR 
-              || statusCode == STATUS_CODES.PRELIMINARY 
+              statusCode == STATUS_CODES.FORMED_WITH_ERROR
+              || statusCode == STATUS_CODES.PRELIMINARY
               || statusCode == STATUS_CODES.IN_AGREEMENT">Удалить</button>
-              
+
               <button class="btn btn-default" ng-if="
               statusCode == STATUS_CODES.APPROVED">Перевести в Предварительный</button>
-              
+
               <button class="btn btn-default" ng-if="
               statusCode == STATUS_CODES.PRELIMINARY
               || statusCode == STATUS_CODES.IN_AGREEMENT">Утвердить</button>
@@ -115,7 +115,7 @@
           </div>
         </div>
 
-        
+
         <div ng-if="statusCode == STATUS_CODES.FORMED_WITH_ERROR" class="col-md-7 noPadding">
           <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
             <h5><b>Статус:</b> {{statusInfoData.statusName}}</h5>

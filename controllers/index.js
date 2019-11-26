@@ -12,20 +12,27 @@ var app = angular.module('app', [
 
 app.constant('STATUS_CODES', {
   IN_PROCESSING: '0', // В обработке
-  FINAL: '1', // Окончательный
+  APPROVED: '1', // Утвержден
   PRELIMINARY: '2', // Предварительный
   DELETED: '3', // Удален
   CANCELED_BY_USER: '4', // Отменен пользователем
   FORMED_WITH_ERROR: '5', // Сформирован с ошибкой
   WAITING_FOR_PROCESSING: '6', // В ожидании обработки
-  APPROVED: '7', // Утвержден
-  IN_AGREEMENT: '8', // На согласовании
+  IN_AGREEMENT: '8' // На согласовании
 }).constant('USER_ROLES', {
   ONE: '1',
-  ZERO: '0',
-}).run(function ($rootScope, STATUS_CODES, USER_ROLES) {
+  ZERO: '0'
+}).constant('BUTTONS', {
+  TO_AGREEMENT: '0',
+  DELETE: '1',
+  SEND_TO_PRELIMINARY: '2',
+  PRELIMINARY: '3',
+  APPROVE: '4'
+
+}).run(function ($rootScope, STATUS_CODES, USER_ROLES, BUTTONS) {
   $rootScope.STATUS_CODES = STATUS_CODES;
   $rootScope.USER_ROLES = USER_ROLES;
+  $rootScope.BUTTONS = BUTTONS;
 });
 
 app.config(['$qProvider', function ($qProvider) {
@@ -129,6 +136,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       {
         name: 'id',
         width: '130',
+        sort: 'desc',
         displayName: 'Номер среза',
         cellTemplate: '<div class="text-center" ng-controller="ModalControlCtrl"><button style="margin: 5px 0" class="btn btn-primary" ng-hide="row.treeLevel==0 || row.treeLevel == 1" ng-click="grid.appScope.open(row.entity)">{{COL_FIELD CUSTOM_FILTERS}}</button></div>'
       },
@@ -216,8 +224,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
 
     });
-
-    // $scope.info = {};
   };
 
 
@@ -250,6 +256,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       var groupCode = row.entity.groupCode,
         statusCode = row.entity.code,
         year = row.entity.statusYear;
+
+
       // подгружает данные http
       $http({
         method: 'GET',
@@ -675,16 +683,21 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
 });
 
 
-app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalInstance, value, STATUS_CODES, USER_ROLES) {
+app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalInstance, value, STATUS_CODES, USER_ROLES, BUTTONS) {
   /*=====  Получение данных ======*/
   $scope.statusInfoData = [];
   var url = '';
+  var method = '';
   $scope.srezNo = value.id;
   $scope.period = value.period;
   $scope.srezToNum = value.maxRecNum;
+
+
   // Получаем код статуса со строки - row.entity
-  // $scope.statusCode = value.statusCode;
-  $scope.statusCode = STATUS_CODES.IN_AGREEMENT;
+  $scope.statusCode = value.statusCode;
+  // $scope.statusCode = STATUS_CODES.FORMED_WITH_ERROR;
+
+
   // Определяем роль пользователя
   $scope.userRole = USER_ROLES.ONE;
   $scope.statuses = [
@@ -721,9 +734,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
     case STATUS_CODES.IN_PROCESSING: // В обработке
       url = 'preliminary.json';
       break;
-    case STATUS_CODES.FINAL: // Окончательный
-      url = 'final.json';
-      break;
     case STATUS_CODES.CANCELED_BY_USER: // Отменен пользователем
       url = 'canceledByUser.json';
       break;
@@ -751,7 +761,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         sessionKey: 'admin'
       }
     }).then(function (response) {
-      if ($scope.statusCode != STATUS_CODES.IN_AGREEMENT) {
+      if ($scope.statusCode !== STATUS_CODES.IN_AGREEMENT) {
         $scope.statusInfoData = response.data;
       } else { // Если статус "НА СОГЛАСОВАНИИ"
         $scope.statusInfoData = response.data;
@@ -780,44 +790,19 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
     });
   }
 
-  /*=====  Генерация таблицы согласования из данных ======*/
-    // $scope.getInAgreementGrid = function(data){
-    //   $scope.inAgreementGridOptions = {
-    //     showGridFooter: false,
-    //     enableColumnMenus: false,
-    //     showTreeExpandNoChildren: false,
-    //     enableHiding: false,
-    //     enableSorting: false,
-    //     enableFiltering: false,
-    //     enableRowSelection: true,
-    //     enableSelectAll: false,
-    //     rowHeight: 35,
-    //     multiSelect: true,
-    //     columnDefs: [
-    //       {name: 'regionName', width: '35%', displayName: 'Терр.управление'},
-    //       {name: 'agreementDate', width: '15%', displayName: 'Дата-время согласования'},
-    //       {name: 'status', width: '15%', displayName: 'Статус'},
-    //       {name: 'fullName', width: '35%', displayName: 'ФИО'}
-    //     ]
-    //   };
-    //   $scope.inAgreementGridOptions.data = data;
-    //   console.log($scope.inAgreementGridOptions);
-    //   return $scope.inAgreementGridOptions;
-    // };
-  /*=====  Генерация таблицы согласования из данных end ======*/
-
   /*Получаем дерево статусов в зависимости от Номера среза*/
-  // $scope.getStatusTree = function () {
-  //   $http({
-  //     method: 'GET',
-  //     url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/' + $scope.srezNo + '/history',
-  //     headers: {
-  //       sessionKey: 'admin'
-  //     }
-  //   }).then(function (response) {
-  //     console.log('statuses tree', response.data);
-  //   });
-  // };
+  $scope.getStatusTree = function () {
+    $http({
+      method: 'GET',
+      url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/' + $scope.srezNo + '/history',
+      headers: {
+        sessionKey: 'admin'
+      }
+    }).then(function (response) {
+      console.log('statuses tree', response.data);
+      $scope.statuses = response.data;
+    });
+  };
   /*Получаем дерево статусов в зависимости от Номера среза*/
 
 
@@ -835,6 +820,44 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
     - Процесс согласования в таблице - изменение данных в таблице по мере согласования
     - Причина отказа - вводить/смотреть причину отказа
   */
+
+
+  $scope.statusAction = function (btnNum) {
+
+    var btnActionUrl = '';
+    switch (btnNum) {
+      case btnNum = BUTTONS.PRELIMINARY:
+        btnActionUrl = 'preliminary';
+        break;
+      case btnNum = BUTTONS.DELETE:
+        btnActionUrl = 'delete';
+        break;
+      case btnNum = BUTTONS.SEND_TO_PRELIMINARY:
+        btnActionUrl = 'send';
+        break;
+      case btnNum = BUTTONS.APPROVE:
+        btnActionUrl = 'approve';
+        break;
+      case btnNum = BUTTONS.TO_AGREEMENT:
+        btnActionUrl = 'confirm';
+        break;
+    }
+
+
+    $http({
+      method: 'PUT',
+      url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/' + $scope.srezNo + '/' + btnActionUrl,
+      headers: {
+        sessionKey: 'admin'
+      }
+    }).then(function (response) {
+      console.log(response);
+      $scope.getStatusTree();
+    }, function (reason) {
+      console.log(reason)
+    })
+
+  };
 
 
   $scope.cancel = function () {

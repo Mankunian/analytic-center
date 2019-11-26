@@ -84,27 +84,28 @@
             </div>
 
             <div ng-if="userRole == USER_ROLES.ONE">
-              <button class="btn btn-default" ng-if="
+              <button ng-click="statusAction(BUTTONS.TO_AGREEMENT)" class="btn btn-default" ng-if="
               statusCode == STATUS_CODES.PRELIMINARY">На согласование
               </button>
 
               <button class="btn btn-default" ng-if="
               statusCode == STATUS_CODES.FORMED_WITH_ERROR
               || statusCode == STATUS_CODES.PRELIMINARY
-              || statusCode == STATUS_CODES.IN_AGREEMENT">Удалить
+              || statusCode == STATUS_CODES.IN_AGREEMENT" ng-click="statusAction(BUTTONS.DELETE)">Удалить
               </button>
 
-              <button class="btn btn-default" ng-if="
+              <button ng-click="statusAction(BUTTONS.SEND_TO_PRELIMINARY)" class="btn btn-default" ng-if="
               statusCode == STATUS_CODES.APPROVED">Перевести в Предварительный
               </button>
 
-              <button class="btn btn-default" ng-if="
-              statusCode == STATUS_CODES.PRELIMINARY
-              || statusCode == STATUS_CODES.IN_AGREEMENT">Утвердить
+              <button ng-click="statusAction(BUTTONS.APPROVE)" class="btn btn-default" ng-if="
+              statusCode == STATUS_CODES.PRELIMINARY">Утвердить
               </button>
             </div>
+
+
             <div ng-if="userRole == USER_ROLES.ZERO">
-              <button class="btn btn-default" ng-if="
+              <button ng-click="statusAction(BUTTONS.TO_AGREEMENT) " class="btn btn-default" ng-if="
               statusCode == STATUS_CODES.IN_AGREEMENT">Согласовать
               </button>
             </div>
@@ -122,8 +123,6 @@
           </div>
         </div>
         <!--Инфо по статусу Предварительный-->
-
-
 
 
         <!--Инфо по статусу Сформирован с ошибкой-->

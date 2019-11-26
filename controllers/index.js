@@ -677,13 +677,14 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
 
 app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalInstance, value, STATUS_CODES, USER_ROLES) {
   /*=====  Получение данных ======*/
-  $scope.statusInfo = [];
+  $scope.statusInfoData = [];
   var url = '';
   $scope.srezNo = value.id;
   $scope.period = value.period;
   $scope.srezToNum = value.maxRecNum;
   // Получаем код статуса со строки - row.entity
-  $scope.statusCode = value.statusCode;
+  // $scope.statusCode = value.statusCode;
+  $scope.statusCode = STATUS_CODES.IN_AGREEMENT;
   // Определяем роль пользователя
   $scope.userRole = USER_ROLES.ONE;
   $scope.statuses = [
@@ -734,6 +735,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
       break;
     case STATUS_CODES.IN_AGREEMENT: // На согласовании
       url = 'inAgreement.json';
+      // if ($scope.statusInfoData.data != undefined) $scope.agreementData = $scope.statusInfoData.data;
       break;
     default:
       // statements_def
@@ -749,27 +751,73 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         sessionKey: 'admin'
       }
     }).then(function (response) {
-      $scope.statusInfoData = response.data;
-      console.log($scope.statusInfoData);
+      if ($scope.statusCode != STATUS_CODES.IN_AGREEMENT) {
+        $scope.statusInfoData = response.data;
+      } else { // Если статус "НА СОГЛАСОВАНИИ"
+        $scope.statusInfoData = response.data;
+        $scope.gridOptions1 = {
+          data: response.data.dataset,
+          showGridFooter: false,
+          enableColumnMenus: false,
+          showTreeExpandNoChildren: false,
+          enableHiding: false,
+          enableSorting: false,
+          enableFiltering: false,
+          enableRowSelection: true,
+          enableSelectAll: false,
+          rowHeight: 35,
+          columnDefs: [
+            {name: 'regionName', width: '35%', displayName: 'Терр.управление'},
+            {name: 'agreementDate', width: '15%', displayName: 'Дата-время согласования'},
+            {name: 'status', width: '15%', displayName: 'Статус'},
+            {name: 'fullName', width: '35%', displayName: 'ФИО'}
+          ]
+        };
+      }
       $scope.getStatusTree();
     }, function (reason) {
       console.log(reason);
     });
   }
 
+  /*=====  Генерация таблицы согласования из данных ======*/
+    // $scope.getInAgreementGrid = function(data){
+    //   $scope.inAgreementGridOptions = {
+    //     showGridFooter: false,
+    //     enableColumnMenus: false,
+    //     showTreeExpandNoChildren: false,
+    //     enableHiding: false,
+    //     enableSorting: false,
+    //     enableFiltering: false,
+    //     enableRowSelection: true,
+    //     enableSelectAll: false,
+    //     rowHeight: 35,
+    //     multiSelect: true,
+    //     columnDefs: [
+    //       {name: 'regionName', width: '35%', displayName: 'Терр.управление'},
+    //       {name: 'agreementDate', width: '15%', displayName: 'Дата-время согласования'},
+    //       {name: 'status', width: '15%', displayName: 'Статус'},
+    //       {name: 'fullName', width: '35%', displayName: 'ФИО'}
+    //     ]
+    //   };
+    //   $scope.inAgreementGridOptions.data = data;
+    //   console.log($scope.inAgreementGridOptions);
+    //   return $scope.inAgreementGridOptions;
+    // };
+  /*=====  Генерация таблицы согласования из данных end ======*/
+
   /*Получаем дерево статусов в зависимости от Номера среза*/
-  $scope.getStatusTree = function () {
-    $http({
-      method: 'GET',
-      url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/' + $scope.srezNo + '/history',
-      headers: {
-        sessionKey: 'admin'
-      }
-    }).then(function (response) {
-      console.log(response.data)
-    })
-  };
-  $scope.getStatusTree();
+  // $scope.getStatusTree = function () {
+  //   $http({
+  //     method: 'GET',
+  //     url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/' + $scope.srezNo + '/history',
+  //     headers: {
+  //       sessionKey: 'admin'
+  //     }
+  //   }).then(function (response) {
+  //     console.log('statuses tree', response.data);
+  //   });
+  // };
   /*Получаем дерево статусов в зависимости от Номера среза*/
 
 

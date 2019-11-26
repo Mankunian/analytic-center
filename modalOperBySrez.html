@@ -168,10 +168,16 @@
         </div>
         <!--Инфо по статусу Утвержден-->
 
-
-
-
-
+        <!--Инфо по статусу На согласовании-->
+        <div ng-if="statusCode == STATUS_CODES.IN_AGREEMENT" class="col-md-7 noPadding">
+          <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
+            <h5><b>Статус:</b> {{statusInfoData.statusName}}</h5>
+            <h5><b>Срез отправил на согласование:</b> {{statusInfoData.sendToAggrementBy}}</h5>
+            <h5><b>Время перевода на согласование:</b> {{statusInfoData.agreementDate}}</h5>
+            <div id="gridInAgreement" ui-grid="gridOptions1" ng-if="gridOptions1" ui-grid-cellnav class="grid"></div>
+          </div>
+        </div>
+        <!--Инфо по статусу На согласовании-->
 
       </div>
     </div>

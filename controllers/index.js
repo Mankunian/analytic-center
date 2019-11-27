@@ -420,7 +420,7 @@ app.controller('modalOperBySrezCtrl', function ($scope, $uibModal, $rootScope, $
       }
     });
     modalInstance.result.then(function (response) {
-
+      console.log('response');
     });
 
   };
@@ -445,12 +445,37 @@ app.controller('langDropdownCtrl', function ($scope, $log) {
 /**
  *  ModalContentCtrl
  */
-app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, value, $rootScope, $sce) {
+app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, value, $rootScope, $sce, $timeout) {
 
-  $scope.statSliceNum = 541;
   // $scope.statSliceNum = value.id;
-  $scope.statSlicePeriod = value.period;
+  $scope.statSliceNum         = 541;
+  $scope.statSlicePeriod      = value.period;
+  $scope.isTabsLoaded         = false;
+  $scope.isReportsSelected    = false;
+  $scope.tabsIsRefreshed      = false;
+  $scope.isReadyReportsLoaded = true;
+  var refreshedTabs = [];
 
+  var refreshTabs = function(code) {
+    if ( !refreshedTabs.includes(code)) {
+      $scope.refresh = true;
+      console.log('refresh true');
+      $timeout(function() {
+        $scope.refresh = false;
+        console.log('refresh false');
+      }, 0);
+      refreshedTabs.push(code);
+    }
+  };
+
+  var refresh = function() {
+    $scope.refresh = true;
+    $timeout(function() {
+      $scope.refresh = false;
+    }, 0);
+  };
+
+  /*=====  Получение списка отчетов для формирования вкладок ======*/
   $http({
     method: 'GET',
     url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/reports?sliceId=' + $scope.statSliceNum,
@@ -464,6 +489,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
   $scope.getReportInfo = function (index) {
     return $scope.reportTabs[index];
   };
+  /*=====  Получение списка отчетов для формирования вкладок end ======*/
 
   /*=====  Regions grid - get data from backend ======*/
   $http({
@@ -523,21 +549,11 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
           enableSelectAll: false,
           selectionRowHeaderWidth: 35,
           rowHeight: 35,
-          treeIndent: 10,
+          treeIndent: 7,
           multiSelect: true,
           columnDefs: [
-            {
-              name: 'code',
-              width: '20%',
-              displayName: 'и/н',
-              cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>"
-            },
-            {
-              name: 'name',
-              width: '40%',
-              displayName: 'Регион/Орган',
-              cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>"
-            }
+            {name: 'code', width: '20%', displayName: 'и/н', cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': (row.treeLevel == 'last') ? grid.options.treeIndent * 3 + 'px' : grid.options.treeIndent * (row.treeLevel + 1) + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>"},
+            {name: 'name', width: '80%', displayName: 'Регион/Орган', cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': (row.treeLevel == 'last') ? grid.options.treeIndent * 3 + 'px' : grid.options.treeIndent * (row.treeLevel + 1) + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>"}
           ]
         };
         // Запись отчетов и ведомств в правильную структуру для Grid 
@@ -546,6 +562,9 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
       });
       // END Each function for reports with orgs
       $scope.onRegisterApiInit();
+
+      // Скрыть индикатор загрузки и показать данные формы
+      $scope.isTabsLoaded = true;
     }, function (reason) {
       console.log(reason);
     });
@@ -584,7 +603,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
       item.gridRegionsDataset.onRegisterApi = function (gridApi) {
         item.gridApiRegionsName = gridApi;
         gridApi.selection.on.rowSelectionChanged($scope, function (row) {
-          $scope.selectedRegions[index] = item.gridApiRegionsName.selection.getSelectedRows()
+          $scope.selectedRegions[index] = item.gridApiRegionsName.selection.getSelectedRows();
         });
       };
     });
@@ -597,13 +616,19 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
       'name': name,
       'code': code,
     };
+    // refreshTabs(code);
+    refresh();
   };
   /*=====  Get and save current reports's name, code end ======*/
 
   /*=====  Sets correct $$treeLevel ======*/
   var writeoutNodeRegions = function (childArray, currentLevel, dataArray) {
     childArray.forEach(function (childNode) {
-      if (childNode.children.length > 0) childNode.$$treeLevel = currentLevel;
+      if (childNode.children.length > 0) {
+        childNode.$$treeLevel = currentLevel;
+      } else {
+        childNode.$$treeLevel = 'last';
+      }
       dataArray.push(childNode);
       writeoutNodeRegions(childNode.children, currentLevel + 1, dataArray);
     });
@@ -615,39 +640,81 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
     $scope.requestedReports = [];
     $scope.requestedReportsQuery = [];
     var reportInfo,
-      counter = 0;
+        counter = 0;
 
     if ($scope.selectedRegions != undefined && $scope.selectedDeps != undefined) {
-
       $scope.selectedRegions.forEach(function (element, index) {
         var regionsTabIndex = index;
         reportInfo = $scope.getReportInfo(regionsTabIndex);
 
         element.forEach(function (region, index) {
           if ($scope.selectedDeps[regionsTabIndex] != undefined) {
-            $scope.selectedDeps[regionsTabIndex].forEach(function (department, index) {
+            $scope.isReportsSelected = true;
 
-              $scope.department = department;
-              $scope.requestedReports[counter] = reportInfo.name + " - " + region.name + "-" + $scope.department.name;
+            $scope.selectedDeps[regionsTabIndex].forEach(function (department, index) {
+              $scope.requestedReports[counter] = reportInfo.name + '-' + region.name + '-' + department.name;
               $scope.requestedReportsQuery[counter] = {
                 "sliceId": $scope.statSliceNum,
                 "reportCode": reportInfo.code,
-                "orgCode": $scope.department.code,
+                "orgCode": department.code,
                 "regCode": region.code
               };
               counter++;
             });
           }
-          console.log($scope.requestedReports);
-          console.log($scope.requestedReportsQuery);
         });
       });
+
+      // $scope.gridOptionsSelectedReports = {
+      //   data: $scope.requestedReports,
+      //   showGridFooter: false,
+      //   enableColumnMenus: false,
+      //   showTreeExpandNoChildren: false,
+      //   enableHiding: false,
+      //   enableSorting: false,
+      //   enableFiltering: false,
+      //   enableRowSelection: true,
+      //   enableSelectAll: false,
+      //   rowHeight: 35,
+      //   columnDefs: [
+      //     {name: '0', width: '14%', displayName: 'Тип'},
+      //     {name: '1', width: '51%', displayName: 'Регион'},
+      //     {name: '2', width: '35%', displayName: 'Ведомство'},
+      //   ]
+      // };
+      // refresh();
     }
+  };
+  $scope.removeSelectedReport = function(key){
+    var removedDepIndex,
+        removedDepValue,
+        removedRegIndex,
+        removedTabIndex;
+
+    removedDepValue = $scope.requestedReportsQuery[key].orgCode;
+    removedRegValue = $scope.requestedReportsQuery[key].regCode;
+
+    $scope.requestedReports.splice(key, 1);
+    $scope.requestedReportsQuery.splice(key, 1);
+
+    if ($scope.requestedReportsQuery.findIndex(x => x.orgCode === removedDepValue) === -1) {
+      console.log('bolwe net deps');
+      removedDepIndex = $scope.depsGridApiOptions[0].gridApiDepDataset.data.findIndex(x => x.code === removedDepValue);
+      $scope.depsGridApiOptions[0].gridApiDepsName.selection.toggleRowSelection($scope.depsGridApiOptions[0].gridApiDepDataset.data[removedDepIndex]);            
+    }
+  
+    if ($scope.requestedReportsQuery.findIndex(x => x.regCode === removedRegValue) === -1) {
+      console.log('bolwe net regs');
+      removedRegIndex = $scope.regionsGridApiOptions[0].gridRegionsDataset.data.findIndex(x => x.code === removedRegValue);
+      $scope.regionsGridApiOptions[0].gridApiRegionsName.selection.toggleRowSelection($scope.regionsGridApiOptions[0].gridRegionsDataset.data[removedRegIndex]);      
+    }
+
   };
   /*=====  Generate and get requested reports end ======*/
 
   /*=====  Get reports ======*/
   $scope.getReports = function () {
+    $scope.isReadyReportsLoaded = false;
     if ($scope.requestedReportsQuery != undefined && $scope.requestedReportsQuery.length > 0) {
       $scope.readyReports = [];
       $http({
@@ -658,11 +725,12 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
         },
         data: $scope.requestedReportsQuery
       }).then(function (response) {
+        $scope.isReadyReportsLoaded = true;
         var reportValues = response.data;
         var counter = 0;
         reportValues.forEach(function (element, index) {
 
-          var reportDownloadUrl = "https://analytic-centre.tk:8081/api/v1/{lang}/slices/reports/" + element.value + "/download";
+          var reportDownloadUrl = "https://analytic-centre.tk:8081/api/v1/RU/slices/reports/" + element.value + "/download";
           var readyReportItem = "<a href=" + reportDownloadUrl + " target='_blank'>Скачать отчет (" + $scope.requestedReports[counter] + ")</a>";
 
           $scope.readyReports.push($sce.trustAsHtml(readyReportItem));
@@ -706,7 +774,10 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
 
   /*=====  Remove numbers from string ======*/
   $scope.getOnlyLetters = function (string) {
-    var stringWithoutNumbers = string.replace(/[0-9]/g, '');
+    var stringWithoutNumbers;
+    if (string != undefined) {
+     stringWithoutNumbers = string.replace(/[0-9]/g, '');
+    }
     return stringWithoutNumbers;
   };
   /*=====  Remove numbers from string end ======*/
@@ -778,7 +849,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
           columnDefs: [
             {name: 'regionName', width: '33%', displayName: 'Терр.управление'},
             {name: 'agreementDate', width: '25%', displayName: 'Дата-время согласования'},
-            {name: 'status', width: '20%', displayName: 'Статус', cellTemplate: '<a href="#" class="deletedSliceLink agreeedSliceLink btn btn-danger" ng-hide="{{COL_FIELD CUSTOM_FILTERS}} == 1">{{COL_FIELD CUSTOM_FILTERS}}</a> <a href="#" class="agreeedSliceLink" ng-show="{{COL_FIELD CUSTOM_FILTERS}} == 1">{{COL_FIELD CUSTOM_FILTERS}}</a>'},
+            {name: 'status', width: '20%', displayName: 'Статус', cellTemplate: '<a href="#" class="deletedSliceLink agreeedSliceLink" ng-hide="{{COL_FIELD CUSTOM_FILTERS}} == 1">Отказать</a> <a href="#" class="agreeedSliceLink" ng-show="{{COL_FIELD CUSTOM_FILTERS}} == 1">Согласовать</a>'},
             {name: 'fullName', width: '35%', displayName: 'ФИО'}
           ]
         };

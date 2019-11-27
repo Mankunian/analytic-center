@@ -694,18 +694,21 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
     removedDepValue = $scope.requestedReportsQuery[key].orgCode;
     removedRegValue = $scope.requestedReportsQuery[key].regCode;
 
+    $scope.requestedReports.splice(key, 1);
+    $scope.requestedReportsQuery.splice(key, 1);
+
     if ($scope.requestedReportsQuery.findIndex(x => x.orgCode === removedDepValue) === -1) {
-      console.log('takoi est ewe');
+      console.log('bolwe net deps');
       removedDepIndex = $scope.depsGridApiOptions[0].gridApiDepDataset.data.findIndex(x => x.code === removedDepValue);
       $scope.depsGridApiOptions[0].gridApiDepsName.selection.toggleRowSelection($scope.depsGridApiOptions[0].gridApiDepDataset.data[removedDepIndex]);            
     }
   
+    if ($scope.requestedReportsQuery.findIndex(x => x.regCode === removedRegValue) === -1) {
+      console.log('bolwe net regs');
+      removedRegIndex = $scope.regionsGridApiOptions[0].gridRegionsDataset.data.findIndex(x => x.code === removedRegValue);
+      $scope.regionsGridApiOptions[0].gridApiRegionsName.selection.toggleRowSelection($scope.regionsGridApiOptions[0].gridRegionsDataset.data[removedRegIndex]);      
+    }
 
-    removedRegIndex = $scope.regionsGridApiOptions[0].gridRegionsDataset.data.findIndex(x => x.code === removedRegValue);
-    $scope.regionsGridApiOptions[0].gridApiRegionsName.selection.toggleRowSelection($scope.regionsGridApiOptions[0].gridRegionsDataset.data[removedRegIndex]);
-
-    $scope.requestedReports.splice(key, 1);
-    $scope.requestedReportsQuery.splice(key, 1);
   };
   /*=====  Generate and get requested reports end ======*/
 

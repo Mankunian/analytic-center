@@ -51,7 +51,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       }
     }).then(function (value) {
       $scope.status = value.data;
-      console.log($scope.status);
     });
   };
   $scope.getStatus();
@@ -129,7 +128,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
           "<img id='{{row.entity.$$hashKey}}' " +
           "ng-hide='row.treeLevel == undefined' " +
           "ng-click='grid.appScope.toggleFirstRow(rowRenderIndex, row.treeLevel, row)' " +
-          "style='width: 24px; margin: 0 10px' " +
+          "style='width: 24px; margin: 0 10px; cursor: pointer' " +
           "src='./img/folder-cl.png' " +
           "alt=''>{{COL_FIELD CUSTOM_FILTERS}}</div>"
       },
@@ -220,8 +219,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
         $scope.gridOptions.data = [];
         writeoutNode(dataSet, 0, $scope.gridOptions.data);
       });
-      console.log(dataSet);
-
+      console.log(dataSet)
 
     });
   };
@@ -237,7 +235,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     if (treeLevel === 0) {
       var groupFolderImg = document.getElementById(row.entity.$$hashKey);
 
-      if (groupFolderImg.src.indexOf('folder-cl.png') != -1) {
+      if (groupFolderImg.src.indexOf('folder-cl.png') !== -1) {
         groupFolderImg.src = 'img/folder-op.png'
       } else {
         groupFolderImg.src = 'img/folder-cl.png'
@@ -246,12 +244,14 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     } else {
 
       var statusFolderImg = document.getElementById(row.entity.$$hashKey);
-      if (statusFolderImg.src.indexOf('folder-cl.png') != -1) {
+      if (statusFolderImg.src.indexOf('folder-cl.png') !== -1) {
         statusFolderImg.src = 'img/folder-op.png'
       } else {
         statusFolderImg.src = 'img/folder-cl.png'
       }
 
+
+      $scope.preloaderByStatus = true;
 
       var groupCode = row.entity.groupCode,
         statusCode = row.entity.code,
@@ -267,6 +267,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
         }
       }).then(function (value) {
         $scope.showGrid = value.data;
+        $scope.preloaderByStatus = false;
       }, function (reason) {
         console.log(reason);
       });
@@ -291,7 +292,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
             });
 
             row.entity.isDataLoaded = true;
-          }, 2000, 1);
+          }, 1000, 1);
         } else {
           console.log('This row already has data');
         }
@@ -383,7 +384,7 @@ app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope) {
       templateUrl: "modalContent.html",
       controller: "ModalContentCtrl",
       size: 'lg',
-      backdrop : 'static',
+      backdrop: 'static',
       windowTopClass: 'getReportModal',
       resolve: {
         value: function () {
@@ -411,7 +412,7 @@ app.controller('modalOperBySrezCtrl', function ($scope, $uibModal, $rootScope, $
       templateUrl: 'modalOperBySrez.html',
       controller: 'modalContentOperBySrezCtrl',
       size: 'xlg',
-      backdrop : 'static',
+      backdrop: 'static',
       windowTopClass: 'getReportModal',
       resolve: {
         value: function () {
@@ -778,7 +779,12 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
           columnDefs: [
             {name: 'regionName', width: '33%', displayName: 'Терр.управление'},
             {name: 'agreementDate', width: '25%', displayName: 'Дата-время согласования'},
-            {name: 'status', width: '20%', displayName: 'Статус', cellTemplate: '<a href="#" class="deletedSliceLink agreeedSliceLink btn btn-danger" ng-hide="{{COL_FIELD CUSTOM_FILTERS}} == 1">{{COL_FIELD CUSTOM_FILTERS}}</a> <a href="#" class="agreeedSliceLink" ng-show="{{COL_FIELD CUSTOM_FILTERS}} == 1">{{COL_FIELD CUSTOM_FILTERS}}</a>'},
+            {
+              name: 'status',
+              width: '20%',
+              displayName: 'Статус',
+              cellTemplate: '<a href="#" class="deletedSliceLink agreeedSliceLink btn btn-danger" ng-hide="{{COL_FIELD CUSTOM_FILTERS}} == 1">{{COL_FIELD CUSTOM_FILTERS}}</a> <a href="#" class="agreeedSliceLink" ng-show="{{COL_FIELD CUSTOM_FILTERS}} == 1">{{COL_FIELD CUSTOM_FILTERS}}</a>'
+            },
             {name: 'fullName', width: '35%', displayName: 'ФИО'}
           ]
         };
@@ -811,7 +817,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
     });
   };
   /*Получаем дерево статусов в зависимости от Номера среза*/
-
 
 
   $scope.statusAction = function (btnNum) {

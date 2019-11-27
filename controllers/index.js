@@ -111,7 +111,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     enableSelectAll: false,
     selectionRowHeaderWidth: 35,
     rowHeight: 45,
-    treeIndent: 10,
+    treeIndent: 30,
 
     columnDefs: [
       {

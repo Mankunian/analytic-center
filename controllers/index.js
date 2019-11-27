@@ -95,7 +95,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     'class="ui-grid-cell-contents"> ' +
     '<button ' +
     'ng-click="grid.appScope.openOperBySrez(row.entity)" ' +
-    'ng-hide="row.treeLevel==0 || row.treeLevel == 1" ' +
+    'ng-hide="row.treeLevel==0 || row.treeLevel == 1 || row.entity.statusCode == 0 || row.entity.statusCode == 6" ' +
     'type="button" class="btn btn-success"> Операция со срезами ' +
     '</button> </div>';
 

@@ -194,14 +194,26 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   };
 
 
+  $scope.checkboxModel = {
+    value: false
+  };
+
+
+  var url = '';
   $scope.loader = false;
-  $scope.getAllSrez = function () {
+  $scope.showDeletedReports = function (check) {
     $scope.loader = true;
+    if (check) {
+      url = 'https://analytic-centre.tk:8081/api/v1/RU/slices/parents?deleted=true'
+    } else {
+      url = 'https://analytic-centre.tk:8081/api/v1/RU/slices/parents?deleted=false'
+    }
+
     var dataSet = [];
 
     $http({
       method: 'GET',
-      url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/parents?deleted=false',
+      url: url,
       headers: {
         sessionKey: 'admin'
       }
@@ -222,10 +234,11 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       console.log(dataSet)
 
     });
+
+
   };
+  $scope.showDeletedReports();
 
-
-  $scope.getAllSrez();
 
 
   $scope.toggleFirstRow = function (index, treeLevel, row) {
@@ -288,12 +301,14 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
             $scope.showGrid.forEach(function (statusData) {
               $scope.dataByStatus = statusData;
-              $scope.gridOptions.data.splice(selectedRowIndex, 0, $scope.dataByStatus);
             });
+            $scope.gridOptions.data.splice(selectedRowIndex, 0, $scope.dataByStatus);
+            console.log($scope.showGrid);
 
             row.entity.isDataLoaded = true;
           }, 1000, 1);
         } else {
+          $scope.showGrid = [];
           console.log('This row already has data');
         }
       });
@@ -370,10 +385,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   var dateToString = dd + '.' + mm + '.' + yy;
 }]);
 
-
-/**
- *  ModalControlCtrl
- */
 app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope) {
 
   $rootScope.open = function (value) {
@@ -400,9 +411,6 @@ app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope) {
 });
 
 
-/**
- *  ModalOperBySrezCtrl
- */
 app.controller('modalOperBySrezCtrl', function ($scope, $uibModal, $rootScope, $http, STATUS_CODES) {
 
   $rootScope.openOperBySrez = function (rowEntity) {
@@ -428,9 +436,6 @@ app.controller('modalOperBySrezCtrl', function ($scope, $uibModal, $rootScope, $
 });
 
 
-/**
- *  LangDropdownCtrl
- */
 app.controller('langDropdownCtrl', function ($scope, $log) {
 
   $scope.data = {
@@ -443,9 +448,7 @@ app.controller('langDropdownCtrl', function ($scope, $log) {
 
 });
 
-/**
- *  ModalContentCtrl
- */
+
 app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, value, $rootScope, $sce) {
 
   $scope.statSliceNum = 541;
@@ -688,70 +691,109 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
 
 app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalInstance, value, STATUS_CODES, USER_ROLES, BUTTONS) {
   /*=====  Получение данных ======*/
+
+
   $scope.statusInfoData = [];
   var url = '';
   $scope.srezNo = value.id;
   $scope.period = value.period;
   $scope.srezToNum = value.maxRecNum;
-  // Получаем код статуса со строки - row.entity
+
   $scope.statusCode = value.statusCode;
-  // $scope.statusCode = STATUS_CODES.FORMED_WITH_ERROR;
 
 
   // Определяем роль пользователя
   $scope.userRole = USER_ROLES.ONE;
+  // $scope.userRole = USER_ROLES.ZERO;
+
+
   $scope.statuses = [
     {'code': value.statusCode, 'name': value.statusName}
   ];
   /*=====  Получение данных end ======*/
 
-  /*=====  Remove numbers from string ======*/
-  $scope.getOnlyLetters = function (string) {
-    var stringWithoutNumbers = string.replace(/[0-9]/g, '');
-    return stringWithoutNumbers;
+
+  /*Получаем дерево статусов в зависимости от Номера среза*/
+  $scope.getStatusTree = function () {
+    $http({
+      method: 'GET',
+      url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/' + $scope.srezNo + '/history',
+      headers: {
+        sessionKey: 'admin'
+      }
+    }).then(function (response) {
+      console.log('statuses tree', response.data);
+      $scope.statuses = response.data;
+
+
+      $scope.statuses.forEach(function (history) {
+        if (value.statusCode === history.statusCode) {
+          $scope.inAgreement = {
+            "statusName": history.statusName,
+            "personName": history.personName,
+            "statusDate": history.statusDate
+          };
+          console.log($scope.inAgreement)
+        }
+
+      })
+    });
   };
-  /*=====  Remove numbers from string end ======*/
+  $scope.getStatusTree();
+  /*Получаем дерево статусов в зависимости от Номера среза*/
+
 
   /*=====  Получаем код статуса после клика на статус
   в дереве статусов и перезаписываем полученный из row.entity ======*/
-  $scope.getStatusCode = function (selectedStatusCode) {
-    $scope.statusCode = selectedStatusCode;
+  $scope.getStatusCode = function (selectedStatus) {
+    $scope.statusCode = selectedStatus.statusCode;
+
+    /*=====  Сравниваем полученный код статуса и меняем URL HTTP запроса ======*/
+    switch ($scope.statusCode) {
+      case STATUS_CODES.FORMED_WITH_ERROR: // Сформирован с ошибкой
+        url = 'withError.json';
+        break;
+      case STATUS_CODES.PRELIMINARY: // Предварительный
+        $scope.statusName = selectedStatus.statusName;
+        $scope.personName = selectedStatus.personName;
+
+        break;
+      case STATUS_CODES.DELETED: // Удален
+        $scope.statusName = selectedStatus.statusName;
+        $scope.personName = selectedStatus.personName;
+        $scope.statusDate = selectedStatus.statusDate;
+
+        break;
+      case STATUS_CODES.IN_PROCESSING: // В обработке
+        url = 'preliminary.json';
+        break;
+      case STATUS_CODES.CANCELED_BY_USER: // Отменен пользователем
+        url = 'canceledByUser.json';
+        break;
+      case STATUS_CODES.WAITING_FOR_PROCESSING: // В ожидании обработки
+        url = 'waitingForProcess.json';
+        break;
+      case STATUS_CODES.APPROVED: // Окончательный
+
+
+        break;
+      case STATUS_CODES.IN_AGREEMENT: // На согласовании
+        // get data from history by forEach
+
+
+        // if ($scope.statusInfoData.data != undefined) $scope.agreementData = $scope.statusInfoData.data;
+        break;
+      default:
+        // statements_def
+        break;
+    }
+    /*=====  Сравниваем полученный код статуса и меняем URL HTTP запроса end ======*/
   };
+
+
   /*=====  Получаем код статуса после клика на статус
   в дереве статусов и перезаписываем полученный из row.entity ======*/
 
-  /*=====  Сравниваем полученный код статуса и меняем URL HTTP запроса ======*/
-  switch ($scope.statusCode) {
-    case STATUS_CODES.FORMED_WITH_ERROR: // Сформирован с ошибкой
-      url = 'withError.json';
-      break;
-    case STATUS_CODES.PRELIMINARY: // Предварительный
-      url = 'preliminary.json';
-      break;
-    case STATUS_CODES.DELETED: // Удален
-      url = 'deleted.json';
-      break;
-    case STATUS_CODES.IN_PROCESSING: // В обработке
-      url = 'preliminary.json';
-      break;
-    case STATUS_CODES.CANCELED_BY_USER: // Отменен пользователем
-      url = 'canceledByUser.json';
-      break;
-    case STATUS_CODES.WAITING_FOR_PROCESSING: // В ожидании обработки
-      url = 'waitingForProcess.json';
-      break;
-    case STATUS_CODES.APPROVED: // Утвержден
-      url = 'approved.json';
-      break;
-    case STATUS_CODES.IN_AGREEMENT: // На согласовании
-      url = 'inAgreement.json';
-      // if ($scope.statusInfoData.data != undefined) $scope.agreementData = $scope.statusInfoData.data;
-      break;
-    default:
-      // statements_def
-      break;
-  }
-  /*=====  Сравниваем полученный код статуса и меняем URL HTTP запроса end ======*/
 
   if (url !== '') {
     $http({
@@ -761,6 +803,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         sessionKey: 'admin'
       }
     }).then(function (response) {
+      console.log(response);
       if ($scope.statusCode != STATUS_CODES.IN_AGREEMENT) {
         $scope.statusInfoData = response.data;
       } else { // Если статус "НА СОГЛАСОВАНИИ"
@@ -795,21 +838,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
     });
   }
 
-  /*Получаем дерево статусов в зависимости от Номера среза*/
-  $scope.getStatusTree = function () {
-    $http({
-      method: 'GET',
-      url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/' + $scope.srezNo + '/history',
-      headers: {
-        sessionKey: 'admin'
-      }
-    }).then(function (response) {
-      console.log('statuses tree', response.data);
-      $scope.statuses = response.data;
-    });
-  };
-  /*Получаем дерево статусов в зависимости от Номера среза*/
-
 
   $scope.statusAction = function (btnNum) {
 
@@ -841,7 +869,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
       }
     }).then(function (response) {
       console.log(response);
-      $scope.getStatusTree();
     }, function (reason) {
       console.log(reason)
     })

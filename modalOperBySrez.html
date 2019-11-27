@@ -78,8 +78,8 @@
               </ul>
               <uib-tabset active="activePill" vertical="true" type="pills">
                 <uib-tab ng-style="{'margin-left': $index*15 + 'px'}" ng-repeat="status in statuses"
-                         ng-click="getStatusCode(status.code)" style="width: fit-content; margin: 5px" index="$index"
-                         heading="{{getOnlyLetters(status.name)}}"></uib-tab>
+                         ng-click="getStatusCode(status)" style="width: fit-content; margin: 5px" index="$index"
+                         heading="{{status.statusName}}"></uib-tab>
               </uib-tabset>
             </div>
 
@@ -108,6 +108,10 @@
               <button ng-click="statusAction(BUTTONS.TO_AGREEMENT) " class="btn btn-default" ng-if="
               statusCode == STATUS_CODES.IN_AGREEMENT">Согласовать
               </button>
+
+              <button ng-click="statusAction(BUTTONS.TO_AGREEMENT)" class="btn btn-default" ng-if="
+              statusCode == STATUS_CODES.IN_AGREEMENT">Отказать
+              </button>
             </div>
           </div>
         </div>
@@ -115,11 +119,11 @@
         <!--Инфо по статусу Предварительный-->
         <div ng-if="statusCode == STATUS_CODES.PRELIMINARY" class="col-md-7 noPadding">
           <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
-            <h5><b>Статус:</b> {{statusInfoData.statusName}}</h5>
-            <h5><b>Срез заказал:</b> {{statusInfoData.sliceByOrder}}</h5>
-            <h5><b>Время заказа среза:</b> {{statusInfoData.orderSrezTime}}</h5>
-            <h5><b>Время начала формирования:</b> {{statusInfoData.startTime}}</h5>
-            <h5><b>Время окончания формирования: </b> {{statusInfoData.endTime}}</h5>
+            <h5><b>Статус:</b> {{statusName}}</h5>
+            <h5><b>Срез заказал:</b> {{personName}}</h5>
+            <h5><b>Время заказа среза:</b> {{statusDate}}</h5>
+            <h5><b>Время начала формирования:</b> {{startTime}}</h5>
+            <h5><b>Время окончания формирования: </b> {{endTime}}</h5>
           </div>
         </div>
         <!--Инфо по статусу Предварительный-->
@@ -148,9 +152,9 @@
         <!--Инфо по статусу Удален-->
         <div ng-if="statusCode == STATUS_CODES.DELETED" class="col-md-7 noPadding">
           <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
-            <h5><b>Статус:</b> {{statusInfoData.statusName}}</h5>
-            <h5><b>Срез удалил:</b> {{statusInfoData.sliceDeleteBy}}</h5>
-            <h5><b>Время удаления среза:</b> {{statusInfoData.sliceDeleteTime}}</h5>
+            <h5><b>Статус:</b> {{statusName}}</h5>
+            <h5><b>Срез удалил:</b> {{personName}}</h5>
+            <h5><b>Время удаления среза:</b> {{statusDate}}</h5>
           </div>
         </div>
 
@@ -170,10 +174,11 @@
         <!--Инфо по статусу На согласовании-->
         <div ng-if="statusCode == STATUS_CODES.IN_AGREEMENT" class="col-md-7 noPadding">
           <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
-            <h5><b>Статус:</b> {{statusInfoData.statusName}}</h5>
-            <h5><b>Срез отправил на согласование:</b> {{statusInfoData.sendToAggrementBy}}</h5>
-            <h5><b>Время перевода на согласование:</b> {{statusInfoData.agreementDate}}</h5>
-            <div id="gridInAgreement" ui-grid="gridOptionsAgreement" ng-if="gridOptionsAgreement" ui-grid-cellnav class="grid"></div>
+            <h5><b>Статус:</b> {{inAgreement.statusName}}</h5>
+            <h5><b>Срез отправил на согласование:</b> {{inAgreement.personName}}</h5>
+            <h5><b>Время перевода на согласование:</b> {{inAgreement.statusDate}}</h5>
+            <div id="gridInAgreement" ui-grid="gridOptionsAgreement" ng-if="gridOptionsAgreement" ui-grid-cellnav
+                 class="grid"></div>
           </div>
         </div>
         <!--Инфо по статусу На согласовании-->

@@ -80,10 +80,15 @@
             <div class="row" ng-if="showGrid">
               <div class="col-md-6 col-xs-6">
                 <div class="pull-left">
-                  <label class="containerLabel">
-                    <input type="checkbox">Показать удаленные
+                  <label class="containerLabel" >
+                    <input
+                      ng-click="showDeletedReports(user)"
+                      checklist-value="user"
+                      type="checkbox">Показать удаленные
                     <span class="checkmark"></span>
                   </label>
+
+
                 </div>
               </div>
 

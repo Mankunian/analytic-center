@@ -778,10 +778,10 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
           rowHeight: 35,
           columnDefs: [
             {name: 'regionName', width: '33%', displayName: 'Терр.управление'},
-            {name: 'agreementDate', width: '25%', displayName: 'Дата-время согласования'},
+            {name: 'agreementDate', width: '35%', displayName: 'Дата-время согласования'},
             {
               name: 'status',
-              width: '20%',
+              width: '25%',
               displayName: 'Статус',
               cellTemplate: '<a href="#" class="deletedSliceLink agreeedSliceLink btn btn-danger" ng-hide="{{COL_FIELD CUSTOM_FILTERS}} == 1">{{COL_FIELD CUSTOM_FILTERS}}</a> <a href="#" class="agreeedSliceLink" ng-show="{{COL_FIELD CUSTOM_FILTERS}} == 1">{{COL_FIELD CUSTOM_FILTERS}}</a>'
             },
@@ -806,14 +806,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
     }).then(function (response) {
       console.log('statuses tree', response.data);
       $scope.statuses = response.data;
-      $scope.statuses = [
-        {
-          "code": "7", "name": "На согласовании"
-        },
-        {
-          "code": "1", "name": "Окончательный"
-        }
-      ]
     });
   };
   /*Получаем дерево статусов в зависимости от Номера среза*/

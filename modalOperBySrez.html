@@ -1,4 +1,5 @@
 <style>
+
   ul.operBySrez {
     list-style: none;
     display: grid;
@@ -71,11 +72,6 @@
             <h5><b>Срез на №</b> {{srezToNum}}</h5>
 
             <div class="statusTree">
-              <ul class="operBySrez">
-                <!--<li class="active" ng-repeat="status in statuses" ng-style="{'margin-left': $index*15 + 'px'}">
-                  <a ng-click="getInfo()">- {{ status.name}}</a>
-                </li>-->
-              </ul>
               <uib-tabset active="activePill" vertical="true" type="pills">
                 <uib-tab ng-style="{'margin-left': $index*15 + 'px'}" ng-repeat="status in statuses"
                          ng-click="getStatusCode(status.code)" style="width: fit-content; margin: 5px" index="$index"
@@ -99,7 +95,8 @@
               </button>
 
               <button ng-click="statusAction(BUTTONS.APPROVE)" class="btn btn-default" ng-if="
-              statusCode == STATUS_CODES.PRELIMINARY">Утвердить
+              statusCode == STATUS_CODES.PRELIMINARY
+              || statusCode == STATUS_CODES.IN_AGREEMENT">Утвердить
               </button>
             </div>
 

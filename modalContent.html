@@ -2,75 +2,74 @@
   <button type="button" class="close" data-dismiss="modal" ng-click="cancel()" >×</button>
   <h3>Получение отчетов</h3>
 </div>
-<div class="modal-body">
-   <uib-tabset active="active">
-      <uib-tab  heading="Каталог" index="0"  select="getRequestedReports()">
-      	<div class="row">
-      		<div class="col-md-6">
-   		   	
-   		   	<form class="form-inline">
-   		   		<div class="form-group">
-   			   		<label for="statSliceNum">Статсрез на №</label>
-   			 			<input type="text" name="statSliceNum" id="statSliceNum" class="form-control" disabled value="{{statSliceNum}}">
-   		   		</div>
-   		   		<div class="form-group">
-   			   		<label for="reportDatePeriod">Отчетный период</label>
-   			 			<input type="text" name="reportDatePeriod" id="reportDatePeriod" class="form-control" disabled value="{{statSlicePeriod}}">
-   		   		</div>
-   		   		<div class="form-group" ng-controller="langDropdownCtrl">
-   			   		<label for="langSelect">Язык отчета</label>
-   				    <select name="langSelect" id="langSelect"
-   				      ng-options="option.name for option in data.langs track by option.id"
-   				      ng-model="data.selectedOption" class="form-control"></select>
-   						</select>
-   		   		</div>
-   		   		<div class="btn-submit">
-   		   			<button class="btn btn-primary btn-md" type="submit" ng-click="getReports()">Получить</button>
-   		   		</div>
-   		   	</form>   			
+<div class="modal-body" ng-class="{isTabsLoaded : isTabsLoaded}">
+  <div class="preloader-block" ng-if="!isTabsLoaded">
+    <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+  </div>
+  <uib-tabset active="active" ng-if="isTabsLoaded">
+    <uib-tab  heading="Каталог" index="0"  select="getRequestedReports()">
+      <div class="row">
+        <div class="col-md-6">
+          <form class="form-inline">
+            <div class="form-group">
+              <label for="statSliceNum">Статсрез на №</label>
+              <input type="text" name="statSliceNum" id="statSliceNum" class="form-control" disabled value="{{statSliceNum}}">
+            </div>
+            <div class="form-group">
+              <label for="reportDatePeriod">Отчетный период</label>
+              <input type="text" name="reportDatePeriod" id="reportDatePeriod" class="form-control" disabled value="{{statSlicePeriod}}">
+            </div>
+            <div class="form-group" ng-controller="langDropdownCtrl">
+              <label for="langSelect">Язык отчета</label>
+              <select name="langSelect" id="langSelect"
+              ng-options="option.name for option in data.langs track by option.id"
+              ng-model="data.selectedOption" class="form-control"></select>
+            </div>
+          </form>   			
 
-      		</div>
-      		<div class="col-md-6">
-      			
-      		</div>
-      	</div>
-      	<div class="row">
-      		<div class="col-md-6">
-   	   		<div class="requested-reports">
-   	   			<h4>Запрошенные отчеты</h4>
-                  <div class="box">
-                    <label class="containerLabel" ng-init="val=true" ng-repeat="item in requestedReports">
-                      <input ng-checked="{{val}}" type="checkbox" checklist-model="user" checklist-value="item.code">
-                      {{item}}
-                      <span class="checkmark"></span>
-                    </label>
-                  </div>
-   	   		</div>
-      		</div>
-            <div class="col-md-6">
-         		<div class="ready-reports">
-                  <h4>Отчеты</h4>
-                  <ul>
-                     <li ng-repeat="item in readyReports">
-                        <div ng-bind-html="item"></div>
-                     </li>
-                  </ul>                  
-               </div>
+        </div>
+        <div class="col-md-6">
+
+        </div>
+      </div>
+      <div class="row" style="border-top: 1px solid #e5e5e5; padding-top: 15px;">
+        <div class="col-md-6">
+          <div class="requested-reports">
+            <h4>Запрошенные отчеты</h4>
+            <!-- <div id="selectedReports" ui-grid="gridOptionsSelectedReports" ui-grid-selection ui-grid-auto-resize ng-if="isReportsSelected" class="grid"></div> -->
+            <ul ng-repeat="(key, item) in requestedReports track by key">
+              <li><span class="remove-icon glyphicon glyphicon-remove-circle" ng-click="removeSelectedReport(key)"></span><span class="requested-report-item">{{item}}</span></li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="ready-reports">
+            <h4>Отчеты</h4>
+            <div class="preloader-block ready-reports" ng-if="!isReadyReportsLoaded">
+              <div class="lds-ring-readyReports"><div></div><div></div><div></div><div></div></div>
             </div>
-      	</div>
-      </uib-tab>
-      <uib-tab ng-repeat="item in reports_n_deps track by $index" heading="{{ item.name }}" select="getCurrentReportTab(item.name, item.code)" deselect="">
-         <div class="row">
-            <div class="col-md-6">
-               <div id="gridRegions" ui-grid="item.gridRegionsDataset" ui-grid-selection ui-grid-grouping class="grid"></div>
-            </div>
-            <div class="col-md-6">
-               <div id="{{grid-$index}}" ui-grid="item.gridDataset"ui-grid-selection ui-grid-cellnav  ui-grid-grouping class="grid"></div>
-            </div>
-         </div>
-   	 </uib-tab>
-   </uib-tabset>
+            <ul ng-if="isReadyReportsLoaded">
+              <li ng-repeat="item in readyReports">
+                <div ng-bind-html="item"></div>
+              </li>
+            </ul>                  
+          </div>
+        </div>
+      </div>
+    </uib-tab>
+    <uib-tab ng-repeat="item in reports_n_deps track by $index" heading="{{ item.name }}" select="getCurrentReportTab(item.name, item.code)">
+      <div class="row">
+        <div class="col-md-6">
+          <div id="gridRegions" ui-grid="item.gridRegionsDataset" ui-grid-selection ui-grid-grouping ui-grid-auto-resize class="grid"></div>
+        </div>
+        <div class="col-md-6">
+          <div id="{{grid-$index}}" ui-grid="item.gridDataset" ui-grid-selection ui-grid-cellnav ui-grid-auto-resize ui-grid-grouping class="grid"></div>
+        </div>
+      </div>
+    </uib-tab>
+  </uib-tabset>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-warning" ng-click="cancel()">Отмена</button>
+  <button class="btn btn-primary btn-md" type="submit" ng-disabled="!isReportsSelected || !isReadyReportsLoaded" ng-click="getReports()">Получить</button>
+  <button class="btn btn-warning" ng-click="blabla()">Отмена</button>
 </div>

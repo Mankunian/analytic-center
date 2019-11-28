@@ -234,7 +234,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
         $scope.gridOptions.data = [];
         writeoutNode(dataSet, 0, $scope.gridOptions.data);
       });
-      console.log(dataSet)
+      // console.log(dataSet)
 
     });
 
@@ -696,7 +696,6 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
 
 app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalInstance, value, STATUS_CODES, USER_ROLES, BUTTONS) {
   /*=====  Получение данных ======*/
-  console.log(value);
 
 
   $scope.statusInfoData = [];
@@ -704,18 +703,12 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   $scope.srezNo = value.id;
   $scope.period = value.period;
   $scope.srezToNum = value.maxRecNum;
-
-  $scope.statusCode = value.statusCode;
+  // $scope.statusCode = value.statusCode;
 
 
   // Определяем роль пользователя
   $scope.userRole = USER_ROLES.ONE;
   // $scope.userRole = USER_ROLES.ZERO;
-
-
-  $scope.statuses = [
-    {'code': value.statusCode, 'name': value.statusName}
-  ];
   /*=====  Получение данных end ======*/
 
 
@@ -728,21 +721,12 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         sessionKey: 'admin'
       }
     }).then(function (response) {
-      console.log('statuses tree', response.data);
-      $scope.statuses = response.data;
-
-
-      $scope.statuses.forEach(function (history) {
-        if (value.statusCode === history.statusCode) {
-          $scope.inAgreement = {
-            "statusName": history.statusName,
-            "personName": history.personName,
-            "statusDate": history.statusDate
-          };
-          console.log($scope.inAgreement)
-        }
-
-      })
+      $scope.history = response.data;
+      $scope.history.forEach(function (historyObj) {
+        $scope.historyObj = historyObj
+      });
+      console.log($scope.historyObj);
+      $scope.getStatusCode($scope.historyObj);
     });
   };
   $scope.getStatusTree();
@@ -752,24 +736,85 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   /*=====  Получаем код статуса после клика на статус
   в дереве статусов и перезаписываем полученный из row.entity ======*/
   $scope.getStatusCode = function (selectedStatus) {
+    console.log(selectedStatus);
     $scope.statusCode = selectedStatus.statusCode;
 
     /*=====  Сравниваем полученный код статуса и меняем URL HTTP запроса ======*/
     switch ($scope.statusCode) {
       case STATUS_CODES.FORMED_WITH_ERROR: // Сформирован с ошибкой
-        url = 'withError.json';
+        $scope.statusName = selectedStatus.statusName;
+        $scope.personName = selectedStatus.personName;
+        $scope.statusDate = selectedStatus.statusDate;
+        $scope.created = value.created;
+        $scope.completed = value.completed;
+        $scope.errorMsg = selectedStatus.msg;
+        break;
+      case STATUS_CODES.APPROVED: // Окончательный
+        $scope.statusName = selectedStatus.statusName;
+        $scope.personName = selectedStatus.personName;
+        $scope.statusDate = selectedStatus.statusDate;
         break;
       case STATUS_CODES.PRELIMINARY: // Предварительный
         $scope.statusName = selectedStatus.statusName;
         $scope.personName = selectedStatus.personName;
-
+        $scope.statusDate = selectedStatus.statusDate;
+        $scope.created = value.created;
+        $scope.completed = value.completed;
         break;
-      case STATUS_CODES.DELETED: // Удален
+      case STATUS_CODES.IN_AGREEMENT: // На согласовании
         $scope.statusName = selectedStatus.statusName;
         $scope.personName = selectedStatus.personName;
         $scope.statusDate = selectedStatus.statusDate;
 
+        $scope.getApprovalList = function () {
+          $http({
+            method: 'GET',
+            url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/1/history/1/approving',
+            headers: {
+              sessionKey: 'admin'
+            }
+          }).then(function (response) {
+            console.log(response)
+          })
+        };
+        $scope.getApprovalList();
+
+        /*$scope.gridOptionsAgreement = {
+          data: response.data.data,
+          showGridFooter: false,
+          enableColumnMenus: false,
+          showTreeExpandNoChildren: false,
+          enableHiding: false,
+          enableSorting: false,
+          enableFiltering: false,
+          enableRowSelection: true,
+          enableSelectAll: false,
+          rowHeight: 35,
+          columnDefs: [
+            {name: 'regionName', width: '33%', displayName: 'Терр.управление'},
+            {name: 'agreementDate', width: '35%', displayName: 'Дата-время согласования'},
+            {
+              name: 'status',
+              width: '25%',
+              displayName: 'Статус',
+              cellTemplate: '<a href="#" class="deletedSliceLink agreeedSliceLink btn btn-danger" ng-hide="{{COL_FIELD CUSTOM_FILTERS}} == 1">{{COL_FIELD CUSTOM_FILTERS}}</a> <a href="#" class="agreeedSliceLink" ng-show="{{COL_FIELD CUSTOM_FILTERS}} == 1">{{COL_FIELD CUSTOM_FILTERS}}</a>'
+            },
+            {name: 'fullName', width: '35%', displayName: 'ФИО'}
+          ]
+        };*/
+
+
+        // if ($scope.statusInfoData.data != undefined) $scope.agreementData = $scope.statusInfoData.data;
         break;
+
+
+      case STATUS_CODES.DELETED: // Удален
+        $scope.statusName = selectedStatus.statusName;
+        $scope.personName = selectedStatus.personName;
+        $scope.statusDate = selectedStatus.statusDate;
+        break;
+
+
       case STATUS_CODES.IN_PROCESSING: // В обработке
         url = 'preliminary.json';
         break;
@@ -778,16 +823,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         break;
       case STATUS_CODES.WAITING_FOR_PROCESSING: // В ожидании обработки
         url = 'waitingForProcess.json';
-        break;
-      case STATUS_CODES.APPROVED: // Окончательный
-
-
-        break;
-      case STATUS_CODES.IN_AGREEMENT: // На согласовании
-        // get data from history by forEach
-
-
-        // if ($scope.statusInfoData.data != undefined) $scope.agreementData = $scope.statusInfoData.data;
         break;
       default:
         // statements_def
@@ -814,29 +849,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         $scope.statusInfoData = response.data;
       } else { // Если статус "НА СОГЛАСОВАНИИ"
         $scope.statusInfoData = response.data;
-        $scope.gridOptionsAgreement = {
-          data: response.data.data,
-          showGridFooter: false,
-          enableColumnMenus: false,
-          showTreeExpandNoChildren: false,
-          enableHiding: false,
-          enableSorting: false,
-          enableFiltering: false,
-          enableRowSelection: true,
-          enableSelectAll: false,
-          rowHeight: 35,
-          columnDefs: [
-            {name: 'regionName', width: '33%', displayName: 'Терр.управление'},
-            {name: 'agreementDate', width: '35%', displayName: 'Дата-время согласования'},
-            {
-              name: 'status',
-              width: '25%',
-              displayName: 'Статус',
-              cellTemplate: '<a href="#" class="deletedSliceLink agreeedSliceLink btn btn-danger" ng-hide="{{COL_FIELD CUSTOM_FILTERS}} == 1">{{COL_FIELD CUSTOM_FILTERS}}</a> <a href="#" class="agreeedSliceLink" ng-show="{{COL_FIELD CUSTOM_FILTERS}} == 1">{{COL_FIELD CUSTOM_FILTERS}}</a>'
-            },
-            {name: 'fullName', width: '35%', displayName: 'ФИО'}
-          ]
-        };
+
       }
       $scope.getStatusTree();
     }, function (reason) {
@@ -880,24 +893,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
     })
 
   };
-
-  /*
-    Реализовано:
-    - Видимость кнопок в зависимости от роли пользователя
-    - Изменение данных справа в модалка в зависимости от статус кода
-      при открытии модалки и при клике на статус в дереве статусов
-    - Переделал отображение данных, теперь данные собираются в один массив.
-      HTML получат данные из одного массива
-    - Генерация пустой таблицы
-
-    Осталось:
-    - Правильная генерация дерева статусов
-    - Генерация пустой таблицы
-    - Процесс согласования в таблице - изменение данных в таблице по мере согласования
-    - Причина отказа - вводить/смотреть причину отказа
-  */
-
-
   $scope.cancel = function () {
     $uibModalInstance.dismiss();
   };

@@ -76,8 +76,8 @@
                   <a ng-click="getInfo()">- {{ status.name}}</a>
                 </li>-->
               </ul>
-              <uib-tabset active="activePill" vertical="true" type="pills">
-                <uib-tab ng-style="{'margin-left': $index*15 + 'px'}" ng-repeat="status in statuses"
+              <uib-tabset active="status.statusCode" vertical="true" type="pills">
+                <uib-tab ng-style="{'margin-left': $index*15 + 'px'}" ng-repeat="status in history"
                          ng-click="getStatusCode(status)" style="width: fit-content; margin: 5px" index="$index"
                          heading="{{status.statusName}}"></uib-tab>
               </uib-tabset>
@@ -116,37 +116,71 @@
           </div>
         </div>
 
+
+
+
+        <!--Инфо по статусу Сформирован с ошибкой-->
+        <div ng-if="statusCode == STATUS_CODES.FORMED_WITH_ERROR" class="col-md-7 noPadding">
+          <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
+            <h5><b>Статус:</b> {{statusName}}</h5>
+            <h5><b>Срез заказал:</b> {{personName}}</h5>
+            <h5><b>Время заказа среза:</b> {{statusDate}}</h5>
+            <h5><b>Время начала формирования:</b> {{created}}</h5>
+            <h5><b>Время окончания формирования: </b> {{completed}}</h5>
+
+            <h5><b>Сообщение об ошибке:</b></h5>
+
+            <div style="border: 1px solid #a7a4a4; padding: 10px">
+              <h5 style="color: red">{{errorMsg}}</h5>
+            </div>
+
+          </div>
+        </div>
+        <!--Инфо по статусу Сформирован с ошибкой-->
+
+
+
+        <!--Инфо по статусу Окончательный / Утвержден-->
+        <div ng-if="statusCode == STATUS_CODES.APPROVED" class="col-md-7 noPadding">
+          <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
+            <h5><b>Статус:</b> {{statusName}}</h5>
+            <h5><b>Срез утвердил:</b> {{personName}}</h5>
+            <h5><b>Время утверждения:</b> {{statusDate}}</h5>
+          </div>
+        </div>
+        <!--Инфо по статусу Окончательный / Утвержден-->
+
+
+
         <!--Инфо по статусу Предварительный-->
         <div ng-if="statusCode == STATUS_CODES.PRELIMINARY" class="col-md-7 noPadding">
           <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
             <h5><b>Статус:</b> {{statusName}}</h5>
             <h5><b>Срез заказал:</b> {{personName}}</h5>
             <h5><b>Время заказа среза:</b> {{statusDate}}</h5>
-            <h5><b>Время начала формирования:</b> {{startTime}}</h5>
-            <h5><b>Время окончания формирования: </b> {{endTime}}</h5>
+            <h5><b>Время начала формирования:</b> {{created}}</h5>
+            <h5><b>Время окончания формирования: </b> {{completed}}</h5>
           </div>
         </div>
         <!--Инфо по статусу Предварительный-->
 
 
-        <!--Инфо по статусу Сформирован с ошибкой-->
-        <div ng-if="statusCode == STATUS_CODES.FORMED_WITH_ERROR" class="col-md-7 noPadding">
+        <!--Инфо по статусу На согласовании-->
+        <div ng-if="statusCode == STATUS_CODES.IN_AGREEMENT" class="col-md-7 noPadding">
           <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
-            <h5><b>Статус:</b> {{statusInfoData.statusName}}</h5>
-            <h5><b>Срез заказал:</b> {{statusInfoData.orderedBy}}</h5>
-            <h5><b>Время заказа среза:</b> {{statusInfoData.orderDate}}</h5>
-            <h5><b>Время начала формирования:</b> {{statusInfoData.startTime}}</h5>
-            <h5><b>Время окончания формирования: </b> {{statusInfoData.endTime}}</h5>
-
-            <h5><b>Сообщение об ошибке</b></h5>
-
-            <div style="border: 1px solid #a7a4a4; padding: 10px">
-              <h5 style="color: red">{{statusInfoData.errorMessage}}</h5>
-            </div>
-
+            <h5><b>Статус:</b> {{statusName}}</h5>
+            <h5><b>Срез отправил на согласование:</b> {{personName}}</h5>
+            <h5><b>Время перевода на согласование:</b> {{statusDate}}</h5>
+            <div id="gridInAgreement" ui-grid="gridOptionsAgreement" ng-if="gridOptionsAgreement" ui-grid-cellnav
+                 class="grid"></div>
           </div>
         </div>
-        <!--Инфо по статусу Сформирован с ошибкой-->
+        <!--Инфо по статусу На согласовании-->
+
+
+
+
+
 
 
         <!--Инфо по статусу Удален-->
@@ -161,27 +195,9 @@
         <!--Инфо по статусу Удален-->
 
 
-        <!--Инфо по статусу Утвержден-->
-        <div ng-if="statusCode == STATUS_CODES.APPROVED" class="col-md-7 noPadding">
-          <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
-            <h5><b>Статус:</b> {{statusInfoData.statusName}}</h5>
-            <h5><b>Срез утвердил:</b> {{statusInfoData.approvedBy}}</h5>
-            <h5><b>Время утверждения:</b> {{statusInfoData.approvedTime}}</h5>
-          </div>
-        </div>
-        <!--Инфо по статусу Утвержден-->
 
-        <!--Инфо по статусу На согласовании-->
-        <div ng-if="statusCode == STATUS_CODES.IN_AGREEMENT" class="col-md-7 noPadding">
-          <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
-            <h5><b>Статус:</b> {{inAgreement.statusName}}</h5>
-            <h5><b>Срез отправил на согласование:</b> {{inAgreement.personName}}</h5>
-            <h5><b>Время перевода на согласование:</b> {{inAgreement.statusDate}}</h5>
-            <div id="gridInAgreement" ui-grid="gridOptionsAgreement" ng-if="gridOptionsAgreement" ui-grid-cellnav
-                 class="grid"></div>
-          </div>
-        </div>
-        <!--Инфо по статусу На согласовании-->
+
+
 
       </div>
     </div>

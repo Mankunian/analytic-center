@@ -96,7 +96,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     '<button ' +
     'ng-click="grid.appScope.openOperBySrez(row.entity)" ' +
     'ng-hide="row.treeLevel==0 || row.treeLevel == 1 || row.entity.statusCode == 0 || row.entity.statusCode == 6" ' +
-    'type="button" class="btn btn-success"> Операция со срезами ' +
+    'type="button" class="btn btn-primary"> Операция со срезами ' +
     '</button> </div>';
 
   $scope.gridOptions = {
@@ -134,32 +134,35 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       },
       {
         name: 'id',
-        width: '130',
+        width: '*',
         sort: 'asc',
-        displayName: 'Номер среза',
-        cellTemplate: '<div class="text-center" ng-controller="ModalControlCtrl"><button style="margin: 5px 0" class="btn btn-primary" ng-hide="row.treeLevel==0 || row.treeLevel == 1" ng-click="grid.appScope.open(row.entity)">{{COL_FIELD CUSTOM_FILTERS}}</button></div>'
+        displayName: 'Номер среза / Период',
+        cellTemplate: '<div class="text-center" ng-controller="ModalControlCtrl"><button style="margin: 5px 0; font-weight: 600" class="btn btn-default" ng-hide="row.treeLevel==0 || row.treeLevel == 1" ng-click="grid.appScope.open(row.entity)">{{row.entity.id}}</button> {{row.entity.period}}</div>'
       },
-      {
+      /*{
         name: 'period',
         width: '*',
         displayName: 'Период'
 
-      },
+      },*/
       {
         name: 'created',
         displayName: 'Сформирован',
-        width: '*'
+        width: '*',
+        cellTemplate: '<div class="indentInline">{{row.entity.created}}</div>'
       },
 
       {
         name: 'maxRecNum',
         displayName: 'На номер',
-        width: '*'
+        width: '*',
+        cellTemplate: '<div class="indentInline">{{row.entity.maxRecNum}}</div>'
       },
       {
         name: 'region',
         displayName: 'По органу',
-        width: '130'
+        width: '130',
+        cellTemplate: '<div class="indentInline">{{row.entity.region}}</div>'
       },
       {
         name: 'button',
@@ -693,6 +696,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
 
 app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalInstance, value, STATUS_CODES, USER_ROLES, BUTTONS) {
   /*=====  Получение данных ======*/
+  console.log(value);
 
 
   $scope.statusInfoData = [];

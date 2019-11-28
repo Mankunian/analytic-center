@@ -195,3 +195,7 @@ form.tab-form-demo .tab-pane {
     animation-iteration-count: infinite;
     animation-timing-function: ease-in-out;
 }
+
+.indentInline{
+    margin: 10px 15px;
+}

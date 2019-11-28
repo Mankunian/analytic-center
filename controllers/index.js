@@ -240,7 +240,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   $scope.showDeletedReports();
 
 
-
   $scope.toggleFirstRow = function (index, treeLevel, row) {
 
     //Получение всех срезов
@@ -325,13 +324,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
   $scope.user = [];
   $scope.orderSrez = function (user) {
-    var changeTab = function () {
-      $('.nav-tabs a[href="#home"]').tab('show');
-      $scope.vChecked = false;
-    };
 
-
-    changeTab();
 
     $scope.group = user;
 
@@ -353,8 +346,17 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       data: dataObj
     }).then(function (response) {
 
-      $scope.user = [];
       $scope.showGrid = response.data;
+      // $scope.user = [];
+
+      var changeTab = function () {
+        $('.nav-tabs a[href="#home"]').tab('show');
+        $scope.vChecked = false;
+        $scope.user.length = 0;
+      };
+
+
+      changeTab();
 
 
     }, function (reason) {

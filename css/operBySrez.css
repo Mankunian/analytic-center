@@ -66,6 +66,7 @@ h5 {
 }
 
 .modal-header {
+    padding: 6px 10px;
     text-align: left;
     background: #5B9BD5;
     color: #fff;
@@ -94,3 +95,6 @@ div#tabs.statusHistory ul li:last-child a{
     color: white;
 }
 
+.nav-pills>li>a{
+    border-radius: 0;
+}

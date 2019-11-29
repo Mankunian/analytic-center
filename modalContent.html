@@ -19,11 +19,11 @@
               <label for="reportDatePeriod">Отчетный период</label>
               <input type="text" name="reportDatePeriod" id="reportDatePeriod" class="form-control" disabled value="{{statSlicePeriod}}">
             </div>
-            <div class="form-group" ng-controller="langDropdownCtrl">
+            <div class="form-group">
               <label for="langSelect">Язык отчета</label>
               <select name="langSelect" id="langSelect"
-              ng-options="option.name for option in data.langs track by option.id"
-              ng-model="data.selectedOption" class="form-control"></select>
+              ng-options="option.name for option in langData.langs track by option.id"
+              ng-model="langData.selectedRepLang" class="form-control"></select>
             </div>
           </form>   			
 
@@ -36,9 +36,11 @@
         <div class="col-md-6">
           <div class="requested-reports">
             <h4>Запрошенные отчеты</h4>
-            <!-- <div id="selectedReports" ui-grid="gridOptionsSelectedReports" ui-grid-selection ui-grid-auto-resize ng-if="isReportsSelected" class="grid"></div> -->
-            <ul ng-repeat="(key, item) in requestedReports track by key">
-              <li><span class="remove-icon glyphicon glyphicon-remove-circle" ng-click="removeSelectedReport(key)"></span><span class="requested-report-item">{{item}}</span></li>
+            <ul>
+              <li ng-repeat="(key, item) in requestedReports track by key">
+                <span class="remove-icon glyphicon glyphicon-remove-circle" ng-click="removeSelectedReport(key)"></span>
+                <span class="requested-report-item">{{item}}</span>
+              </li>
             </ul>
           </div>
         </div>
@@ -71,5 +73,5 @@
 </div>
 <div class="modal-footer">
   <button class="btn btn-primary btn-md" type="submit" ng-disabled="!isReportsSelected || !isReadyReportsLoaded" ng-click="getReports()">Получить</button>
-  <button class="btn btn-warning" ng-click="blabla()">Отмена</button>
+  <button class="btn btn-warning" ng-click="cancel()">Отмена</button>
 </div>

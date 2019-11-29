@@ -90,7 +90,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   $scope.getStatSrez();
 
   //Получить № статсреза
-  var operBySrez = '<div  ' +
+  var operBySrez = '<div style="text-align: center"  ' +
     'ng-controller="modalOperBySrezCtrl" ' +
     'ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" ' +
     'class="ui-grid-cell-contents"> ' +

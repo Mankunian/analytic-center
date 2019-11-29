@@ -288,3 +288,10 @@ form.tab-form-demo .tab-pane {
 .indentInline{
     margin: 10px 15px;
 }
+
+.ui-grid-icon-plus-squared{
+    display: none;
+}
+.ui-grid-icon-minus-squared{
+    display: none;
+}

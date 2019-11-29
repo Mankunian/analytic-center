@@ -61,7 +61,7 @@ form.tab-form-demo .tab-pane {
 }
 .requested-reports ul {
 	list-style: none;
-  height: 250px;
+  max-height: 250px;
   overflow-y: auto;
 }
 .requested-reports ul li {
@@ -76,7 +76,7 @@ form.tab-form-demo .tab-pane {
 .ready-reports ul {
 	list-style: square;
 	padding-left: 20px;
-  height: 250px;
+  max-height: 250px;
   overflow-y: auto;
 }
 .ready-reports ul li {

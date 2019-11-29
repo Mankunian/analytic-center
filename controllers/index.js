@@ -430,8 +430,7 @@ app.controller('modalOperBySrezCtrl', function ($scope, $uibModal, $rootScope, $
  */
 app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, value, $rootScope, $sce, $timeout) {
 
-  // $scope.statSliceNum = value.id;
-  $scope.statSliceNum         = 541;
+  $scope.statSliceNum = value.id;
   $scope.statSlicePeriod      = value.period;
   $scope.isTabsLoaded         = false;
   $scope.isReportsSelected    = false;

@@ -785,8 +785,8 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   $scope.srezToNum = value.maxRecNum;
   // Получаем код статуса со строки - row.entity
 
-  $scope.rowEntityStatusCode = value.statusCode;
-  console.log($scope.rowEntityStatusCode);
+  $scope.rowEntityStatusCode = value.statusCode; // Here show buttons by current Status
+
   $scope.statusCode = value.statusCode;
   // $scope.statusCode = STATUS_CODES.FORMED_WITH_ERROR;
 
@@ -825,13 +825,13 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   /*=====  Получаем код статуса после клика на статус
   в дереве статусов и перезаписываем полученный из row.entity ======*/
   $scope.getStatusCode = function (selectedStatus) {
+
+    $scope.rowEntityStatusCode = selectedStatus.statusCode; // 1 Окончательный
     console.log(selectedStatus);
     $scope.statusCode = selectedStatus.statusCode;
 
 
     if (selectedStatus.statusCode === STATUS_CODES.IN_AGREEMENT) {
-      console.log('На согласовании');
-
       $http({
         method: 'GET',
         url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/' + selectedStatus.sliceId + '/history/' + selectedStatus.id + '/approving',

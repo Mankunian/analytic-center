@@ -90,3 +90,7 @@ div#tabs.statusHistory ul li:last-child{
     background: #337ab7;
 }
 
+div#tabs.statusHistory ul li:last-child a{
+    color: white;
+}
+

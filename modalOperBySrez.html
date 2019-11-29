@@ -1,4 +1,9 @@
 <style>
+
+  .modal-content{
+    border-radius: 0;
+  }
+
   ul.operBySrez {
     list-style: none;
     display: grid;
@@ -37,6 +42,7 @@
     height: auto;
     margin: 15px 0;
     min-height: 45vh;
+    overflow-y: scroll;
     background: #fff
   }
 
@@ -47,14 +53,30 @@
   .nav-pills > li > a {
     color: black;
     border: 1px solid #b5a8a8;
+    width: 150px;
   }
 
   .nav {
     padding-left: 10px;
   }
+
+  .modal-header{
+    text-align: left;
+    background: #5B9BD5;
+    color: #fff;
+  }
+
+  .modal-header .close{
+    color: #fff;
+    opacity: 2;
+  }
+  #tabs{
+    /*overflow-y: scroll;*/
+    height: 45vh;
+  }
 </style>
 
-<div class="modal-header" style="text-align: left">
+<div class="modal-header">
   <button type="button" class="close" data-dismiss="modal" ng-click="cancel()">×</button>
   <h4><b>Операции со срезами</b></h4>
 </div>
@@ -76,7 +98,7 @@
                   <a ng-click="getInfo()">- {{ status.name}}</a>
                 </li>-->
               </ul>
-              <uib-tabset active="status.statusCode" vertical="true" type="pills">
+              <uib-tabset  id="tabs" active="activeTabIndex" vertical="true" type="pills">
                 <uib-tab ng-style="{'margin-left': $index*15 + 'px'}" ng-repeat="status in history"
                          ng-click="getStatusCode(status)" style="width: fit-content; margin: 5px" index="$index"
                          heading="{{status.statusName}}"></uib-tab>
@@ -84,39 +106,43 @@
             </div>
 
             <div ng-if="userRole == USER_ROLES.ONE">
-              <button ng-click="statusAction(BUTTONS.TO_AGREEMENT)" class="btn btn-default" ng-if="
-              statusCode == STATUS_CODES.PRELIMINARY">На согласование
+
+
+              <button ng-click="statusAction(BUTTONS.SEND)" class="btn btn-default" ng-if="
+              rowEntityStatusCode == STATUS_CODES.PRELIMINARY">На согласование
               </button>
+
+
+              <button ng-click="statusAction(BUTTONS.PRELIMINARY)" class="btn btn-default" ng-if="
+              rowEntityStatusCode == STATUS_CODES.APPROVED">Перевести в Предварительный
+              </button>
+
 
               <button class="btn btn-default" ng-if="
-              statusCode == STATUS_CODES.FORMED_WITH_ERROR
-              || statusCode == STATUS_CODES.PRELIMINARY
-              || statusCode == STATUS_CODES.IN_AGREEMENT" ng-click="statusAction(BUTTONS.DELETE)">Удалить
+              rowEntityStatusCode == STATUS_CODES.FORMED_WITH_ERROR
+              || rowEntityStatusCode == STATUS_CODES.PRELIMINARY
+              || rowEntityStatusCode == STATUS_CODES.IN_AGREEMENT" ng-click="statusAction(BUTTONS.DELETE)">Удалить
               </button>
 
-              <button ng-click="statusAction(BUTTONS.SEND_TO_PRELIMINARY)" class="btn btn-default" ng-if="
-              statusCode == STATUS_CODES.APPROVED">Перевести в Предварительный
-              </button>
 
-              <button ng-click="statusAction(BUTTONS.APPROVE)" class="btn btn-default" ng-if="
-              statusCode == STATUS_CODES.PRELIMINARY || statusCode == STATUS_CODES.IN_AGREEMENT">Утвердить
+              <button ng-click="statusAction(BUTTONS.CONFIRM)" class="btn btn-default" ng-if="
+              rowEntityStatusCode == STATUS_CODES.PRELIMINARY || rowEntityStatusCode == STATUS_CODES.IN_AGREEMENT">
+                Утвердить
               </button>
             </div>
 
 
             <div ng-if="userRole == USER_ROLES.ZERO">
-              <button ng-click="statusAction(BUTTONS.TO_AGREEMENT) " class="btn btn-default" ng-if="
-              statusCode == STATUS_CODES.IN_AGREEMENT">Согласовать
+              <button ng-click="statusAction(BUTTONS.APPROVE) " class="btn btn-default" ng-if="
+              rowEntityStatusCode == STATUS_CODES.IN_AGREEMENT">Согласовать
               </button>
 
-              <button ng-click="statusAction(BUTTONS.TO_AGREEMENT)" class="btn btn-default" ng-if="
-              statusCode == STATUS_CODES.IN_AGREEMENT">Отказать
+              <button ng-click="statusAction(BUTTONS.APPROVE)" class="btn btn-default" ng-if="
+              rowEntityStatusCode == STATUS_CODES.IN_AGREEMENT">Отказать
               </button>
             </div>
           </div>
         </div>
-
-
 
 
         <!--Инфо по статусу Сформирован с ошибкой-->
@@ -139,7 +165,6 @@
         <!--Инфо по статусу Сформирован с ошибкой-->
 
 
-
         <!--Инфо по статусу Окончательный / Утвержден-->
         <div ng-if="statusCode == STATUS_CODES.APPROVED" class="col-md-7 noPadding">
           <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
@@ -149,7 +174,6 @@
           </div>
         </div>
         <!--Инфо по статусу Окончательный / Утвержден-->
-
 
 
         <!--Инфо по статусу Предварительный-->
@@ -178,11 +202,6 @@
         <!--Инфо по статусу На согласовании-->
 
 
-
-
-
-
-
         <!--Инфо по статусу Удален-->
         <div ng-if="statusCode == STATUS_CODES.DELETED" class="col-md-7 noPadding">
           <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
@@ -195,16 +214,12 @@
         <!--Инфо по статусу Удален-->
 
 
-
-
-
-
       </div>
     </div>
   </div>
 </div>
 <div class="modal-footer">
-  <button class="btn btn-warning" ng-click="cancel()">Отмена</button>
+  <button class="btn btn-danger" ng-click="cancel()">Отмена</button>
 </div>
 
 

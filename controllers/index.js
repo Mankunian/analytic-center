@@ -23,11 +23,12 @@ app.constant('STATUS_CODES', {
   ONE: '1',
   ZERO: '0'
 }).constant('BUTTONS', {
-  TO_AGREEMENT: '0',
-  DELETE: '1',
-  SEND_TO_PRELIMINARY: '2',
-  PRELIMINARY: '3',
-  APPROVE: '4'
+  APPROVE: '0', // Согласовать
+  CONFIRM: '1', // Утвердить/ Окончательный
+  DELETE: '2', // Удалить
+  PRELIMINARY: '3', // Перевести в предварительный
+  SEND: '4' // На согласование
+
 
 }).run(function ($rootScope, STATUS_CODES, USER_ROLES, BUTTONS) {
   $rootScope.STATUS_CODES = STATUS_CODES;
@@ -134,10 +135,10 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       },
       {
         name: 'id',
-        width: '*',
+        width: '20%',
         sort: 'asc',
         displayName: 'Номер среза / Период',
-        cellTemplate: '<div class="text-center" ng-controller="ModalControlCtrl"><button style="margin: 5px 0; font-weight: 600" class="btn btn-default" ng-hide="row.treeLevel==0 || row.treeLevel == 1" ng-click="grid.appScope.open(row.entity)">{{row.entity.id}}</button> {{row.entity.period}}</div>'
+        cellTemplate: '<div ng-hide="row.treeLevel==0 || row.treeLevel == 1" class="text-center" ng-controller="ModalControlCtrl"><button style="margin: 5px 0; font-weight: 600; border: none; background: transparent" class="btn btn-default"  ng-click="grid.appScope.open(row.entity)"><a>№{{row.entity.id}}</a></button>период {{row.entity.period}}</div>'
       },
       /*{
         name: 'period',
@@ -145,24 +146,25 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
         displayName: 'Период'
 
       },*/
-      {
-        name: 'created',
-        displayName: 'Сформирован',
-        width: '*',
-        cellTemplate: '<div class="indentInline">{{row.entity.created}}</div>'
-      },
+
 
       {
         name: 'maxRecNum',
         displayName: 'На номер',
-        width: '*',
+        width: '9%',
         cellTemplate: '<div class="indentInline">{{row.entity.maxRecNum}}</div>'
       },
       {
         name: 'region',
         displayName: 'По органу',
-        width: '130',
+        width: '8%',
         cellTemplate: '<div class="indentInline">{{row.entity.region}}</div>'
+      },
+      {
+        name: 'created',
+        displayName: 'Сформирован',
+        width: '13%',
+        cellTemplate: '<div class="indentInline">{{row.entity.created}}</div>'
       },
       {
         name: 'button',
@@ -234,12 +236,12 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
         $scope.gridOptions.data = [];
         writeoutNode(dataSet, 0, $scope.gridOptions.data);
       });
-      // console.log(dataSet)
+
 
     });
-
-
   };
+
+
   $scope.showDeletedReports();
 
 
@@ -248,6 +250,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     //Получение всех срезов
 
     if (treeLevel === 0) {
+      console.log(row.entity);
       var groupFolderImg = document.getElementById(row.entity.$$hashKey);
 
       if (groupFolderImg.src.indexOf('folder-cl.png') !== -1) {
@@ -257,6 +260,9 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       }
       $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
     } else {
+
+
+      console.log(row.entity);
 
       var statusFolderImg = document.getElementById(row.entity.$$hashKey);
       if (statusFolderImg.src.indexOf('folder-cl.png') !== -1) {
@@ -268,29 +274,43 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
       $scope.preloaderByStatus = true;
 
-      var groupCode = row.entity.groupCode,
-        statusCode = row.entity.code,
-        year = row.entity.statusYear;
+      var urlStatus = '';
+      var check = $scope.checkboxModel.value;
+      $scope.getDataOnclickStatus = function () {
 
+        var groupCode = row.entity.groupCode,
+          statusCode = row.entity.code,
+          year = row.entity.statusYear;
 
-      // подгружает данные http
-      $http({
-        method: 'GET',
-        url: 'https://analytic-centre.tk:8081/api/v1/RU/slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + '',
-        headers: {
-          sessionKey: 'admin'
+        if (check) {
+          urlStatus = 'https://analytic-centre.tk:8081/api/v1/RU/slices?deleted=true&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + ''
+
+        } else {
+          urlStatus = 'https://analytic-centre.tk:8081/api/v1/RU/slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + ''
         }
-      }).then(function (value) {
-        $scope.showGrid = value.data;
-        $scope.preloaderByStatus = false;
-      }, function (reason) {
-        console.log(reason);
-      });
+
+        // подгружает данные http
+        $http({
+          method: 'GET',
+          url: urlStatus,
+          headers: {
+            sessionKey: 'admin'
+          }
+        }).then(function (value) {
+          $scope.showGrid = value.data;
+          $scope.preloaderByStatus = false;
+        }, function (reason) {
+          console.log(reason);
+        });
+      };
+      $scope.getDataOnclickStatus();
 
 
+      // Тут данные добавляются
       $scope.gridApi.treeBase.on.rowExpanded($scope, function (row) {
 
         if (row.entity.isDataLoaded === undefined && row.entity.$$treeLevel !== 0) {
+
           $interval(function () {
             var selectedRowHashkey = row.entity.$$hashKey,
               selectedRowIndex = 0;
@@ -302,15 +322,20 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
             });
 
             $scope.showGrid.forEach(function (statusData) {
-              $scope.dataByStatus = statusData;
+              // $scope.dataByStatus = statusData;
+              $scope.gridOptions.data.splice(selectedRowIndex, 0, statusData);
+              console.log(statusData)
             });
-            $scope.gridOptions.data.splice(selectedRowIndex, 0, $scope.dataByStatus);
+
             console.log($scope.showGrid);
+            //Тут дублирует записи
+
+            $scope.showGrid = [];
+            $scope.showGrid.length = 0;
 
             row.entity.isDataLoaded = true;
-          }, 1000, 1);
+          }, 2000, 1);
         } else {
-          $scope.showGrid = [];
           console.log('This row already has data');
         }
       });
@@ -327,7 +352,13 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
   $scope.user = [];
   $scope.orderSrez = function (user) {
+    var changeTab = function () {
+      $('.nav-tabs a[href="#home"]').tab('show');
+      $scope.vChecked = false;
+    };
 
+
+    changeTab();
 
     $scope.group = user;
 
@@ -349,17 +380,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       data: dataObj
     }).then(function (response) {
 
+      $scope.user = [];
       $scope.showGrid = response.data;
-      // $scope.user = [];
-
-      var changeTab = function () {
-        $('.nav-tabs a[href="#home"]').tab('show');
-        $scope.vChecked = false;
-        $scope.user.length = 0;
-      };
-
-
-      changeTab();
 
 
     }, function (reason) {
@@ -390,6 +412,10 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   var dateToString = dd + '.' + mm + '.' + yy;
 }]);
 
+
+/**
+ *  ModalControlCtrl
+ */
 app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope) {
 
   $rootScope.open = function (value) {
@@ -416,6 +442,9 @@ app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope) {
 });
 
 
+/**
+ *  ModalOperBySrezCtrl
+ */
 app.controller('modalOperBySrezCtrl', function ($scope, $uibModal, $rootScope, $http, STATUS_CODES) {
 
   $rootScope.openOperBySrez = function (rowEntity) {
@@ -434,13 +463,16 @@ app.controller('modalOperBySrezCtrl', function ($scope, $uibModal, $rootScope, $
       }
     });
     modalInstance.result.then(function (response) {
-
+      console.log('response');
     });
 
   };
 });
 
 
+/**
+ *  LangDropdownCtrl
+ */
 app.controller('langDropdownCtrl', function ($scope, $log) {
 
   $scope.data = {
@@ -453,13 +485,40 @@ app.controller('langDropdownCtrl', function ($scope, $log) {
 
 });
 
+/**
+ *  ModalContentCtrl
+ */
+app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, value, $rootScope, $sce, $timeout) {
 
-app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, value, $rootScope, $sce) {
-
-  $scope.statSliceNum = 541;
   // $scope.statSliceNum = value.id;
+  $scope.statSliceNum = 541;
   $scope.statSlicePeriod = value.period;
+  $scope.isTabsLoaded = false;
+  $scope.isReportsSelected = false;
+  $scope.tabsIsRefreshed = false;
+  $scope.isReadyReportsLoaded = true;
+  var refreshedTabs = [];
 
+  var refreshTabs = function (code) {
+    if (!refreshedTabs.includes(code)) {
+      $scope.refresh = true;
+      console.log('refresh true');
+      $timeout(function () {
+        $scope.refresh = false;
+        console.log('refresh false');
+      }, 0);
+      refreshedTabs.push(code);
+    }
+  };
+
+  var refresh = function () {
+    $scope.refresh = true;
+    $timeout(function () {
+      $scope.refresh = false;
+    }, 0);
+  };
+
+  /*=====  Получение списка отчетов для формирования вкладок ======*/
   $http({
     method: 'GET',
     url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/reports?sliceId=' + $scope.statSliceNum,
@@ -473,6 +532,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
   $scope.getReportInfo = function (index) {
     return $scope.reportTabs[index];
   };
+  /*=====  Получение списка отчетов для формирования вкладок end ======*/
 
   /*=====  Regions grid - get data from backend ======*/
   $http({
@@ -532,20 +592,20 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
           enableSelectAll: false,
           selectionRowHeaderWidth: 35,
           rowHeight: 35,
-          treeIndent: 10,
+          treeIndent: 7,
           multiSelect: true,
           columnDefs: [
             {
               name: 'code',
               width: '20%',
               displayName: 'и/н',
-              cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>"
+              cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': (row.treeLevel == 'last') ? grid.options.treeIndent * 3 + 'px' : grid.options.treeIndent * (row.treeLevel + 1) + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>"
             },
             {
               name: 'name',
-              width: '40%',
+              width: '80%',
               displayName: 'Регион/Орган',
-              cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>"
+              cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': (row.treeLevel == 'last') ? grid.options.treeIndent * 3 + 'px' : grid.options.treeIndent * (row.treeLevel + 1) + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>"
             }
           ]
         };
@@ -555,6 +615,9 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
       });
       // END Each function for reports with orgs
       $scope.onRegisterApiInit();
+
+      // Скрыть индикатор загрузки и показать данные формы
+      $scope.isTabsLoaded = true;
     }, function (reason) {
       console.log(reason);
     });
@@ -593,7 +656,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
       item.gridRegionsDataset.onRegisterApi = function (gridApi) {
         item.gridApiRegionsName = gridApi;
         gridApi.selection.on.rowSelectionChanged($scope, function (row) {
-          $scope.selectedRegions[index] = item.gridApiRegionsName.selection.getSelectedRows()
+          $scope.selectedRegions[index] = item.gridApiRegionsName.selection.getSelectedRows();
         });
       };
     });
@@ -606,13 +669,19 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
       'name': name,
       'code': code,
     };
+    // refreshTabs(code);
+    refresh();
   };
   /*=====  Get and save current reports's name, code end ======*/
 
   /*=====  Sets correct $$treeLevel ======*/
   var writeoutNodeRegions = function (childArray, currentLevel, dataArray) {
     childArray.forEach(function (childNode) {
-      if (childNode.children.length > 0) childNode.$$treeLevel = currentLevel;
+      if (childNode.children.length > 0) {
+        childNode.$$treeLevel = currentLevel;
+      } else {
+        childNode.$$treeLevel = 'last';
+      }
       dataArray.push(childNode);
       writeoutNodeRegions(childNode.children, currentLevel + 1, dataArray);
     });
@@ -627,36 +696,78 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
       counter = 0;
 
     if ($scope.selectedRegions != undefined && $scope.selectedDeps != undefined) {
-
       $scope.selectedRegions.forEach(function (element, index) {
         var regionsTabIndex = index;
         reportInfo = $scope.getReportInfo(regionsTabIndex);
 
         element.forEach(function (region, index) {
           if ($scope.selectedDeps[regionsTabIndex] != undefined) {
-            $scope.selectedDeps[regionsTabIndex].forEach(function (department, index) {
+            $scope.isReportsSelected = true;
 
-              $scope.department = department;
-              $scope.requestedReports[counter] = reportInfo.name + " - " + region.name + "-" + $scope.department.name;
+            $scope.selectedDeps[regionsTabIndex].forEach(function (department, index) {
+              $scope.requestedReports[counter] = reportInfo.name + '-' + region.name + '-' + department.name;
               $scope.requestedReportsQuery[counter] = {
                 "sliceId": $scope.statSliceNum,
                 "reportCode": reportInfo.code,
-                "orgCode": $scope.department.code,
+                "orgCode": department.code,
                 "regCode": region.code
               };
               counter++;
             });
           }
-          console.log($scope.requestedReports);
-          console.log($scope.requestedReportsQuery);
         });
       });
+
+      // $scope.gridOptionsSelectedReports = {
+      //   data: $scope.requestedReports,
+      //   showGridFooter: false,
+      //   enableColumnMenus: false,
+      //   showTreeExpandNoChildren: false,
+      //   enableHiding: false,
+      //   enableSorting: false,
+      //   enableFiltering: false,
+      //   enableRowSelection: true,
+      //   enableSelectAll: false,
+      //   rowHeight: 35,
+      //   columnDefs: [
+      //     {name: '0', width: '14%', displayName: 'Тип'},
+      //     {name: '1', width: '51%', displayName: 'Регион'},
+      //     {name: '2', width: '35%', displayName: 'Ведомство'},
+      //   ]
+      // };
+      // refresh();
     }
+  };
+  $scope.removeSelectedReport = function (key) {
+    var removedDepIndex,
+      removedDepValue,
+      removedRegIndex,
+      removedTabIndex;
+
+    removedDepValue = $scope.requestedReportsQuery[key].orgCode;
+    removedRegValue = $scope.requestedReportsQuery[key].regCode;
+
+    $scope.requestedReports.splice(key, 1);
+    $scope.requestedReportsQuery.splice(key, 1);
+
+    /*if ($scope.requestedReportsQuery.findIndex(x => x.orgCode === removedDepValue) === -1) {
+      console.log('bolwe net deps');
+      removedDepIndex = $scope.depsGridApiOptions[0].gridApiDepDataset.data.findIndex(x => x.code === removedDepValue);
+      $scope.depsGridApiOptions[0].gridApiDepsName.selection.toggleRowSelection($scope.depsGridApiOptions[0].gridApiDepDataset.data[removedDepIndex]);
+    }
+
+    if ($scope.requestedReportsQuery.findIndex(x => x.regCode === removedRegValue) === -1) {
+      console.log('bolwe net regs');
+      removedRegIndex = $scope.regionsGridApiOptions[0].gridRegionsDataset.data.findIndex(x => x.code === removedRegValue);
+      $scope.regionsGridApiOptions[0].gridApiRegionsName.selection.toggleRowSelection($scope.regionsGridApiOptions[0].gridRegionsDataset.data[removedRegIndex]);
+    }*/
+
   };
   /*=====  Generate and get requested reports end ======*/
 
   /*=====  Get reports ======*/
   $scope.getReports = function () {
+    $scope.isReadyReportsLoaded = false;
     if ($scope.requestedReportsQuery != undefined && $scope.requestedReportsQuery.length > 0) {
       $scope.readyReports = [];
       $http({
@@ -667,11 +778,12 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
         },
         data: $scope.requestedReportsQuery
       }).then(function (response) {
+        $scope.isReadyReportsLoaded = true;
         var reportValues = response.data;
         var counter = 0;
         reportValues.forEach(function (element, index) {
 
-          var reportDownloadUrl = "https://analytic-centre.tk:8081/api/v1/{lang}/slices/reports/" + element.value + "/download";
+          var reportDownloadUrl = "https://analytic-centre.tk:8081/api/v1/RU/slices/reports/" + element.value + "/download";
           var readyReportItem = "<a href=" + reportDownloadUrl + " target='_blank'>Скачать отчет (" + $scope.requestedReports[counter] + ")</a>";
 
           $scope.readyReports.push($sce.trustAsHtml(readyReportItem));
@@ -694,16 +806,19 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
 });
 
 
-app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalInstance, value, STATUS_CODES, USER_ROLES, BUTTONS) {
+app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalInstance, value, STATUS_CODES, USER_ROLES, BUTTONS, $uibModal, $timeout) {
   /*=====  Получение данных ======*/
-
-
   $scope.statusInfoData = [];
   var url = '';
   $scope.srezNo = value.id;
   $scope.period = value.period;
   $scope.srezToNum = value.maxRecNum;
-  // $scope.statusCode = value.statusCode;
+  // Получаем код статуса со строки - row.entity
+
+  $scope.rowEntityStatusCode = value.statusCode;
+  console.log($scope.rowEntityStatusCode);
+  $scope.statusCode = value.statusCode;
+  // $scope.statusCode = STATUS_CODES.FORMED_WITH_ERROR;
 
 
   // Определяем роль пользователя
@@ -712,6 +827,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   /*=====  Получение данных end ======*/
 
 
+  $scope.activeTabIndex = 0;
   /*Получаем дерево статусов в зависимости от Номера среза*/
   $scope.getStatusTree = function () {
     $http({
@@ -722,10 +838,17 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
       }
     }).then(function (response) {
       $scope.history = response.data;
-      $scope.history.forEach(function (historyObj) {
+      console.log($scope.history);
+      //Make tab active depends on last index of status
+      $scope.activeTabIndex = $scope.history.length - 1;
+      // console.log($scope.activeTabIndex);
+      // $scope.rowEntityStatusCode = $scope.history[activeTabIndex].statusCode;
+      // console.log($scope.rowEntityStatusCode[activeTabIndex].statusCode);
+
+
+        $scope.history.forEach(function (historyObj) {
         $scope.historyObj = historyObj
       });
-      console.log($scope.historyObj);
       $scope.getStatusCode($scope.historyObj);
     });
   };
@@ -738,6 +861,49 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   $scope.getStatusCode = function (selectedStatus) {
     console.log(selectedStatus);
     $scope.statusCode = selectedStatus.statusCode;
+
+
+    if (selectedStatus.statusCode === STATUS_CODES.IN_AGREEMENT) {
+      console.log('На согласовании');
+
+      $http({
+        method: 'GET',
+        url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/' + selectedStatus.sliceId + '/history/' + selectedStatus.id + '/approving',
+        headers: {
+          sessionKey: 'admin'
+        }
+      }).then(function (response) {
+        $scope.statusInfoData = response.data;
+
+        $scope.gridOptionsAgreement = {
+          data: response.data,
+          showGridFooter: false,
+          enableColumnMenus: false,
+          showTreeExpandNoChildren: false,
+          enableHiding: false,
+          enableSorting: false,
+          enableFiltering: false,
+          enableRowSelection: true,
+          enableSelectAll: false,
+          rowHeight: 35,
+          columnDefs: [
+            {name: 'territoryName', width: '*', displayName: 'Терр.управление'},
+            {name: 'approveDate', width: '*', displayName: 'Дата-время согласования'},
+            {
+              name: 'approveName',
+              width: '*',
+              displayName: 'Статус',
+              cellTemplate: '<div style="margin: 5px 0; text-align: center"><a ng-click="grid.appScope.modalRejectionReason(row.entity)" ng-style= "{ color: row.entity.approveCode == \'2\' ? \'red\' : \'\' }">{{COL_FIELD CUSTOM_FILTERS}}</a></div>'
+            },
+            {name: 'personName', width: '*', displayName: 'ФИО'}
+          ]
+        };
+        // $scope.getStatusTree();
+      }, function (reason) {
+        console.log(reason)
+      })
+    }
+
 
     /*=====  Сравниваем полученный код статуса и меняем URL HTTP запроса ======*/
     switch ($scope.statusCode) {
@@ -765,46 +931,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         $scope.statusName = selectedStatus.statusName;
         $scope.personName = selectedStatus.personName;
         $scope.statusDate = selectedStatus.statusDate;
-
-        $scope.getApprovalList = function () {
-          $http({
-            method: 'GET',
-            url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/1/history/1/approving',
-            headers: {
-              sessionKey: 'admin'
-            }
-          }).then(function (response) {
-            console.log(response)
-          })
-        };
-        $scope.getApprovalList();
-
-        /*$scope.gridOptionsAgreement = {
-          data: response.data.data,
-          showGridFooter: false,
-          enableColumnMenus: false,
-          showTreeExpandNoChildren: false,
-          enableHiding: false,
-          enableSorting: false,
-          enableFiltering: false,
-          enableRowSelection: true,
-          enableSelectAll: false,
-          rowHeight: 35,
-          columnDefs: [
-            {name: 'regionName', width: '33%', displayName: 'Терр.управление'},
-            {name: 'agreementDate', width: '35%', displayName: 'Дата-время согласования'},
-            {
-              name: 'status',
-              width: '25%',
-              displayName: 'Статус',
-              cellTemplate: '<a href="#" class="deletedSliceLink agreeedSliceLink btn btn-danger" ng-hide="{{COL_FIELD CUSTOM_FILTERS}} == 1">{{COL_FIELD CUSTOM_FILTERS}}</a> <a href="#" class="agreeedSliceLink" ng-show="{{COL_FIELD CUSTOM_FILTERS}} == 1">{{COL_FIELD CUSTOM_FILTERS}}</a>'
-            },
-            {name: 'fullName', width: '35%', displayName: 'ФИО'}
-          ]
-        };*/
-
-
-        // if ($scope.statusInfoData.data != undefined) $scope.agreementData = $scope.statusInfoData.data;
         break;
 
 
@@ -821,9 +947,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
       case STATUS_CODES.CANCELED_BY_USER: // Отменен пользователем
         url = 'canceledByUser.json';
         break;
-      case STATUS_CODES.WAITING_FOR_PROCESSING: // В ожидании обработки
-        url = 'waitingForProcess.json';
-        break;
       default:
         // statements_def
         break;
@@ -832,50 +955,25 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   };
 
 
-  /*=====  Получаем код статуса после клика на статус
-  в дереве статусов и перезаписываем полученный из row.entity ======*/
-
-
-  if (url !== '') {
-    $http({
-      method: 'GET',
-      url: './json/' + url,
-      headers: {
-        sessionKey: 'admin'
-      }
-    }).then(function (response) {
-      console.log(response);
-      if ($scope.statusCode != STATUS_CODES.IN_AGREEMENT) {
-        $scope.statusInfoData = response.data;
-      } else { // Если статус "НА СОГЛАСОВАНИИ"
-        $scope.statusInfoData = response.data;
-
-      }
-      $scope.getStatusTree();
-    }, function (reason) {
-      console.log(reason);
-    });
-  }
-
-
   $scope.statusAction = function (btnNum) {
+    console.log(btnNum);
 
     var btnActionUrl = '';
     switch (btnNum) {
+      case btnNum = BUTTONS.SEND:
+        btnActionUrl = 'send'; // На согласование
+        break;
       case btnNum = BUTTONS.PRELIMINARY:
-        btnActionUrl = 'preliminary';
+        btnActionUrl = 'preliminary'; // Перевести в предварительный
         break;
-      case btnNum = BUTTONS.DELETE:
-        btnActionUrl = 'delete';
-        break;
-      case btnNum = BUTTONS.SEND_TO_PRELIMINARY:
-        btnActionUrl = 'send';
+      case btnNum = BUTTONS.CONFIRM:
+        btnActionUrl = 'confirm'; // Утвердить
         break;
       case btnNum = BUTTONS.APPROVE:
-        btnActionUrl = 'approve';
+        btnActionUrl = 'approve'; // Согласовать
         break;
-      case btnNum = BUTTONS.TO_AGREEMENT:
-        btnActionUrl = 'confirm';
+      case btnNum = BUTTONS.DELETE:
+        btnActionUrl = 'delete'; // Удалить
         break;
     }
 
@@ -888,13 +986,42 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
       }
     }).then(function (response) {
       console.log(response);
+      $timeout(alert('Операция успешно совершена'), 2000);
+      $scope.getStatusTree();
     }, function (reason) {
-      console.log(reason)
+      console.log(reason);
+
     })
 
   };
+
+
+  $scope.modalRejectionReason = function (rowEntity) {
+    if (rowEntity.approveCode === '2') {
+      $uibModal.open({
+        templateUrl: 'rejectionReason.html',
+        controller: function ($scope, $uibModalInstance) {
+          // $scope.userRole = USER_ROLES.ZERO;
+          $scope.userRole = USER_ROLES.ONE;
+
+          $scope.rejectionMsg = rowEntity.msg;
+
+
+          $scope.ok = function () {
+            $uibModalInstance.close();
+          };
+
+          $scope.cancel = function () {
+            $uibModalInstance.dismiss('cancel');
+          };
+        }
+      })
+    }
+  };
+
+
   $scope.cancel = function () {
-    $uibModalInstance.dismiss();
+    $uibModalInstance.dismiss($scope.showDeletedReports());
   };
 
 });

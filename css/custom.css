@@ -109,112 +109,6 @@ form.tab-form-demo .tab-pane {
 }
 
 /*Loader*/
-@-webkit-keyframes rotate {
-    0% {
-        -webkit-transform: rotate(0deg);
-        transform: rotate(0deg);
-    }
-    50% {
-        -webkit-transform: rotate(180deg);
-        transform: rotate(180deg);
-    }
-    100% {
-        -webkit-transform: rotate(360deg);
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes rotate {
-    0% {
-        -webkit-transform: rotate(0deg);
-        transform: rotate(0deg);
-    }
-    50% {
-        -webkit-transform: rotate(180deg);
-        transform: rotate(180deg);
-    }
-    100% {
-        -webkit-transform: rotate(360deg);
-        transform: rotate(360deg);
-    }
-}
-
-@-webkit-keyframes rotate2 {
-    0% {
-        -webkit-transform: rotate(0deg);
-        transform: rotate(0deg);
-        border-top-color: rgba(0, 0, 0, 0.5);
-    }
-    50% {
-        -webkit-transform: rotate(180deg);
-        transform: rotate(180deg);
-        border-top-color: rgba(0, 0, 255, 0.5);
-    }
-    100% {
-        -webkit-transform: rotate(360deg);
-        transform: rotate(360deg);
-        border-top-color: rgba(0, 0, 0, 0.5);
-    }
-}
-
-@keyframes rotate2 {
-    0% {
-        -webkit-transform: rotate(0deg);
-        transform: rotate(0deg);
-        border-top-color: rgba(0, 0, 0, 0.5);
-    }
-    50% {
-        -webkit-transform: rotate(180deg);
-        transform: rotate(180deg);
-        border-top-color: rgba(0, 0, 255, 0.5);
-    }
-    100% {
-        -webkit-transform: rotate(360deg);
-        transform: rotate(360deg);
-        border-top-color: rgba(0, 0, 0, 0.5);
-    }
-}
-
-* {
-    box-sizing: border-box;
-}
-
-
-.loader {
-    position: relative;
-    margin: 75px auto;
-    width: 150px;
-    height: 150px;
-    display: block;
-    overflow: hidden;
-}
-
-.loader div {
-    height: 100%;
-}
-
-/* loader 1 */
-.loader1,
-.loader1 div {
-    border-radius: 50%;
-    padding: 8px;
-    border: 2px solid transparent;
-    -webkit-animation: rotate linear 3.5s infinite;
-    animation: rotate linear 3.5s infinite;
-    border-top-color: rgba(0, 0, 0, 0.5);
-    border-bottom-color: rgba(0, 0, 255, 0.5);
-}
-
-
-div:hover {
-    -webkit-animation-play-state: paused;
-    animation-play-state: paused;
-}
-
-.loader,
-.loader * {
-    will-change: transform;
-}
 
 
 /*TreeView*/
@@ -355,4 +249,49 @@ div:hover {
 }
 .preloader-block.ready-reports {
     height: auto;
+}
+
+
+/*Preloader for ui grid treeLevel = 2*/
+@keyframes loader-animation {
+    0% {
+        left: -100%;
+    }
+    49% {
+        left: 100%;
+    }
+    50% {
+        left: 100%;
+    }
+    100% {
+        left: -100%;
+    }
+}
+
+.loader {
+    height: 5px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.loader .bar {
+    position: relative;
+    height: 5px;
+    width: 100%;
+    background-color: dodgerblue;
+    animation-name: loader-animation;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+}
+
+.indentInline{
+    margin: 10px 15px;
+}
+
+.ui-grid-icon-plus-squared{
+    display: none;
+}
+.ui-grid-icon-minus-squared{
+    display: none;
 }

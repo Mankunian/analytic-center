@@ -7,42 +7,42 @@
   		"regionCode" : "00",
   		"regionName" : "г.Нур-султан",
   		"agreementDate" : "19.11.2019 20:21",
-  		"status" : "1",
+  		"status" : "Согласовать",
   		"fullName" : "Жакупов И.С."
   	},
   	{
   		"regionCode" : "01",
   		"regionName" : "г.Алматы",
   		"agreementDate" : "19.11.2019 20:21",
-  		"status" : "0",
+  		"status" : "Отказать",
   		"fullName" : "Искаков А.С."
   	},
   	{
   		"regionCode" : "02",
   		"regionName" : "г.Шымкент",
   		"agreementDate" : "19.11.2019 20:21",
-  		"status" : "1",
+  		"status" : "Согласовать",
   		"fullName" : "Абрамов В.С."
   	},
   	{
   		"regionCode" : "00",
   		"regionName" : "г.Нур-султан",
   		"agreementDate" : "19.11.2019 20:21",
-  		"status" : "1",
+  		"status" : "Согласовать",
   		"fullName" : "Жакупов И.С."
   	},
   	{
   		"regionCode" : "01",
   		"regionName" : "г.Алматы",
   		"agreementDate" : "19.11.2019 20:21",
-  		"status" : "0",
+  		"status" : "Отказать",
   		"fullName" : "Искаков А.С."
   	},
   	{
   		"regionCode" : "02",
   		"regionName" : "г.Шымкент",
   		"agreementDate" : "19.11.2019 20:21",
-  		"status" : "1",
+  		"status" : "Согласовать",
   		"fullName" : "Абрамов В.С."
   	}
   ]

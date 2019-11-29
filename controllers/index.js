@@ -808,12 +808,8 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
       }
     }).then(function (response) {
       $scope.history = response.data;
-      console.log($scope.history);
       //Make tab active depends on last index of status
       $scope.activeTabIndex = $scope.history.length - 1;
-      // console.log($scope.activeTabIndex);
-      // $scope.rowEntityStatusCode = $scope.history[activeTabIndex].statusCode;
-      // console.log($scope.rowEntityStatusCode[activeTabIndex].statusCode);
 
 
         $scope.history.forEach(function (historyObj) {

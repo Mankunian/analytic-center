@@ -236,6 +236,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
         $scope.gridOptions.data = [];
         writeoutNode(dataSet, 0, $scope.gridOptions.data);
       });
+      console.log(dataSet);
 
 
     });
@@ -265,7 +266,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       console.log(row.entity);
 
       var statusFolderImg = document.getElementById(row.entity.$$hashKey);
-      if (statusFolderImg.src.indexOf('folder-cl.png') !== -1) {
+      if (statusFolderImg.src.indexOf('folder-cl.png') != -1) {
         statusFolderImg.src = 'img/folder-op.png'
       } else {
         statusFolderImg.src = 'img/folder-cl.png'
@@ -425,8 +426,8 @@ app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope) {
     var modalInstance = $uibModal.open({
       templateUrl: "modalContent.html",
       controller: "ModalContentCtrl",
-      size: 'lg',
-      backdrop: 'static',
+      size: 'xlg',
+      backdrop : 'static',
       windowTopClass: 'getReportModal',
       resolve: {
         value: function () {
@@ -469,51 +470,30 @@ app.controller('modalOperBySrezCtrl', function ($scope, $uibModal, $rootScope, $
   };
 });
 
-
-/**
- *  LangDropdownCtrl
- */
-app.controller('langDropdownCtrl', function ($scope, $log) {
-
-  $scope.data = {
-    langs: [
-      {id: '0', name: 'Русский'},
-      {id: '1', name: 'Казахский'}
-    ],
-    selectedOption: {id: '0', name: 'Русский'}
-  };
-
-});
-
 /**
  *  ModalContentCtrl
  */
 app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, value, $rootScope, $sce, $timeout) {
 
-  // $scope.statSliceNum = value.id;
-  $scope.statSliceNum = 541;
-  $scope.statSlicePeriod = value.period;
-  $scope.isTabsLoaded = false;
-  $scope.isReportsSelected = false;
-  $scope.tabsIsRefreshed = false;
+  $scope.statSliceNum = value.id;
+  $scope.statSlicePeriod      = value.period;
+  $scope.isTabsLoaded         = false;
+  $scope.isReportsSelected    = false;
+  $scope.tabsIsRefreshed      = false;
   $scope.isReadyReportsLoaded = true;
-  var refreshedTabs = [];
 
-  var refreshTabs = function (code) {
-    if (!refreshedTabs.includes(code)) {
-      $scope.refresh = true;
-      console.log('refresh true');
-      $timeout(function () {
-        $scope.refresh = false;
-        console.log('refresh false');
-      }, 0);
-      refreshedTabs.push(code);
-    }
+  $scope.langData = {
+    langs: [
+      {id: '0', name: 'Русский'},
+      {id: '1', name: 'Казахский'}
+    ],
+    selectedRepLang: {id: '0', name: 'Русский'}
   };
 
-  var refresh = function () {
+
+  var refresh = function() {
     $scope.refresh = true;
-    $timeout(function () {
+    $timeout(function() {
       $scope.refresh = false;
     }, 0);
   };
@@ -570,12 +550,12 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
           enableSorting: false,
           enableFiltering: false,
           enableRowSelection: true,
-          enableSelectAll: false,
+          enableSelectAll: true,
           rowHeight: 35,
           multiSelect: true,
           columnDefs: [
-            {name: 'code', width: '15%', displayName: 'и/н'},
-            {name: 'name', width: '70%', displayName: 'Ведомство'}
+            {name: 'code', width: '*', displayName: 'и/н'},
+            {name: 'name', width: '*', displayName: 'Ведомство'}
           ]
         };
         // Запись отчетов и ведомств в правильную структуру для Grid 
@@ -595,18 +575,8 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
           treeIndent: 7,
           multiSelect: true,
           columnDefs: [
-            {
-              name: 'code',
-              width: '20%',
-              displayName: 'и/н',
-              cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': (row.treeLevel == 'last') ? grid.options.treeIndent * 3 + 'px' : grid.options.treeIndent * (row.treeLevel + 1) + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>"
-            },
-            {
-              name: 'name',
-              width: '80%',
-              displayName: 'Регион/Орган',
-              cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': (row.treeLevel == 'last') ? grid.options.treeIndent * 3 + 'px' : grid.options.treeIndent * (row.treeLevel + 1) + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>"
-            }
+            {name: 'code', width: '20%', displayName: 'и/н', cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': (row.treeLevel == 'last') ? grid.options.treeIndent * 3 + 'px' : grid.options.treeIndent * (row.treeLevel + 1) + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>"},
+            {name: 'name', width: '80%', displayName: 'Регион/Орган', cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': (row.treeLevel == 'last') ? grid.options.treeIndent * 3 + 'px' : grid.options.treeIndent * (row.treeLevel + 1) + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>"}
           ]
         };
         // Запись отчетов и ведомств в правильную структуру для Grid 
@@ -662,7 +632,9 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
     });
   };
   /*=====  Initialize onRegisterApi event handler function with dynamic data end ======*/
+  // $scope.regionsGridApiOptions[0].gridApiRegionsName.treeBase.toggleRowTreeState($scope.regionsGridApiOptions[0].grid.renderContainers.body.visibleRowCache[0]);
 
+  // $scope.regionsGridApiOptions[0].gridApiRegionsName.selection.toggleRowSelection($scope.regionsGridApiOptions[0].gridRegionsDataset.data[removedRegIndex]);
   /*=====  Get and save current reports's name, code ======*/
   $scope.getCurrentReportTab = function (name, code) {
     $scope.currentReportTab = {
@@ -693,18 +665,20 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
     $scope.requestedReports = [];
     $scope.requestedReportsQuery = [];
     var reportInfo,
-      counter = 0;
+        counter = 0;
 
-    if ($scope.selectedRegions != undefined && $scope.selectedDeps != undefined) {
+    if ($scope.selectedRegions != undefined && $scope.selectedRegions.length > 0 && $scope.selectedDeps != undefined && $scope.selectedDeps.length > 0) {
       $scope.selectedRegions.forEach(function (element, index) {
         var regionsTabIndex = index;
         reportInfo = $scope.getReportInfo(regionsTabIndex);
-
+        console.log($scope.selectedRegions[regionsTabIndex]);
         element.forEach(function (region, index) {
           if ($scope.selectedDeps[regionsTabIndex] != undefined) {
             $scope.isReportsSelected = true;
 
             $scope.selectedDeps[regionsTabIndex].forEach(function (department, index) {
+              console.log($scope.selectedDeps[regionsTabIndex]);
+              console.log('im here');
               $scope.requestedReports[counter] = reportInfo.name + '-' + region.name + '-' + department.name;
               $scope.requestedReportsQuery[counter] = {
                 "sliceId": $scope.statSliceNum,
@@ -717,62 +691,58 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
           }
         });
       });
-
-      // $scope.gridOptionsSelectedReports = {
-      //   data: $scope.requestedReports,
-      //   showGridFooter: false,
-      //   enableColumnMenus: false,
-      //   showTreeExpandNoChildren: false,
-      //   enableHiding: false,
-      //   enableSorting: false,
-      //   enableFiltering: false,
-      //   enableRowSelection: true,
-      //   enableSelectAll: false,
-      //   rowHeight: 35,
-      //   columnDefs: [
-      //     {name: '0', width: '14%', displayName: 'Тип'},
-      //     {name: '1', width: '51%', displayName: 'Регион'},
-      //     {name: '2', width: '35%', displayName: 'Ведомство'},
-      //   ]
-      // };
-      // refresh();
     }
   };
-  $scope.removeSelectedReport = function (key) {
+
+  $scope.removeSelectedReport = function(key){
     var removedDepIndex,
-      removedDepValue,
-      removedRegIndex,
-      removedTabIndex;
+        removedDepValue,
+        removedRegIndex,
+        removedTabIndex;
 
     removedDepValue = $scope.requestedReportsQuery[key].orgCode;
     removedRegValue = $scope.requestedReportsQuery[key].regCode;
 
+
     $scope.requestedReports.splice(key, 1);
     $scope.requestedReportsQuery.splice(key, 1);
+    // $scope.selectedDeps.splice($scope.selectedDeps[0].findIndex(x => x.code === removedDepValue), 1);
 
-    /*if ($scope.requestedReportsQuery.findIndex(x => x.orgCode === removedDepValue) === -1) {
-      console.log('bolwe net deps');
-      removedDepIndex = $scope.depsGridApiOptions[0].gridApiDepDataset.data.findIndex(x => x.code === removedDepValue);
-      $scope.depsGridApiOptions[0].gridApiDepsName.selection.toggleRowSelection($scope.depsGridApiOptions[0].gridApiDepDataset.data[removedDepIndex]);
-    }
 
-    if ($scope.requestedReportsQuery.findIndex(x => x.regCode === removedRegValue) === -1) {
-      console.log('bolwe net regs');
-      removedRegIndex = $scope.regionsGridApiOptions[0].gridRegionsDataset.data.findIndex(x => x.code === removedRegValue);
-      $scope.regionsGridApiOptions[0].gridApiRegionsName.selection.toggleRowSelection($scope.regionsGridApiOptions[0].gridRegionsDataset.data[removedRegIndex]);
-    }*/
+    console.log('такой деп еще есть',$scope.requestedReportsQuery.findIndex(x => x.orgCode === removedDepValue) !== -1);
+    console.log('такой регион еще есть',$scope.requestedReportsQuery.findIndex(x => x.regCode === removedRegValue) !== -1);
 
+    // if ($scope.requestedReportsQuery.findIndex(x => x.orgCode === removedDepValue) !== -1 && $scope.requestedReportsQuery.findIndex(x => x.regCode === removedRegValue) !== -1) {
+
+      if ($scope.requestedReportsQuery.findIndex(x => x.orgCode === removedDepValue) === -1) {
+        console.log('bolwe net deps');
+        removedDepIndex = $scope.depsGridApiOptions[0].gridApiDepDataset.data.findIndex(x => x.code === removedDepValue);
+        $scope.depsGridApiOptions[0].gridApiDepsName.selection.toggleRowSelection($scope.depsGridApiOptions[0].gridApiDepDataset.data[removedDepIndex]);
+      }
+
+      if ($scope.requestedReportsQuery.findIndex(x => x.regCode === removedRegValue) === -1) {
+        console.log('bolwe net regs');
+        removedRegIndex = $scope.regionsGridApiOptions[0].gridRegionsDataset.data.findIndex(x => x.code === removedRegValue);
+        $scope.regionsGridApiOptions[0].gridApiRegionsName.selection.toggleRowSelection($scope.regionsGridApiOptions[0].gridRegionsDataset.data[removedRegIndex]);
+      }
+
+    // }
+    console.log($scope.requestedReportsQuery);
   };
   /*=====  Generate and get requested reports end ======*/
 
   /*=====  Get reports ======*/
   $scope.getReports = function () {
     $scope.isReadyReportsLoaded = false;
+
+    var selectedLang = 'ru';
+    if ($scope.langData.selectedRepLang.id === '1') selectedLang = 'kz';
+
     if ($scope.requestedReportsQuery != undefined && $scope.requestedReportsQuery.length > 0) {
       $scope.readyReports = [];
       $http({
         method: 'POST',
-        url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/reports/createReports',
+        url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/reports/createReports?repLang='+selectedLang,
         headers: {
           sessionKey: 'admin'
         },
@@ -784,7 +754,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
         reportValues.forEach(function (element, index) {
 
           var reportDownloadUrl = "https://analytic-centre.tk:8081/api/v1/RU/slices/reports/" + element.value + "/download";
-          var readyReportItem = "<a href=" + reportDownloadUrl + " target='_blank'>Скачать отчет (" + $scope.requestedReports[counter] + ")</a>";
+          var readyReportItem = "<a href=" + reportDownloadUrl + " target='_blank'>Скачать (" + $scope.requestedReports[counter] + ")</a>";
 
           $scope.readyReports.push($sce.trustAsHtml(readyReportItem));
           counter++;
@@ -1021,7 +991,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
 
 
   $scope.cancel = function () {
-    $uibModalInstance.dismiss($scope.showDeletedReports());
+    $uibModalInstance.dismiss();
   };
 
 });

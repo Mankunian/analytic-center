@@ -2,7 +2,7 @@
 
 <div class="modal-header">
   <button type="button" class="close" data-dismiss="modal" ng-click="cancel()">×</button>
-  <h4><b>Операции со срезами</b></h4>
+  <h4>Операции со срезами</h4>
 </div>
 <div class="modal-body" ng-controller="modalOperBySrezCtrl">
   <div class="row">
@@ -10,11 +10,20 @@
       <div>
         <div class="col-md-5 noPadding">
           <div
-            style="min-height: 70vh; height: 100%; padding: 10px">
+            style="min-height: 70vh; height: 100%; padding: 0 10px">
 
-            <h5><b>№ среза:</b> {{srezNo}}</h5>
-            <h5><b>Период:</b> {{period}}</h5>
-            <h5><b>Срез на №</b> {{srezToNum}}</h5>
+            <div class="col-md-12">
+              <div class="row">
+                <div style="float: left">
+                  <h5><b>№ среза:</b> {{srezNo}}</h5>
+
+                </div>
+                <div style="float: right">
+                  <h5><b>Период:</b> {{period}}</h5>
+                </div>
+              </div>
+            </div>
+            <!--<h5><b>Срез на №</b> {{srezToNum}}</h5>-->
 
             <div class="statusTree">
               <ul class="operBySrez">
@@ -104,10 +113,10 @@
         <div ng-if="statusCode == STATUS_CODES.PRELIMINARY" class="col-md-7 noPadding">
           <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
             <h5><b>Статус:</b> {{statusName}}</h5>
-            <h5><b>Срез заказал:</b> {{personName}}</h5>
-            <h5><b>Время заказа среза:</b> {{statusDate}}</h5>
-            <h5><b>Время начала формирования:</b> {{created}}</h5>
-            <h5><b>Время окончания формирования: </b> {{completed}}</h5>
+            <h5><b>Срез перевел:</b> {{personName}}</h5>
+            <h5><b>Время перевода среза:</b> {{statusDate}}</h5>
+            <!--<h5><b>Время начала формирования:</b> {{created}}</h5>
+            <h5><b>Время окончания формирования: </b> {{completed}}</h5>-->
           </div>
         </div>
         <!--Инфо по статусу Предварительный-->

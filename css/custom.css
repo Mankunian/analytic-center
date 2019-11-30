@@ -297,9 +297,8 @@ form.tab-form-demo .tab-pane {
 }
 
 #grid1 .ui-grid-render-container{
-    margin-left: 0;
+    /*margin-left: 0 !important;*/
 }
-#1575092241300-body-grid-container{
-    margin-left: 0 !important;
+.ui-grid-row .ui-grid-cell.ui-grid-row-header-cell{
+    background: none;
 }
-

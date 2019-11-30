@@ -153,7 +153,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       {
         name: 'maxRecNum',
         displayName: 'На номер',
-        width: '140',
+        width: '200',
         cellTemplate: '<div class="indentInline">{{row.entity.maxRecNum}}</div>'
       },
 
@@ -172,7 +172,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       {
         name: 'region',
         displayName: 'По органу',
-        width: '130',
+        width: '200',
         cellTemplate: '<div class="indentInline">{{row.entity.region}}</div>'
       }
     ]

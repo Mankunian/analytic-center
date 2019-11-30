@@ -1,3 +1,37 @@
+@font-face {
+  font-family: Roboto;
+  src: url(/fonts/Roboto/Roboto-Regular.ttf);
+}
+
+html,body {
+  font-family: 'Roboto', sans-serif;
+  max-width: 1920px;
+  margin: 0 auto;
+}
+header {
+  padding: 13px 20px;
+}
+.logo {
+  width: 70px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+.logo-text {
+  display: inline-block;
+  vertical-align: middle;
+  color: #2B6AB9;
+  font-size: 12px;
+  font-weight: 700;
+}
+header h1 {
+  color: #134179;
+  text-transform: uppercase;
+  font-weight: 900;
+  font-size: 30px;
+  text-align: center;
+}
+
 .remove-icon {
   color: #f52929;
   font-size: 22px;
@@ -47,6 +81,8 @@ form.tab-form-demo .tab-pane {
     font-size: 14px;
     min-width: 130px;
     margin-right: 10px;
+    color: #315C92;
+    font-weight: 400;
 }
 
 .getReportModal form .form-group {
@@ -98,6 +134,7 @@ form.tab-form-demo .tab-pane {
 .requested-reports h4,
 .ready-reports h4 {
   margin-bottom: 20px;
+  color: #214878;
 }
 .request-status {
     min-height: 100px;
@@ -105,9 +142,16 @@ form.tab-form-demo .tab-pane {
 .btn-submit .btn {
     padding: 6px 35px;
 }
-.grid {
+.ui-grid {
+  box-sizing: border-box;
+}
+.request-report-grid-modal {
     width: 495px;
-    height: 450px;
+    height: 455px;
+}
+.request-report-grid-modal .ui-grid-header-cell,
+.request-report-grid-modal .ui-grid-header-cell {
+  height: 29.56px;
 }
 /*TreeView*/
 .ui-icon.ui-igtreegrid-expansion-indicator.ui-icon-minus {
@@ -292,3 +336,104 @@ form.tab-form-demo .tab-pane {
 }
 
 
+.nav-tabs>li>a {
+  border-radius: 0;
+}
+.main-tabs {
+  border-bottom: 10px #EAEBED solid;
+}
+.main-tabs.nav-tabs>li>a {
+  margin-right: 0;
+  color: #A8A8A9;
+  text-transform: uppercase;
+  background-color: #F2F3F4;
+  font-weight: 700;
+  font-family: 'Roboto', sans-serif;
+}
+.main-tabs.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+  color: #2A5B98;
+  background-color: #EAEBED;
+}
+button.btn {
+  background-color: #2E86CD;
+  border-radius: 0;
+  border: none;
+  min-width: 100px;
+  font-size: 13px;
+  padding: 7px 12px;
+  color: #fff;
+}
+button.btn:hover {
+  color: #fff;
+}
+.modal-header {
+  background-color: #214878;
+  border: none;
+}
+.modal-content {
+  border: none;
+}
+.modal-heading {
+  text-align: left;
+  color: #fff;
+  margin: 0;
+  padding-left: 20px;
+  font-size: 20px;
+}
+.modal-header .close {
+  opacity: 1;
+  color: #fff;
+}
+input.form-control {
+  border-radius: 0;
+}
+.blue-title {
+  color: #315C92;
+}
+.report-modal {
+  padding: 0 0 15px 0;
+}
+.report-modal .nav-tabs {
+  background-color: #E8EDED;
+  padding: 15px 15px 0 15px;
+}
+.report-modal .nav-tabs>li>a {
+  margin-right: 5px;
+  border-radius: 5px 5px 0 0;
+  color: #264B7B;
+  background-color: #D4DDE1;
+  font-family: 'Roboto', sans-serif;
+}
+.report-modal .nav-tabs>li.active>a, .report-modal .nav-tabs>li.active>a:focus, .report-modal .nav-tabs>li.active>a:hover {
+  color: #264B7B;
+  background-color: #fff;
+}
+.report-modal .form-inline .form-control {
+  background: #E8EDED;
+  border: none;
+  box-shadow: none;
+}
+.report-modal .tab-content {
+  padding: 0 15px;
+}
+.main-navigation {
+  background-color: #134179;
+  height: 40px;
+  position: relative;
+}
+
+.main-navigation span {
+  background: #1975C0;
+  position: absolute;
+  bottom: 0;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 14px;
+  font-weight: 400;
+  height: 50px;
+  display: block;
+  padding: 16px 20px 0 20px;
+  left: 100px;
+  border-radius: 3px 3px 0 0;
+  cursor: pointer;
+}

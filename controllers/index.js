@@ -420,28 +420,38 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 /**
  *  ModalControlCtrl
  */
-app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope) {
+app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope, STATUS_CODES) {
 
   $rootScope.open = function (value) {
 
-    $scope.dataSendByModal = value;
+    
+    if (value.statusCode == STATUS_CODES.IN_PROCESSING || value.statusCode == STATUS_CODES.WAITING_FOR_PROCESSING){
+      console.log('Not Open');
+      alert('По данному статусу невозможно получить отчет!')
 
-    var modalInstance = $uibModal.open({
-      templateUrl: "modalContent.html",
-      controller: "ModalContentCtrl",
-      size: 'xlg',
-      backdrop : 'static',
-      windowTopClass: 'getReportModal',
-      resolve: {
-        value: function () {
-          return $scope.dataSendByModal;
+    } else {
+      $scope.dataSendByModal = value;
+
+      var modalInstance = $uibModal.open({
+        templateUrl: "modalContent.html",
+        controller: "ModalContentCtrl",
+        size: 'xlg',
+        backdrop : 'static',
+        windowTopClass: 'getReportModal',
+        resolve: {
+          value: function () {
+            return $scope.dataSendByModal;
+          }
         }
-      }
-    });
+      });
 
-    modalInstance.result.then(function (response) {
-      // $scope.result = `${response} button hitted`;
-    });
+      modalInstance.result.then(function (response) {
+        // $scope.result = `${response} button hitted`;
+      });
+      console.log('Open')
+    }
+
+
   };
 });
 

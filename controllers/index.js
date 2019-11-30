@@ -828,6 +828,8 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         $scope.history.forEach(function (historyObj) {
         $scope.historyObj = historyObj
       });
+        console.log($scope.historyObj);
+        $scope.rowEntityStatusCode = $scope.historyObj.statusCode;
       $scope.getStatusCode($scope.historyObj);
     });
   };
@@ -839,9 +841,20 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   в дереве статусов и перезаписываем полученный из row.entity ======*/
   $scope.getStatusCode = function (selectedStatus) {
 
-    $scope.rowEntityStatusCode = selectedStatus.statusCode; // 1 Окончательный
-    console.log(selectedStatus);
+    // $scope.rowEntityStatusCode = selectedStatus.statusCode; // 1 Окончательный
+    // console.log(selectedStatus);
     $scope.statusCode = selectedStatus.statusCode;
+
+
+
+
+
+
+
+
+
+
+
 
 
     if (selectedStatus.statusCode === STATUS_CODES.IN_AGREEMENT) {

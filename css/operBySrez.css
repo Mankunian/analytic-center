@@ -46,7 +46,7 @@ h5 {
     border-radius: 1.5px;
     height: auto;
     margin: 15px 0;
-    min-height: 45vh;
+    min-height: 58vh;
     overflow-y: scroll;
     background: #fff
 }
@@ -66,15 +66,16 @@ h5 {
 }
 
 .modal-header {
-    padding: 6px 10px;
+    padding: 0 10px;
     text-align: left;
-    background: #5B9BD5;
+    background: #224879;
     color: #fff;
 }
 
 .modal-header .close {
     color: #fff;
     opacity: 2;
+    margin-top: 7px;
 }
 
 #tabs {

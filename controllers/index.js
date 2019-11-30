@@ -153,7 +153,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       {
         name: 'maxRecNum',
         displayName: 'На номер',
-        width: '150',
+        width: '140',
         cellTemplate: '<div class="indentInline">{{row.entity.maxRecNum}}</div>'
       },
 
@@ -172,7 +172,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       {
         name: 'region',
         displayName: 'По органу',
-        width: '150',
+        width: '130',
         cellTemplate: '<div class="indentInline">{{row.entity.region}}</div>'
       }
     ]
@@ -856,15 +856,15 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
           enableSelectAll: false,
           rowHeight: 35,
           columnDefs: [
-            {name: 'territoryName', width: '*', displayName: 'Терр.управление'},
-            {name: 'approveDate', width: '*', displayName: 'Дата-время согласования'},
+            {name: 'territoryName', width: '250', displayName: 'Терр.управление'},
+            {name: 'approveDate', width: '170', displayName: 'Дата-время согласования'},
             {
               name: 'approveName',
-              width: '*',
+              width: '150',
               displayName: 'Статус',
               cellTemplate: '<div style="margin: 5px 0; text-align: center"><a ng-click="grid.appScope.modalRejectionReason(row.entity)" ng-style= "{ color: row.entity.approveCode == \'2\' ? \'red\' : \'\' }">{{COL_FIELD CUSTOM_FILTERS}}</a></div>'
             },
-            {name: 'personName', width: '*', displayName: 'ФИО'}
+            {name: 'personName', width: '170', displayName: 'ФИО'}
           ]
         };
         // $scope.getStatusTree();

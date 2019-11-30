@@ -295,3 +295,11 @@ form.tab-form-demo .tab-pane {
 #grid1 .ui-grid-icon-minus-squared{
     display: none;
 }
+
+#grid1 .ui-grid-render-container{
+    margin-left: 0;
+}
+#1575092241300-body-grid-container{
+    margin-left: 0 !important;
+}
+

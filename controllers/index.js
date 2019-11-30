@@ -113,7 +113,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     enableSelectAll: false,
     selectionRowHeaderWidth: 35,
     rowHeight: 45,
-    treeIndent: 30,
+    treeIndent: 40,
 
     columnDefs: [
       {
@@ -142,14 +142,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
         displayName: 'Номер среза / Период',
         cellTemplate: '<div ng-hide="row.treeLevel==0 || row.treeLevel == 1"  ng-controller="ModalControlCtrl"><button style="margin: 5px 0; font-weight: 600; border: none; background: transparent" class="btn btn-default"  ng-click="grid.appScope.open(row.entity)"><a>№{{row.entity.id}} период {{row.entity.period}}</a></button></div>'
       },
-      /*{
-        name: 'period',
-        width: '*',
-        displayName: 'Период'
-
-      },*/
-
-
       {
         name: 'maxRecNum',
         displayName: 'На номер',
@@ -254,26 +246,22 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     //Получение всех срезов
 
     if (treeLevel === 0) {
-      console.log(row.entity);
-      var groupFolderImg = document.getElementById(row.entity.$$hashKey);
+      /*var groupFolderImg = document.getElementById(row.entity.$$hashKey);
 
       if (groupFolderImg.src.indexOf('folder-cl.png') !== -1) {
         groupFolderImg.src = 'img/folder-op.png'
       } else {
         groupFolderImg.src = 'img/folder-cl.png'
-      }
+      }*/
       $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
     } else {
 
-
-      console.log(row.entity);
-
-      var statusFolderImg = document.getElementById(row.entity.$$hashKey);
+      /*var statusFolderImg = document.getElementById(row.entity.$$hashKey);
       if (statusFolderImg.src.indexOf('folder-cl.png') != -1) {
         statusFolderImg.src = 'img/folder-op.png'
       } else {
         statusFolderImg.src = 'img/folder-cl.png'
-      }
+      }*/
 
 
       $scope.preloaderByStatus = true;
@@ -338,7 +326,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
             $scope.showGrid.length = 0;
 
             row.entity.isDataLoaded = true;
-          }, 2000, 1);
+          }, 1000, 1);
         } else {
           console.log('This row already has data');
         }

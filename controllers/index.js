@@ -650,6 +650,8 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
   // $scope.regionsGridApiOptions[0].gridApiRegionsName.selection.toggleRowSelection($scope.regionsGridApiOptions[0].gridRegionsDataset.data[removedRegIndex]);
   /*=====  Get and save current reports's name, code ======*/
   $scope.getCurrentReportTab = function (name, code) {
+    $scope.isCatalogTab = false;
+    console.log($scope.isCatalogTab);
     $scope.currentReportTab = {
       'name': name,
       'code': code,
@@ -675,6 +677,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
 
   /*=====  Generate and get requested reports ======*/
   $scope.getRequestedReports = function () {
+    $scope.isCatalogTab = true;
     $scope.requestedReports = [];
     $scope.requestedReportsQuery = [];
     var reportInfo,

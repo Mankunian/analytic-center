@@ -70,6 +70,6 @@
   </uib-tabset>
 </div>
 <div class="modal-footer">
-  <button class="btn btn-primary btn-md" type="submit" ng-disabled="!isReportsSelected || !isReadyReportsLoaded" ng-click="getReports()">Получить</button>
+  <button class="btn btn-primary btn-md" type="submit" ng-disabled="!isReportsSelected || !isReadyReportsLoaded" ng-click="getReports()" ng-show="isCatalogTab">Получить</button>
   <button class="btn btn-warning" ng-click="cancel()">Отмена</button>
 </div>

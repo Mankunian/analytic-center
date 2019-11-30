@@ -318,10 +318,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
               $scope.gridOptions.data.splice(selectedRowIndex, 0, statusData);
               console.log(statusData)
             });
-
-            console.log($scope.showGrid);
             //Тут дублирует записи
-
             $scope.showGrid = [];
             $scope.showGrid.length = 0;
 
@@ -331,14 +328,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
           console.log('This row already has data');
         }
       });
-
-
       $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
-
-
     }
-
-
   };
 
 
@@ -638,7 +629,9 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
   // $scope.regionsGridApiOptions[0].gridApiRegionsName.selection.toggleRowSelection($scope.regionsGridApiOptions[0].gridRegionsDataset.data[removedRegIndex]);
   /*=====  Get and save current reports's name, code ======*/
   $scope.getCurrentReportTab = function (name, code) {
-    $scope.currentReportTab = {
+    $scope.isCatalogTab      = false;
+    $scope.isReportsSelected = false;
+    $scope.currentReportTab  = {
       'name': name,
       'code': code,
     };
@@ -663,6 +656,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
 
   /*=====  Generate and get requested reports ======*/
   $scope.getRequestedReports = function () {
+    $scope.isCatalogTab = true;
     $scope.requestedReports = [];
     $scope.requestedReportsQuery = [];
     var reportInfo,
@@ -672,14 +666,10 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
       $scope.selectedRegions.forEach(function (element, index) {
         var regionsTabIndex = index;
         reportInfo = $scope.getReportInfo(regionsTabIndex);
-        console.log($scope.selectedRegions[regionsTabIndex]);
         element.forEach(function (region, index) {
           if ($scope.selectedDeps[regionsTabIndex] != undefined) {
-            $scope.isReportsSelected = true;
 
             $scope.selectedDeps[regionsTabIndex].forEach(function (department, index) {
-              console.log($scope.selectedDeps[regionsTabIndex]);
-              console.log('im here');
               $scope.requestedReports[counter] = reportInfo.name + '-' + region.name + '-' + department.name;
               $scope.requestedReportsQuery[counter] = {
                 "sliceId": $scope.statSliceNum,
@@ -693,6 +683,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
         });
       });
     }
+    if($scope.requestedReports.length > 0) $scope.isReportsSelected = true;
   };
 
   $scope.removeSelectedReport = function(key){
@@ -704,42 +695,29 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
     removedDepValue = $scope.requestedReportsQuery[key].orgCode;
     removedRegValue = $scope.requestedReportsQuery[key].regCode;
 
-
     $scope.requestedReports.splice(key, 1);
     $scope.requestedReportsQuery.splice(key, 1);
-    // $scope.selectedDeps.splice($scope.selectedDeps[0].findIndex(x => x.code === removedDepValue), 1);
 
+    if ($scope.requestedReportsQuery.findIndex(x => x.orgCode === removedDepValue) === -1) {
+      removedDepIndex = $scope.depsGridApiOptions[0].gridApiDepDataset.data.findIndex(x => x.code === removedDepValue);
+      $scope.depsGridApiOptions[0].gridApiDepsName.selection.toggleRowSelection($scope.depsGridApiOptions[0].gridApiDepDataset.data[removedDepIndex]);
+    }
 
-    console.log('такой деп еще есть',$scope.requestedReportsQuery.findIndex(x => x.orgCode === removedDepValue) !== -1);
-    console.log('такой регион еще есть',$scope.requestedReportsQuery.findIndex(x => x.regCode === removedRegValue) !== -1);
-
-    // if ($scope.requestedReportsQuery.findIndex(x => x.orgCode === removedDepValue) !== -1 && $scope.requestedReportsQuery.findIndex(x => x.regCode === removedRegValue) !== -1) {
-
-      if ($scope.requestedReportsQuery.findIndex(x => x.orgCode === removedDepValue) === -1) {
-        console.log('bolwe net deps');
-        removedDepIndex = $scope.depsGridApiOptions[0].gridApiDepDataset.data.findIndex(x => x.code === removedDepValue);
-        $scope.depsGridApiOptions[0].gridApiDepsName.selection.toggleRowSelection($scope.depsGridApiOptions[0].gridApiDepDataset.data[removedDepIndex]);
-      }
-
-      if ($scope.requestedReportsQuery.findIndex(x => x.regCode === removedRegValue) === -1) {
-        console.log('bolwe net regs');
-        removedRegIndex = $scope.regionsGridApiOptions[0].gridRegionsDataset.data.findIndex(x => x.code === removedRegValue);
-        $scope.regionsGridApiOptions[0].gridApiRegionsName.selection.toggleRowSelection($scope.regionsGridApiOptions[0].gridRegionsDataset.data[removedRegIndex]);
-      }
-
-    // }
-    console.log($scope.requestedReportsQuery);
+    if ($scope.requestedReportsQuery.findIndex(x => x.regCode === removedRegValue) === -1) {
+      removedRegIndex = $scope.regionsGridApiOptions[0].gridRegionsDataset.data.findIndex(x => x.code === removedRegValue);
+      $scope.regionsGridApiOptions[0].gridApiRegionsName.selection.toggleRowSelection($scope.regionsGridApiOptions[0].gridRegionsDataset.data[removedRegIndex]);
+    }
   };
   /*=====  Generate and get requested reports end ======*/
 
   /*=====  Get reports ======*/
   $scope.getReports = function () {
     $scope.isReadyReportsLoaded = false;
-
     var selectedLang = 'ru';
     if ($scope.langData.selectedRepLang.id === '1') selectedLang = 'kz';
 
     if ($scope.requestedReportsQuery != undefined && $scope.requestedReportsQuery.length > 0) {
+      
       $scope.readyReports = [];
       $http({
         method: 'POST',
@@ -753,11 +731,12 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
         var reportValues = response.data;
         var counter = 0;
         reportValues.forEach(function (element, index) {
-
           var reportDownloadUrl = "https://analytic-centre.tk:8081/api/v1/RU/slices/reports/" + element.value + "/download";
-          var readyReportItem = "<a href=" + reportDownloadUrl + " target='_blank'>Скачать (" + $scope.requestedReports[counter] + ")</a>";
-
-          $scope.readyReports.push($sce.trustAsHtml(readyReportItem));
+          var readyReportItem = {
+            url : reportDownloadUrl,
+            name : $scope.requestedReports[counter]
+          };
+          $scope.readyReports.push(readyReportItem);
           counter++;
         });
       }, function (reason) {

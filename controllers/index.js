@@ -7,7 +7,8 @@ var app = angular.module('app', [
   'ui.grid.treeView',
   'ui.grid.grouping',
   'ui.grid.edit',
-  'ui.grid.selection'
+  'ui.grid.selection',
+  'ui.grid.resizeColumns'
 ]);
 
 app.constant('STATUS_CODES', {
@@ -90,7 +91,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   $scope.getStatSrez();
 
   //Получить № статсреза
-  var operBySrez = '<div style="text-align: center"  ' +
+  var operBySrez = '<div  ' +
     'ng-controller="modalOperBySrezCtrl" ' +
     'ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" ' +
     'class="ui-grid-cell-contents"> ' +
@@ -135,10 +136,11 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       },
       {
         name: 'id',
-        width: '20%',
+        width: '300',
         sort: 'asc',
+        enableColumnResizing: true,
         displayName: 'Номер среза / Период',
-        cellTemplate: '<div ng-hide="row.treeLevel==0 || row.treeLevel == 1" class="text-center" ng-controller="ModalControlCtrl"><button style="margin: 5px 0; font-weight: 600; border: none; background: transparent" class="btn btn-default"  ng-click="grid.appScope.open(row.entity)"><a>№{{row.entity.id}}</a></button>период {{row.entity.period}}</div>'
+        cellTemplate: '<div ng-hide="row.treeLevel==0 || row.treeLevel == 1"  ng-controller="ModalControlCtrl"><button style="margin: 5px 0; font-weight: 600; border: none; background: transparent" class="btn btn-default"  ng-click="grid.appScope.open(row.entity)"><a>№{{row.entity.id}} период {{row.entity.period}}</a></button></div>'
       },
       /*{
         name: 'period',
@@ -151,26 +153,27 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       {
         name: 'maxRecNum',
         displayName: 'На номер',
-        width: '9%',
+        width: '150',
         cellTemplate: '<div class="indentInline">{{row.entity.maxRecNum}}</div>'
       },
-      {
-        name: 'region',
-        displayName: 'По органу',
-        width: '8%',
-        cellTemplate: '<div class="indentInline">{{row.entity.region}}</div>'
-      },
+
       {
         name: 'created',
         displayName: 'Сформирован',
-        width: '13%',
+        width: '200',
         cellTemplate: '<div class="indentInline">{{row.entity.created}}</div>'
       },
       {
         name: 'button',
-        width: '*',
+        width: '200',
         displayName: 'Действие',
         cellTemplate: operBySrez
+      },
+      {
+        name: 'region',
+        displayName: 'По органу',
+        width: '150',
+        cellTemplate: '<div class="indentInline">{{row.entity.region}}</div>'
       }
     ]
   };

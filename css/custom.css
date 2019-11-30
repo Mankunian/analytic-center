@@ -289,9 +289,9 @@ form.tab-form-demo .tab-pane {
     margin: 10px 15px;
 }
 
-.ui-grid-icon-plus-squared{
+#grid1 .ui-grid-icon-plus-squared{
     display: none;
 }
-.ui-grid-icon-minus-squared{
+#grid1 .ui-grid-icon-minus-squared{
     display: none;
 }

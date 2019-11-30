@@ -270,30 +270,53 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       var check = $scope.checkboxModel.value;
       $scope.getDataOnclickStatus = function () {
 
-        var groupCode = row.entity.groupCode,
-          statusCode = row.entity.code,
-          year = row.entity.statusYear;
 
-        if (check) {
-          urlStatus = 'https://analytic-centre.tk:8081/api/v1/RU/slices?deleted=true&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + ''
+
+        if (!check) {
+          var groupCode = row.entity.groupCode,
+            statusCode = row.entity.code,
+            year = row.entity.statusYear;
+
+
+          urlStatus = 'https://analytic-centre.tk:8081/api/v1/RU/slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + '';
+          // подгружает данные http
+          $http({
+            method: 'GET',
+            url: urlStatus,
+            headers: {
+              sessionKey: 'admin'
+            }
+          }).then(function (value) {
+            $scope.showGrid = value.data;
+            $scope.preloaderByStatus = false;
+          }, function (reason) {
+            console.log(reason);
+          });
 
         } else {
-          urlStatus = 'https://analytic-centre.tk:8081/api/v1/RU/slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + ''
+          console.log(check);
+          var groupCodeByDeleted = row.entity.groupCode,
+            statusCodeByDeleted = row.entity.code,
+            yearByDeleted = row.entity.statusYear;
+
+
+          urlStatus = 'https://analytic-centre.tk:8081/api/v1/RU/slices?deleted=true&groupCode=' + groupCodeByDeleted + '&statusCode=' + statusCodeByDeleted + '&year=' + yearByDeleted + '';
+          // подгружает данные http
+          $http({
+            method: 'GET',
+            url: urlStatus,
+            headers: {
+              sessionKey: 'admin'
+            }
+          }).then(function (value) {
+            $scope.showGrid = value.data;
+            $scope.preloaderByStatus = false;
+          }, function (reason) {
+            console.log(reason);
+          });
         }
 
-        // подгружает данные http
-        $http({
-          method: 'GET',
-          url: urlStatus,
-          headers: {
-            sessionKey: 'admin'
-          }
-        }).then(function (value) {
-          $scope.showGrid = value.data;
-          $scope.preloaderByStatus = false;
-        }, function (reason) {
-          console.log(reason);
-        });
+
       };
       $scope.getDataOnclickStatus();
 

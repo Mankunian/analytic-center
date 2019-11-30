@@ -488,7 +488,7 @@ app.controller('modalOperBySrezCtrl', function ($scope, $uibModal, $rootScope, $
 /**
  *  ModalContentCtrl
  */
-app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, value, $rootScope, $sce, $timeout) {
+app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, value, $rootScope, $sce, $timeout, $log) {
 
   $scope.statSliceNum = value.id;
   $scope.statSlicePeriod      = value.period;
@@ -632,10 +632,15 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
         item.gridApiDepsName = gridApi;
         gridApi.selection.on.rowSelectionChanged($scope, function (row) {
           $scope.selectedDeps[index] = item.gridApiDepsName.selection.getSelectedRows();
+          console.log(item.gridApiDepsName.selection.getSelectedRows());
+        });
+        gridApi.selection.on.rowSelectionChangedBatch($scope,function(rows){
+          $scope.selectedDeps[index] = item.gridApiDepsName.selection.getSelectedRows();
+          console.log(item.gridApiDepsName.selection.getSelectedRows());
         });
       };
     });
-
+    console.log($scope.selectedDeps);
     $scope.selectedRegions = [];
     $scope.regionsGridApiOptions.forEach(function (item, index) {
       item.gridRegionsDataset.onRegisterApi = function (gridApi) {
@@ -643,6 +648,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
         gridApi.selection.on.rowSelectionChanged($scope, function (row) {
           $scope.selectedRegions[index] = item.gridApiRegionsName.selection.getSelectedRows();
         });
+
       };
     });
   };
@@ -658,7 +664,6 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
       'name': name,
       'code': code,
     };
-    // refreshTabs(code);
     refresh();
   };
   /*=====  Get and save current reports's name, code end ======*/
@@ -712,23 +717,27 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
   $scope.removeSelectedReport = function(key){
     var removedDepIndex,
         removedDepValue,
+        removedRegValue,
         removedRegIndex,
+        removedTabValue,
         removedTabIndex;
 
     removedDepValue = $scope.requestedReportsQuery[key].orgCode;
     removedRegValue = $scope.requestedReportsQuery[key].regCode;
-
+    removedTabValue = $scope.requestedReportsQuery[key].reportCode;
+    
     $scope.requestedReports.splice(key, 1);
     $scope.requestedReportsQuery.splice(key, 1);
+    removedTabIndex = $scope.reportTabs.findIndex(x => x.code === removedTabValue);
 
     if ($scope.requestedReportsQuery.findIndex(x => x.orgCode === removedDepValue) === -1) {
-      removedDepIndex = $scope.depsGridApiOptions[0].gridApiDepDataset.data.findIndex(x => x.code === removedDepValue);
-      $scope.depsGridApiOptions[0].gridApiDepsName.selection.toggleRowSelection($scope.depsGridApiOptions[0].gridApiDepDataset.data[removedDepIndex]);
+      removedDepIndex = $scope.depsGridApiOptions[removedTabIndex].gridApiDepDataset.data.findIndex(x => x.code === removedDepValue);
+      $scope.depsGridApiOptions[removedTabIndex].gridApiDepsName.selection.toggleRowSelection($scope.depsGridApiOptions[removedTabIndex].gridApiDepDataset.data[removedDepIndex]);
     }
 
     if ($scope.requestedReportsQuery.findIndex(x => x.regCode === removedRegValue) === -1) {
-      removedRegIndex = $scope.regionsGridApiOptions[0].gridRegionsDataset.data.findIndex(x => x.code === removedRegValue);
-      $scope.regionsGridApiOptions[0].gridApiRegionsName.selection.toggleRowSelection($scope.regionsGridApiOptions[0].gridRegionsDataset.data[removedRegIndex]);
+      removedRegIndex = $scope.regionsGridApiOptions[removedTabIndex].gridRegionsDataset.data.findIndex(x => x.code === removedRegValue);
+      $scope.regionsGridApiOptions[removedTabIndex].gridApiRegionsName.selection.toggleRowSelection($scope.regionsGridApiOptions[removedTabIndex].gridRegionsDataset.data[removedRegIndex]);
     }
   };
   /*=====  Generate and get requested reports end ======*/
@@ -882,8 +891,8 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         };
         // $scope.getStatusTree();
       }, function (reason) {
-        console.log(reason)
-      })
+        console.log(reason);
+      });
     }
 
 
@@ -973,7 +982,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
     }, function (reason) {
       console.log(reason);
 
-    })
+    });
 
   };
 

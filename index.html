@@ -60,8 +60,10 @@
         <ul class="nav nav-tabs">
           <li class="active changeClass"><a data-toggle="tab" href="#home">Срезы</a></li>
           <li class="changeClass"><a data-toggle="tab" href="#menu1">Заказать</a></li>
-
         </ul>
+        <div ng-if="loader" class="loader">
+          <div class="bar"></div>
+        </div>
 
         <div class="tab-content">
           <div id="home" class="tab-pane fade in active">
@@ -76,33 +78,27 @@
             </div>
 
             <div class="row" ng-if="showGrid">
-              <div class="col-md-6 col-xs-6">
-                <div class="pull-left">
-                  <label class="containerLabel">
-                    <input type="checkbox">Показать удаленные
-                    <span class="checkmark"></span>
-                  </label>
-                </div>
-              </div>
+
 
               <div class="col-md-6">
-                <div class="pull-right">
-                  <button title="Обновить таблицу" ng-click="getAllSrez()"
+                <div class="pull-left">
+                  <button title="Обновить таблицу" ng-click="showDeletedReports()"
                           class="btn btn-primary"><i class="fa fa-refresh"></i></button>
                 </div>
               </div>
-            </div>
 
-            <div ng-if="loader" class='loader loader1'>
-              <div>
-                <div>
-                  <div>
-                    <div>
-                      <div>
-                        <div></div>
-                      </div>
-                    </div>
-                  </div>
+              <div class="col-md-6 col-xs-6">
+                <div class="pull-right">
+                  <label class="containerLabel" >
+                    <input ng-model="checkboxModel.value"
+                           ng-change="showDeletedReports(checkboxModel.value)"
+
+
+                           type="checkbox">Показать удаленные
+                    <span class="checkmark"></span>
+                  </label>
+
+
                 </div>
               </div>
             </div>
@@ -110,9 +106,12 @@
 
             <div class="row">
               <div class="col-md-12" style="padding-bottom: 25px; padding-top: 10px">
+                <div ng-if="preloaderByStatus" class="loader">
+                  <div class="bar"></div>
+                </div>
                 <div ng-if="showGrid" style="width: 100%" id="grid1" ui-grid="gridOptions"
                      ui-grid-grouping
-                     ui-grid-resize-columns ui-grid-expandable class="grid"></div>
+                     ui-grid-resize-columns  ui-grid-expandable class="grid"></div>
               </div>
             </div>
 

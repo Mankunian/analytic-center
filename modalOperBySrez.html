@@ -1,63 +1,8 @@
-<style>
+<link rel="stylesheet" href="css/operBySrez.css" type="text/css">
 
-  ul.operBySrez {
-    list-style: none;
-    display: grid;
-    margin: 10px;
-  }
-
-  ul.operBySrez li a {
-    border: 1px solid;
-    border-radius: 1px;
-    padding: 5px;
-    font-weight: bold;
-    margin: 5px 0;
-    background: #fff;
-    color: #0b0b0b;
-    text-decoration: none;
-    text-align: left;
-  }
-
-  ul.operBySrez li a:focus {
-    background: #A5C3E6;
-  }
-
-
-  h5 {
-    line-height: 1.5em;
-    font-weight: normal;
-  }
-
-  .modal-body {
-    background: linear-gradient(#fff, #a8a8a8);
-  }
-
-  .statusTree {
-    border: 1px solid #a7a4a4;
-    border-radius: 1.5px;
-    height: auto;
-    margin: 15px 0;
-    min-height: 45vh;
-    background: #fff
-  }
-
-  .noPadding {
-    padding: 0;
-  }
-
-  .nav-pills > li > a {
-    color: black;
-    border: 1px solid #b5a8a8;
-  }
-
-  .nav {
-    padding-left: 10px;
-  }
-</style>
-
-<div class="modal-header" style="text-align: left">
+<div class="modal-header">
   <button type="button" class="close" data-dismiss="modal" ng-click="cancel()">×</button>
-  <h4><b>Операции со срезами</b></h4>
+  <h4>Операции со срезами</h4>
 </div>
 <div class="modal-body" ng-controller="modalOperBySrezCtrl">
   <div class="row">
@@ -65,75 +10,87 @@
       <div>
         <div class="col-md-5 noPadding">
           <div
-            style="min-height: 70vh; height: 100%; padding: 10px">
+            style="min-height: 70vh; height: 100%; padding: 0 10px">
 
-            <h5><b>№ среза:</b> {{srezNo}}</h5>
-            <h5><b>Период:</b> {{period}}</h5>
-            <h5><b>Срез на №</b> {{srezToNum}}</h5>
+            <div class="col-md-12">
+              <div class="row">
+                <div style="float: left">
+                  <h5><b>№ среза:</b> {{srezNo}}</h5>
+
+                </div>
+                <div style="float: right">
+                  <h5><b>Период:</b> {{period}}</h5>
+                </div>
+              </div>
+            </div>
+            <!--<h5><b>Срез на №</b> {{srezToNum}}</h5>-->
 
             <div class="statusTree">
-              <uib-tabset active="activePill" vertical="true" type="pills">
-                <uib-tab ng-style="{'margin-left': $index*15 + 'px'}" ng-repeat="status in statuses"
-                         ng-click="getStatusCode(status.code)" style="width: fit-content; margin: 5px" index="$index"
-                         heading="{{getOnlyLetters(status.name)}}"></uib-tab>
+              <ul class="operBySrez">
+                <!--<li class="active" ng-repeat="status in statuses" ng-style="{'margin-left': $index*15 + 'px'}">
+                  <a ng-click="getInfo()">- {{ status.name}}</a>
+                </li>-->
+              </ul>
+              <uib-tabset class="statusHistory" id="tabs" active="activeTabIndex" vertical="true" type="pills">
+                <uib-tab ng-style="{'margin-left': $index*15 + 'px'}" ng-repeat="status in history"
+                         ng-click="getStatusCode(status)" style="width: fit-content; margin: 5px" index="$index"
+                         heading="{{status.statusName}}"></uib-tab>
               </uib-tabset>
             </div>
 
             <div ng-if="userRole == USER_ROLES.ONE">
-              <button ng-click="statusAction(BUTTONS.TO_AGREEMENT)" class="btn btn-default" ng-if="
-              statusCode == STATUS_CODES.PRELIMINARY">На согласование
+
+
+              <button ng-click="statusAction(BUTTONS.SEND)" class="btn btn-default" ng-if="
+              rowEntityStatusCode == STATUS_CODES.PRELIMINARY">На согласование
               </button>
+
+
+              <button ng-click="statusAction(BUTTONS.PRELIMINARY)" class="btn btn-default" ng-if="
+              rowEntityStatusCode == STATUS_CODES.APPROVED">Перевести в Предварительный
+              </button>
+
 
               <button class="btn btn-default" ng-if="
-              statusCode == STATUS_CODES.FORMED_WITH_ERROR
-              || statusCode == STATUS_CODES.PRELIMINARY
-              || statusCode == STATUS_CODES.IN_AGREEMENT" ng-click="statusAction(BUTTONS.DELETE)">Удалить
+              rowEntityStatusCode == STATUS_CODES.FORMED_WITH_ERROR
+              || rowEntityStatusCode == STATUS_CODES.PRELIMINARY
+              || rowEntityStatusCode == STATUS_CODES.IN_AGREEMENT" ng-click="statusAction(BUTTONS.DELETE)">Удалить
               </button>
 
-              <button ng-click="statusAction(BUTTONS.SEND_TO_PRELIMINARY)" class="btn btn-default" ng-if="
-              statusCode == STATUS_CODES.APPROVED">Перевести в Предварительный
-              </button>
 
-              <button ng-click="statusAction(BUTTONS.APPROVE)" class="btn btn-default" ng-if="
-              statusCode == STATUS_CODES.PRELIMINARY || statusCode == STATUS_CODES.IN_AGREEMENT">Утвердить
+              <button ng-click="statusAction(BUTTONS.CONFIRM)" class="btn btn-default" ng-if="
+              rowEntityStatusCode == STATUS_CODES.PRELIMINARY || rowEntityStatusCode == STATUS_CODES.IN_AGREEMENT">
+                Утвердить
               </button>
             </div>
 
 
             <div ng-if="userRole == USER_ROLES.ZERO">
-              <button ng-click="statusAction(BUTTONS.TO_AGREEMENT) " class="btn btn-default" ng-if="
-              statusCode == STATUS_CODES.IN_AGREEMENT">Согласовать
+              <button ng-click="statusAction(BUTTONS.APPROVE) " class="btn btn-default" ng-if="
+              rowEntityStatusCode == STATUS_CODES.IN_AGREEMENT">Согласовать
+              </button>
+
+              <button ng-click="statusAction(BUTTONS.APPROVE)" class="btn btn-default" ng-if="
+              rowEntityStatusCode == STATUS_CODES.IN_AGREEMENT">Отказать
               </button>
             </div>
           </div>
         </div>
 
-        <!--Инфо по статусу Предварительный-->
-        <div ng-if="statusCode == STATUS_CODES.PRELIMINARY" class="col-md-7 noPadding">
-          <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
-            <h5><b>Статус:</b> {{statusInfoData.statusName}}</h5>
-            <h5><b>Срез заказал:</b> {{statusInfoData.sliceByOrder}}</h5>
-            <h5><b>Время заказа среза:</b> {{statusInfoData.orderSrezTime}}</h5>
-            <h5><b>Время начала формирования:</b> {{statusInfoData.startTime}}</h5>
-            <h5><b>Время окончания формирования: </b> {{statusInfoData.endTime}}</h5>
-          </div>
-        </div>
-        <!--Инфо по статусу Предварительный-->
-
 
         <!--Инфо по статусу Сформирован с ошибкой-->
         <div ng-if="statusCode == STATUS_CODES.FORMED_WITH_ERROR" class="col-md-7 noPadding">
           <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
-            <h5><b>Статус:</b> {{statusInfoData.statusName}}</h5>
-            <h5><b>Срез заказал:</b> {{statusInfoData.orderedBy}}</h5>
-            <h5><b>Время заказа среза:</b> {{statusInfoData.orderDate}}</h5>
-            <h5><b>Время начала формирования:</b> {{statusInfoData.startTime}}</h5>
-            <h5><b>Время окончания формирования: </b> {{statusInfoData.endTime}}</h5>
+            <h5><b>Статус:</b> {{statusName}}</h5>
+            <h5><b>Срез заказал:</b> {{personName}}</h5>
+            <h5><b>Время заказа среза:</b> {{statusDate}}</h5>
+            <h5><b>Время начала формирования:</b> {{created}}</h5>
+            <h5><b>Время окончания формирования: </b> {{completed}}</h5>
 
-            <h5><b>Сообщение об ошибке</b></h5>
+            <h5><b>Сообщение об ошибке:</b></h5>
 
             <div style="border: 1px solid #a7a4a4; padding: 10px">
-              <h5 style="color: red">{{statusInfoData.errorMessage}}</h5>
+              <h5 style="color: red">{{errorMsg}}</h5>
             </div>
 
           </div>
@@ -141,45 +98,61 @@
         <!--Инфо по статусу Сформирован с ошибкой-->
 
 
-        <!--Инфо по статусу Удален-->
-        <div ng-if="statusCode == STATUS_CODES.DELETED" class="col-md-7 noPadding">
-          <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
-            <h5><b>Статус:</b> {{statusInfoData.statusName}}</h5>
-            <h5><b>Срез удалил:</b> {{statusInfoData.sliceDeleteBy}}</h5>
-            <h5><b>Время удаления среза:</b> {{statusInfoData.sliceDeleteTime}}</h5>
-          </div>
-        </div>
-
-        <!--Инфо по статусу Удален-->
-
-
-        <!--Инфо по статусу Утвержден-->
+        <!--Инфо по статусу Окончательный / Утвержден-->
         <div ng-if="statusCode == STATUS_CODES.APPROVED" class="col-md-7 noPadding">
           <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
-            <h5><b>Статус:</b> {{statusInfoData.statusName}}</h5>
-            <h5><b>Срез утвердил:</b> {{statusInfoData.approvedBy}}</h5>
-            <h5><b>Время утверждения:</b> {{statusInfoData.approvedTime}}</h5>
+            <h5><b>Статус:</b> {{statusName}}</h5>
+            <h5><b>Срез утвердил:</b> {{personName}}</h5>
+            <h5><b>Время утверждения:</b> {{statusDate}}</h5>
           </div>
         </div>
-        <!--Инфо по статусу Утвержден-->
+        <!--Инфо по статусу Окончательный / Утвержден-->
+
+
+        <!--Инфо по статусу Предварительный-->
+        <div ng-if="statusCode == STATUS_CODES.PRELIMINARY" class="col-md-7 noPadding">
+          <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
+            <h5><b>Статус:</b> {{statusName}}</h5>
+            <h5><b>Срез перевел:</b> {{personName}}</h5>
+            <h5><b>Время перевода среза:</b> {{statusDate}}</h5>
+            <!--<h5><b>Время начала формирования:</b> {{created}}</h5>
+            <h5><b>Время окончания формирования: </b> {{completed}}</h5>-->
+          </div>
+        </div>
+        <!--Инфо по статусу Предварительный-->
+
 
         <!--Инфо по статусу На согласовании-->
         <div ng-if="statusCode == STATUS_CODES.IN_AGREEMENT" class="col-md-7 noPadding">
           <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
-            <h5><b>Статус:</b> {{statusInfoData.statusName}}</h5>
-            <h5><b>Срез отправил на согласование:</b> {{statusInfoData.sendToAggrementBy}}</h5>
-            <h5><b>Время перевода на согласование:</b> {{statusInfoData.agreementDate}}</h5>
-            <div id="gridInAgreement" ui-grid="gridOptionsAgreement" ng-if="gridOptionsAgreement" ui-grid-cellnav class="grid"></div>
+            <h5><b>Статус:</b> {{statusName}}</h5>
+            <h5><b>Срез отправил на согласование:</b> {{personName}}</h5>
+            <h5><b>Время перевода на согласование:</b> {{statusDate}}</h5>
+            <div id="gridInAgreement" ui-grid="gridOptionsAgreement" ng-if="gridOptionsAgreement" ui-grid-cellnav
+                 class="grid"></div>
           </div>
         </div>
         <!--Инфо по статусу На согласовании-->
+
+
+        <!--Инфо по статусу Удален-->
+        <div ng-if="statusCode == STATUS_CODES.DELETED" class="col-md-7 noPadding">
+          <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
+            <h5><b>Статус:</b> {{statusName}}</h5>
+            <h5><b>Срез удалил:</b> {{personName}}</h5>
+            <h5><b>Время удаления среза:</b> {{statusDate}}</h5>
+          </div>
+        </div>
+
+        <!--Инфо по статусу Удален-->
+
 
       </div>
     </div>
   </div>
 </div>
 <div class="modal-footer">
-  <button class="btn btn-warning" ng-click="cancel()">Отмена</button>
+  <button class="btn btn-danger" ng-click="cancel()">Отмена</button>
 </div>
 
 

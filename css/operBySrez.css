@@ -1,0 +1,101 @@
+
+.grid {
+    width: 100%;
+    height: 450px;
+    background: #F3F3F3;
+}
+
+.modal-content {
+    border-radius: 0;
+}
+
+ul.operBySrez {
+    list-style: none;
+    display: grid;
+    margin: 10px;
+}
+
+ul.operBySrez li a {
+    border: 1px solid;
+    border-radius: 1px;
+    padding: 5px;
+    font-weight: bold;
+    margin: 5px 0;
+    background: #fff;
+    color: #0b0b0b;
+    text-decoration: none;
+    text-align: left;
+}
+
+ul.operBySrez li a:focus {
+    background: #A5C3E6;
+}
+
+
+h5 {
+    line-height: 1.5em;
+    font-weight: normal;
+}
+
+.modal-body {
+    background: linear-gradient(#fff, #a8a8a8);
+}
+
+.statusTree {
+    border: 1px solid #a7a4a4;
+    border-radius: 1.5px;
+    height: auto;
+    margin: 15px 0;
+    min-height: 58vh;
+    overflow-y: scroll;
+    background: #fff
+}
+
+.noPadding {
+    padding: 0;
+}
+
+.nav-pills > li > a {
+    color: black;
+    border: 1px solid #b5a8a8;
+    width: 150px;
+}
+
+.nav {
+    padding-left: 10px;
+}
+
+.modal-header {
+    padding: 0 10px;
+    text-align: left;
+    background: #224879;
+    color: #fff;
+}
+
+.modal-header .close {
+    color: #fff;
+    opacity: 2;
+    margin-top: 7px;
+}
+
+#tabs {
+    /*overflow-y: scroll;*/
+    height: 45vh;
+}
+
+.lastStatus{
+    background-color: red;
+    color: white;
+}
+
+div#tabs.statusHistory ul li:last-child{
+    background: #337ab7;
+}
+
+div#tabs.statusHistory ul li:last-child a{
+    color: white;
+}
+
+.nav-pills>li>a{
+    border-radius: 0;
+}

@@ -566,11 +566,11 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
           enableFiltering: false,
           enableRowSelection: true,
           enableSelectAll: true,
-          rowHeight: 35,
+          // rowHeight: 35,
           multiSelect: true,
           columnDefs: [
-            {name: 'code', width: '*', displayName: 'и/н'},
-            {name: 'name', width: '*', displayName: 'Ведомство'}
+            {name: 'code', width: '20%', displayName: 'и/н'},
+            {name: 'name', width: '70%', displayName: 'Ведомство'}
           ]
         };
         // Запись отчетов и ведомств в правильную структуру для Grid 

@@ -113,7 +113,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     enableSelectAll: false,
     selectionRowHeaderWidth: 35,
     rowHeight: 45,
-    treeIndent: 30,
+    treeIndent: 40,
 
     columnDefs: [
       {
@@ -142,18 +142,10 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
         displayName: 'Номер среза / Период',
         cellTemplate: '<div ng-hide="row.treeLevel==0 || row.treeLevel == 1"  ng-controller="ModalControlCtrl"><button style="margin: 5px 0; font-weight: 600; border: none; background: transparent" class="btn btn-default"  ng-click="grid.appScope.open(row.entity)"><a>№{{row.entity.id}} период {{row.entity.period}}</a></button></div>'
       },
-      /*{
-        name: 'period',
-        width: '*',
-        displayName: 'Период'
-
-      },*/
-
-
       {
         name: 'maxRecNum',
         displayName: 'На номер',
-        width: '140',
+        width: '200',
         cellTemplate: '<div class="indentInline">{{row.entity.maxRecNum}}</div>'
       },
 
@@ -172,7 +164,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       {
         name: 'region',
         displayName: 'По органу',
-        width: '130',
+        width: '200',
         cellTemplate: '<div class="indentInline">{{row.entity.region}}</div>'
       }
     ]
@@ -254,26 +246,22 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     //Получение всех срезов
 
     if (treeLevel === 0) {
-      console.log(row.entity);
-      var groupFolderImg = document.getElementById(row.entity.$$hashKey);
+      /*var groupFolderImg = document.getElementById(row.entity.$$hashKey);
 
       if (groupFolderImg.src.indexOf('folder-cl.png') !== -1) {
         groupFolderImg.src = 'img/folder-op.png'
       } else {
         groupFolderImg.src = 'img/folder-cl.png'
-      }
+      }*/
       $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
     } else {
 
-
-      console.log(row.entity);
-
-      var statusFolderImg = document.getElementById(row.entity.$$hashKey);
+      /*var statusFolderImg = document.getElementById(row.entity.$$hashKey);
       if (statusFolderImg.src.indexOf('folder-cl.png') != -1) {
         statusFolderImg.src = 'img/folder-op.png'
       } else {
         statusFolderImg.src = 'img/folder-cl.png'
-      }
+      }*/
 
 
       $scope.preloaderByStatus = true;
@@ -282,30 +270,53 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       var check = $scope.checkboxModel.value;
       $scope.getDataOnclickStatus = function () {
 
-        var groupCode = row.entity.groupCode,
-          statusCode = row.entity.code,
-          year = row.entity.statusYear;
 
-        if (check) {
-          urlStatus = 'https://analytic-centre.tk:8081/api/v1/RU/slices?deleted=true&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + ''
+
+        if (!check) {
+          var groupCode = row.entity.groupCode,
+            statusCode = row.entity.code,
+            year = row.entity.statusYear;
+
+
+          urlStatus = 'https://analytic-centre.tk:8081/api/v1/RU/slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + '';
+          // подгружает данные http
+          $http({
+            method: 'GET',
+            url: urlStatus,
+            headers: {
+              sessionKey: 'admin'
+            }
+          }).then(function (value) {
+            $scope.showGrid = value.data;
+            $scope.preloaderByStatus = false;
+          }, function (reason) {
+            console.log(reason);
+          });
 
         } else {
-          urlStatus = 'https://analytic-centre.tk:8081/api/v1/RU/slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + ''
+          console.log(check);
+          var groupCodeByDeleted = row.entity.groupCode,
+            statusCodeByDeleted = row.entity.code,
+            yearByDeleted = row.entity.statusYear;
+
+
+          urlStatus = 'https://analytic-centre.tk:8081/api/v1/RU/slices?deleted=true&groupCode=' + groupCodeByDeleted + '&statusCode=' + statusCodeByDeleted + '&year=' + yearByDeleted + '';
+          // подгружает данные http
+          $http({
+            method: 'GET',
+            url: urlStatus,
+            headers: {
+              sessionKey: 'admin'
+            }
+          }).then(function (value) {
+            $scope.showGrid = value.data;
+            $scope.preloaderByStatus = false;
+          }, function (reason) {
+            console.log(reason);
+          });
         }
 
-        // подгружает данные http
-        $http({
-          method: 'GET',
-          url: urlStatus,
-          headers: {
-            sessionKey: 'admin'
-          }
-        }).then(function (value) {
-          $scope.showGrid = value.data;
-          $scope.preloaderByStatus = false;
-        }, function (reason) {
-          console.log(reason);
-        });
+
       };
       $scope.getDataOnclickStatus();
 
@@ -335,7 +346,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
             $scope.showGrid.length = 0;
 
             row.entity.isDataLoaded = true;
-          }, 2000, 1);
+          }, 1000, 1);
         } else {
           console.log('This row already has data');
         }
@@ -816,6 +827,8 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         $scope.history.forEach(function (historyObj) {
         $scope.historyObj = historyObj
       });
+        console.log($scope.historyObj);
+        $scope.rowEntityStatusCode = $scope.historyObj.statusCode;
       $scope.getStatusCode($scope.historyObj);
     });
   };
@@ -827,9 +840,20 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   в дереве статусов и перезаписываем полученный из row.entity ======*/
   $scope.getStatusCode = function (selectedStatus) {
 
-    $scope.rowEntityStatusCode = selectedStatus.statusCode; // 1 Окончательный
-    console.log(selectedStatus);
+    // $scope.rowEntityStatusCode = selectedStatus.statusCode; // 1 Окончательный
+    // console.log(selectedStatus);
     $scope.statusCode = selectedStatus.statusCode;
+
+
+
+
+
+
+
+
+
+
+
 
 
     if (selectedStatus.statusCode === STATUS_CODES.IN_AGREEMENT) {

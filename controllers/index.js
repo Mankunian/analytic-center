@@ -386,7 +386,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       data: dataObj
     }).then(function (response) {
 
-      $scope.user = [];
+      $scope.user.length = 0;
       $scope.showGrid = response.data;
 
 
@@ -870,7 +870,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
           rowHeight: 35,
           columnDefs: [
             {name: 'territoryName', width: '250', displayName: 'Терр.управление'},
-            {name: 'approveDate', width: '170', displayName: 'Дата-время согласования'},
+            {name: 'approveDate', width: '170', displayName: 'Дата-время'},
             {
               name: 'approveName',
               width: '150',

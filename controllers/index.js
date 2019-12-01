@@ -534,7 +534,6 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
   };
   /*=====  Получение списка отчетов для формирования вкладок end ======*/
 
-
   if ($scope.isGroup100) {
     /*=====  Sets correct $$treeLevel ======*/
     var writeoutNodeRegions1 = function (childArray, currentLevel, dataArray) {

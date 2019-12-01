@@ -89,11 +89,11 @@ h5 {
 }
 
 div#tabs.statusHistory ul li:last-child{
-    background: #337ab7;
+    /*background: #337ab7;*/
 }
 
 div#tabs.statusHistory ul li:last-child a{
-    color: white;
+    /*color: white;*/
 }
 
 .nav-pills>li>a{

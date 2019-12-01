@@ -341,7 +341,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
             $scope.showGrid.forEach(function (statusData) {
               // $scope.dataByStatus = statusData;
               $scope.gridOptions.data.splice(selectedRowIndex, 0, statusData);
-              console.log(statusData)
+              console.log(statusData);
             });
             //Тут дублирует записи
             $scope.showGrid = [];
@@ -431,7 +431,7 @@ app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope, STAT
     
     if (value.statusCode == STATUS_CODES.IN_PROCESSING || value.statusCode == STATUS_CODES.WAITING_FOR_PROCESSING){
       console.log('Not Open');
-      alert('По данному статусу невозможно получить отчет!')
+      alert('По данному статусу невозможно получить отчет!');
 
     } else {
       $scope.dataSendByModal = value;
@@ -452,7 +452,7 @@ app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope, STAT
       modalInstance.result.then(function (response) {
         // $scope.result = `${response} button hitted`;
       });
-      console.log('Open')
+      console.log('Open');
     }
 
 

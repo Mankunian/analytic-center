@@ -8,7 +8,9 @@ var app = angular.module('app', [
   'ui.grid.grouping',
   'ui.grid.edit',
   'ui.grid.selection',
-  'ui.grid.resizeColumns'
+  'ui.grid.resizeColumns',
+  'ui.grid.treeView',
+  'ui.grid.expandable'
 ]);
 
 app.constant('STATUS_CODES', {
@@ -204,9 +206,9 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   $scope.showDeletedReports = function (check) {
     $scope.loader = true;
     if (check) {
-      url = 'https://analytic-centre.tk:8081/api/v1/RU/slices/parents?deleted=true'
+      url = 'https://analytic-centre.tk:8081/api/v1/RU/slices/parents?deleted=true';
     } else {
-      url = 'https://analytic-centre.tk:8081/api/v1/RU/slices/parents?deleted=false'
+      url = 'https://analytic-centre.tk:8081/api/v1/RU/slices/parents?deleted=false';
     }
 
     var dataSet = [];
@@ -488,14 +490,17 @@ app.controller('modalOperBySrezCtrl', function ($scope, $uibModal, $rootScope, $
 /**
  *  ModalContentCtrl
  */
-app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, value, $rootScope, $sce, $timeout, $log) {
+app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, value, $rootScope, $sce, $timeout, $log, $interval) {
 
-  $scope.statSliceNum = value.id;
+  $scope.statSliceNum         = value.id;
   $scope.statSlicePeriod      = value.period;
   $scope.isTabsLoaded         = false;
   $scope.isReportsSelected    = false;
   $scope.tabsIsRefreshed      = false;
   $scope.isReadyReportsLoaded = true;
+  $scope.isGroup100           = false;
+
+  if (value.groupCode == 100) $scope.isGroup100 = true;
 
   $scope.langData = {
     langs: [
@@ -528,6 +533,84 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
     return $scope.reportTabs[index];
   };
   /*=====  Получение списка отчетов для формирования вкладок end ======*/
+
+
+  if ($scope.isGroup100) {
+    /*=====  Sets correct $$treeLevel ======*/
+    var writeoutNodeRegions1 = function (childArray, currentLevel, dataArray) {
+      childArray.forEach(function (childNode) {
+        if (childNode.children) {
+          childNode.$$treeLevel = currentLevel;
+        } else {
+          childNode.$$treeLevel = 'last'; 
+        }
+        dataArray.push(childNode);
+        writeoutNodeRegions1(childNode.children, currentLevel + 1, dataArray);
+      });
+    };
+
+    $http({
+      method: 'GET',
+      // url: 'https://18.140.232.52:8081/api/v1/RU/slices/governments/parents',
+      url: './json/parents.json',
+      headers: {
+        sessionKey: 'admin'
+      }
+    }).then(function(response){
+      $scope.reportCorpusData = [];
+      writeoutNodeRegions1(response.data, 0, $scope.reportCorpusData);
+
+      $scope.reportCorpus = {
+        data: $scope.reportCorpusData,
+        showGridFooter: false,
+        enableColumnMenus: false,
+        showTreeExpandNoChildren: true,
+        enableHiding: false,
+        enableSorting: false,
+        enableFiltering: true,
+        enableRowSelection: true,
+        enableSelectAll: true,
+        multiSelect: true,
+        columnDefs: [
+          {name: 'code', width: '17%', displayName: 'Код органа', cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': (row.treeLevel == 'last') ? grid.options.treeIndent * 3 + 'px' : grid.options.treeIndent * (row.treeLevel + 1) + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>"},
+          {name: 'name', width: '83%', displayName: 'Наименование', cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': (row.treeLevel == 'last') ? grid.options.treeIndent * 3 + 'px' : grid.options.treeIndent * (row.treeLevel + 1) + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>"}
+        ],
+        onRegisterApi: function( gridApi ) {
+          $scope.gridApi = gridApi;
+
+          $scope.gridApi.treeBase.on.rowExpanded($scope, function(row) {
+            if ((row.entity.$$treeLevel == 1 && !row.reportCorpusNodeLoaded) || (row.entity.$$treeLevel == 0 && row.entity.children.length == 0 && !row.reportCorpusNodeLoaded)) {
+              var expandedRowIndex = $scope.reportCorpus.data.findIndex(x => x.$$hashKey === row.entity.$$hashKey);
+              $http({
+                method: 'GET',
+                url: 'https://18.140.232.52:8081/api/v1/RU/slices/governments/children?searchPattern='+row.entity.searchPattern,
+                headers: {
+                  sessionKey: 'admin'
+                }
+              }).then(function(response){
+                $scope.reportCorpusChildren = response.data;
+                $scope.reportCorpusChildren.forEach( function(item) {
+                  item.$$treeLevel = row.entity.$$treeLevel + 1;
+                });
+                $scope.reportCorpusChildren.forEach( function(element, index) {
+                  $scope.reportCorpus.data.splice(expandedRowIndex+1+index,0, element);
+                });
+                console.log($scope.reportCorpus);
+                row.reportCorpusNodeLoaded = true;
+              });
+            }
+          });
+          $scope.gridApi.selection.on.rowSelectionChanged($scope,function(row){
+            $scope.selectedReportCorpuses = $scope.gridApi.selection.getSelectedRows();
+          });
+        },
+      };
+      $scope.reportCorpus.tabInfo = {
+        name: '1-П',
+        code: '801'
+      };
+    });
+  }
 
   /*=====  Regions grid - get data from backend ======*/
   $http({
@@ -631,15 +714,12 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
         item.gridApiDepsName = gridApi;
         gridApi.selection.on.rowSelectionChanged($scope, function (row) {
           $scope.selectedDeps[index] = item.gridApiDepsName.selection.getSelectedRows();
-          console.log(item.gridApiDepsName.selection.getSelectedRows());
         });
         gridApi.selection.on.rowSelectionChangedBatch($scope,function(rows){
           $scope.selectedDeps[index] = item.gridApiDepsName.selection.getSelectedRows();
-          console.log(item.gridApiDepsName.selection.getSelectedRows());
         });
       };
     });
-    console.log($scope.selectedDeps);
     $scope.selectedRegions = [];
     $scope.regionsGridApiOptions.forEach(function (item, index) {
       item.gridRegionsDataset.onRegisterApi = function (gridApi) {
@@ -688,6 +768,17 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
     $scope.requestedReportsQuery = [];
     var reportInfo,
         counter = 0;
+
+    if ($scope.selectedReportCorpuses != undefined && $scope.selectedReportCorpuses.length > 0) {
+      $scope.selectedReportCorpuses.forEach( function(element, index) {
+        $scope.requestedReports[index] = $scope.reportCorpus.tabInfo.name + '-' + element.name;
+        $scope.requestedReportsQuery[index] = {
+          "sliceId": $scope.statSliceNum,
+          "reportCode": $scope.reportCorpus.tabInfo.code,
+          "govCode": element.searchPattern
+        };
+      });
+    }
 
     if ($scope.selectedRegions != undefined && $scope.selectedRegions.length > 0 && $scope.selectedDeps != undefined && $scope.selectedDeps.length > 0) {
       $scope.selectedRegions.forEach(function (element, index) {
@@ -824,7 +915,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
 
 
         $scope.history.forEach(function (historyObj) {
-        $scope.historyObj = historyObj
+        $scope.historyObj = historyObj;
       });
         console.log($scope.historyObj);
         $scope.rowEntityStatusCode = $scope.historyObj.statusCode;
@@ -842,18 +933,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
     // $scope.rowEntityStatusCode = selectedStatus.statusCode; // 1 Окончательный
     // console.log(selectedStatus);
     $scope.statusCode = selectedStatus.statusCode;
-
-
-
-
-
-
-
-
-
-
-
-
 
     if (selectedStatus.statusCode === STATUS_CODES.IN_AGREEMENT) {
       $http({

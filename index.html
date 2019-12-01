@@ -144,7 +144,7 @@
                     <div class="col-lg-6 col-md-12">
                       <div class="box">
                         <label class="containerLabel" ng-repeat="group in groups">
-                          <input ng-checked="vChecked" type="checkbox" checklist-model="user"
+                          <input ng-disabled="group.disabled" ng-checked="vChecked" type="checkbox" checklist-model="user"
                                  checklist-value="group.code">{{group.name}}
                           <span class="checkmark"></span>
                         </label>

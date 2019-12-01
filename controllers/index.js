@@ -69,6 +69,11 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       }
     }).then(function (value) {
       $scope.groups = value.data;
+      angular.forEach($scope.groups, function (v) {
+        if (v.status === 2){
+          v.disabled = true;
+        }
+      })
     });
   };
   $scope.getGroups();

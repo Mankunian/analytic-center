@@ -510,7 +510,6 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
     selectedRepLang: {id: '0', name: 'Русский'}
   };
 
-
   var refresh = function() {
     $scope.refresh = true;
     $timeout(function() {

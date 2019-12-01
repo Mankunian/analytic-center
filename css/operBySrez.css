@@ -99,3 +99,15 @@ div#tabs.statusHistory ul li:last-child a{
 .nav-pills>li>a{
     border-radius: 0;
 }
+
+.last:last-of-type{
+    background: #2E86CD;
+}
+
+.last:last-of-type a{
+    color: white;
+}
+
+.last:hover:last-of-type{
+    background: #555555;
+}

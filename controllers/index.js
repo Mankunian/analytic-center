@@ -853,7 +853,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         $scope.history.forEach(function (historyObj) {
         $scope.historyObj = historyObj
       });
-        console.log($scope.historyObj);
         $scope.rowEntityStatusCode = $scope.historyObj.statusCode;
 
 
@@ -878,12 +877,11 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   /*=====  Получаем код статуса после клика на статус
   в дереве статусов и перезаписываем полученный из row.entity ======*/
   $scope.getStatusCode = function (selectedStatus) {
-    console.log(selectedStatus);
 
 
 
     // $scope.rowEntityStatusCode = selectedStatus.statusCode; // 1 Окончательный
-    // console.log(selectedStatus);
+    console.log(selectedStatus); // here set ng class background blue for last as last element of history status
     $scope.statusCode = selectedStatus.statusCode;
 
 
@@ -959,19 +957,15 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
           $scope.personName = selectedStatus.personName;
           $scope.statusDate = selectedStatus.statusDate;
 
-          if (selectedStatus.statusCode === $scope.history[$scope.activeTabIndex].statusCode) {
-            $scope.lastPreliminaryStatus = true;
-            $scope.created = value.created;
-            $scope.completed = value.completed;
-          }
+        $scope.created = value.created;
+        $scope.completed = value.completed;
 
-          // if ($scope.history[$scope.activeTabIndex].statusCode === STATUS_CODES.PRELIMINARY) {
+
+
+          // if ($scope.lastElementHistoryStatus.statusCode === STATUS_CODES.PRELIMINARY) {
           //
           // }
-          //
-          // if ($scope.lastPreliminaryStatus){
-          //
-          // }
+
 
 
         break;
@@ -1035,6 +1029,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
     }).then(function (response) {
       console.log(response);
       $timeout(alert('Операция успешно совершена'), 2000);
+      $scope.rowEntityStatusCode = $scope.statusCode;
       $scope.getStatusTree();
 
 

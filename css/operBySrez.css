@@ -37,9 +37,9 @@ h5 {
     font-weight: normal;
 }
 
-.modal-body {
+/*.modal-body {
     background: linear-gradient(#fff, #a8a8a8);
-}
+}*/
 
 .statusTree {
     border: 1px solid #a7a4a4;
@@ -64,20 +64,20 @@ h5 {
 .nav {
     padding-left: 10px;
 }
-
+/*
 .modal-header {
     padding: 0 10px;
     text-align: left;
     background: #224879;
     color: #fff;
-}
-
+}*/
+/*
 .modal-header .close {
     color: #fff;
     opacity: 2;
     margin-top: 7px;
 }
-
+*/
 #tabs {
     /*overflow-y: scroll;*/
     height: 45vh;

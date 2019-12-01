@@ -1,8 +1,8 @@
 <div class="modal-header">
   <button type="button" class="close" data-dismiss="modal" ng-click="cancel()" >×</button>
-  <h3>Получение отчетов</h3>
+  <h3 class="modal-heading">Получение отчетов</h3>
 </div>
-<div class="modal-body" ng-class="{isTabsLoaded : isTabsLoaded}">
+<div class="modal-body report-modal" ng-class="{isTabsLoaded : isTabsLoaded}">
   <div class="preloader-block" ng-if="!isTabsLoaded">
     <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
   </div>
@@ -12,7 +12,7 @@
         <form class="form-inline">
           <div class="col-md-12">
             <div class="form-group slice-name-input-group">
-              <label for="statSliceNum">Статсрез на №</label>
+              <label for="statSliceNum" class="blue-title">Статсрез на №</label>
               <input type="text" name="statSliceNum" id="statSliceNum" class="form-control" disabled value="{{statSliceNum}}">
             </div>
             <div class="form-group slice-date-input-group">
@@ -60,16 +60,16 @@
     <uib-tab ng-repeat="item in reports_n_deps track by $index" heading="{{ item.name }}" select="getCurrentReportTab(item.name, item.code)">
       <div class="row">
         <div class="col-md-6">
-          <div id="gridRegions" ui-grid="item.gridRegionsDataset" ui-grid-selection ui-grid-grouping ui-grid-auto-resize class="grid"></div>
+          <div id="gridRegions" ui-grid="item.gridRegionsDataset" ui-grid-selection ui-grid-grouping ui-grid-auto-resize class="grid request-report-grid-modal"></div>
         </div>
         <div class="col-md-6">
-          <div id="{{grid-$index}}" ui-grid="item.gridDataset" ui-grid-selection ui-grid-cellnav ui-grid-auto-resize ui-grid-grouping class="grid"></div>
+          <div id="{{grid-$index}}" ui-grid="item.gridDataset" ui-grid-selection ui-grid-cellnav ui-grid-auto-resize ui-grid-grouping class="grid request-report-grid-modal"></div>
         </div>
       </div>
     </uib-tab>
   </uib-tabset>
 </div>
 <div class="modal-footer">
-  <button class="btn btn-primary btn-md" type="submit" ng-disabled="!isReportsSelected || !isReadyReportsLoaded" ng-click="getReports()" ng-show="isCatalogTab">Получить</button>
-  <button class="btn btn-warning" ng-click="cancel()">Отмена</button>
+  <button class="btn btn-md" type="submit" ng-disabled="!isReportsSelected || !isReadyReportsLoaded" ng-click="getReports()" ng-show="isCatalogTab">Получить</button>
+  <button class="btn" ng-click="cancel()">Отмена</button>
 </div>

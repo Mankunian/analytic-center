@@ -2,7 +2,7 @@
 
 <div class="modal-header">
   <button type="button" class="close" data-dismiss="modal" ng-click="cancel()">×</button>
-  <h4>Операции со срезами</h4>
+  <h4 class="modal-heading">Операции со срезами</h4>
 </div>
 <div class="modal-body" ng-controller="modalOperBySrezCtrl">
   <div class="row">
@@ -41,24 +41,24 @@
             <div ng-if="userRole == USER_ROLES.ONE">
 
 
-              <button ng-click="statusAction(BUTTONS.SEND)" class="btn btn-default" ng-if="
+              <button ng-click="statusAction(BUTTONS.SEND)" class="btn" ng-if="
               rowEntityStatusCode == STATUS_CODES.PRELIMINARY">На согласование
               </button>
 
 
-              <button ng-click="statusAction(BUTTONS.PRELIMINARY)" class="btn btn-default" ng-if="
+              <button ng-click="statusAction(BUTTONS.PRELIMINARY)" class="btn" ng-if="
               rowEntityStatusCode == STATUS_CODES.APPROVED">Перевести в Предварительный
               </button>
 
 
-              <button class="btn btn-default" ng-if="
+              <button class="btn" ng-if="
               rowEntityStatusCode == STATUS_CODES.FORMED_WITH_ERROR
               || rowEntityStatusCode == STATUS_CODES.PRELIMINARY
               || rowEntityStatusCode == STATUS_CODES.IN_AGREEMENT" ng-click="statusAction(BUTTONS.DELETE)">Удалить
               </button>
 
 
-              <button ng-click="statusAction(BUTTONS.CONFIRM)" class="btn btn-default" ng-if="
+              <button ng-click="statusAction(BUTTONS.CONFIRM)" class="btn" ng-if="
               rowEntityStatusCode == STATUS_CODES.PRELIMINARY || rowEntityStatusCode == STATUS_CODES.IN_AGREEMENT">
                 Утвердить
               </button>
@@ -66,11 +66,11 @@
 
 
             <div ng-if="userRole == USER_ROLES.ZERO">
-              <button ng-click="statusAction(BUTTONS.APPROVE) " class="btn btn-default" ng-if="
+              <button ng-click="statusAction(BUTTONS.APPROVE) " class="btn" ng-if="
               rowEntityStatusCode == STATUS_CODES.IN_AGREEMENT">Согласовать
               </button>
 
-              <button ng-click="statusAction(BUTTONS.APPROVE)" class="btn btn-default" ng-if="
+              <button ng-click="statusAction(BUTTONS.APPROVE)" class="btn" ng-if="
               rowEntityStatusCode == STATUS_CODES.IN_AGREEMENT">Отказать
               </button>
             </div>

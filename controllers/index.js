@@ -341,7 +341,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
             $scope.showGrid.forEach(function (statusData) {
               // $scope.dataByStatus = statusData;
               $scope.gridOptions.data.splice(selectedRowIndex, 0, statusData);
-              console.log(statusData)
+              console.log(statusData);
             });
             //Тут дублирует записи
             $scope.showGrid = [];
@@ -431,7 +431,7 @@ app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope, STAT
     
     if (value.statusCode == STATUS_CODES.IN_PROCESSING || value.statusCode == STATUS_CODES.WAITING_FOR_PROCESSING){
       console.log('Not Open');
-      alert('По данному статусу невозможно получить отчет!')
+      alert('По данному статусу невозможно получить отчет!');
 
     } else {
       $scope.dataSendByModal = value;
@@ -452,7 +452,7 @@ app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope, STAT
       modalInstance.result.then(function (response) {
         // $scope.result = `${response} button hitted`;
       });
-      console.log('Open')
+      console.log('Open');
     }
 
 
@@ -510,7 +510,6 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
     selectedRepLang: {id: '0', name: 'Русский'}
   };
 
-
   var refresh = function() {
     $scope.refresh = true;
     $timeout(function() {
@@ -533,7 +532,6 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
     return $scope.reportTabs[index];
   };
   /*=====  Получение списка отчетов для формирования вкладок end ======*/
-
 
   if ($scope.isGroup100) {
     /*=====  Sets correct $$treeLevel ======*/
@@ -559,7 +557,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
     }).then(function(response){
       $scope.reportCorpusData = [];
       writeoutNodeRegions1(response.data, 0, $scope.reportCorpusData);
-
+      console.log(response);
       $scope.reportCorpus = {
         data: $scope.reportCorpusData,
         showGridFooter: false,
@@ -796,7 +794,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
                 "regCode": region.code
               };
               counter++;
-            });
+            }); 
           }
         });
       });

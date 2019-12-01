@@ -566,7 +566,6 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
           enableFiltering: false,
           enableRowSelection: true,
           enableSelectAll: true,
-          // rowHeight: 35,
           multiSelect: true,
           columnDefs: [
             {name: 'code', width: '20%', displayName: 'и/н'},

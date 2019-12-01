@@ -559,7 +559,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
     }).then(function(response){
       $scope.reportCorpusData = [];
       writeoutNodeRegions1(response.data, 0, $scope.reportCorpusData);
-
+      console.log(response);
       $scope.reportCorpus = {
         data: $scope.reportCorpusData,
         showGridFooter: false,
@@ -796,7 +796,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
                 "regCode": region.code
               };
               counter++;
-            });
+            }); 
           }
         });
       });

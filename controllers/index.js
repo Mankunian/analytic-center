@@ -368,12 +368,9 @@ app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope, STAT
       });
 
       modalInstance.result.then(function (response) {
-        // $scope.result = `${response} button hitted`;
+        console.log(response);
       });
-      console.log('Open');
     }
-
-
   };
 });
 
@@ -814,17 +811,9 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
 
 
   // Определяем роль пользователя
-  $scope.userRole = USER_ROLES.ONE;
-  // $scope.userRole = USER_ROLES.ZERO;
+  $scope.userRole = USER_ROLES.ZERO;
+  // (user.terrCode = 19000090) ? user.terrCode=USER_ROLES.ONE : user.terrCode=USER_ROLES.ZERO;
   /*=====  Получение данных end ======*/
-
-
-
-  
-
-
-
-
 
 
   $scope.activeTabIndex = 0;

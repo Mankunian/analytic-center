@@ -119,7 +119,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     enableSelectAll: false,
     selectionRowHeaderWidth: 35,
     rowHeight: 45,
-    treeIndent: 40,
+    treeIndent: 15,
+    multiSelect: true,
 
     columnDefs: [
       {
@@ -132,12 +133,12 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
         name: 'name',
         width: '450',
         displayName: 'Группы',
-        cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">" +
+        cellTemplate: "<div style='margin: 0 10px' class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">" +
           "<img id='{{row.entity.$$hashKey}}' " +
           "ng-hide='row.treeLevel == undefined' " +
-          "ng-click='grid.appScope.toggleFirstRow(rowRenderIndex, row.treeLevel, row)' " +
+
           "style='width: 24px; margin: 0 10px; cursor: pointer' " +
-          "src='./img/folder-cl.png' " +
+          "src='' " +
           "alt=''>{{COL_FIELD CUSTOM_FILTERS}}</div>"
       },
       {
@@ -177,9 +178,39 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   };
   $scope.gridOptions.onRegisterApi = function (gridApi) {
     $scope.gridApi = gridApi;
-  };
 
-  $scope.gridOptions.multiSelect = true;
+    $scope.gridApi.treeBase.on.rowExpanded($scope, function (row) {
+
+      console.log(row)
+
+      if (row.entity.$$treeLevel !== 0 && !row.isSlicesLoaded){
+        var groupCode = row.entity.groupCode,
+          statusCode = row.entity.code,
+          year = row.entity.statusYear;
+
+        $http({
+          method: 'GET',
+          url: 'https://analytic-centre.tk:8081/api/v1/RU/slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + '',
+          headers: {
+            sessionKey: 'admin'
+          }
+        }).then(function (value) {
+          $scope.showGrid = value.data;
+          console.log(value.data);
+          var expandedRowStatusIndex = $scope.gridOptions.data.findIndex(x => x.$$hashKey === row.entity.$$hashKey);
+          // $scope.preloaderByStatus = false;
+          $scope.showGrid.forEach( function(element, index) {
+            $scope.gridOptions.data.splice(expandedRowStatusIndex+1+index,0, element);
+          });
+          row.isSlicesLoaded = true;
+
+        }, function (reason) {
+          console.log(reason);
+        });
+
+      }
+    });
+  };
 
   var id = 0;
   var writeoutNode = function (childArray, currentLevel, dataArray) {
@@ -203,7 +234,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   $scope.checkboxModel = {
     value: false
   };
-
 
   var url = '';
   $scope.loader = false;
@@ -238,128 +268,12 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
         writeoutNode(dataSet, 0, $scope.gridOptions.data);
       });
       console.log(dataSet);
-
-
     });
   };
 
 
   $scope.showDeletedReports();
 
-
-  $scope.toggleFirstRow = function (index, treeLevel, row) {
-
-    //Получение всех срезов
-
-    if (treeLevel === 0) {
-      /*var groupFolderImg = document.getElementById(row.entity.$$hashKey);
-
-      if (groupFolderImg.src.indexOf('folder-cl.png') !== -1) {
-        groupFolderImg.src = 'img/folder-op.png'
-      } else {
-        groupFolderImg.src = 'img/folder-cl.png'
-      }*/
-      $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
-    } else {
-
-      /*var statusFolderImg = document.getElementById(row.entity.$$hashKey);
-      if (statusFolderImg.src.indexOf('folder-cl.png') != -1) {
-        statusFolderImg.src = 'img/folder-op.png'
-      } else {
-        statusFolderImg.src = 'img/folder-cl.png'
-      }*/
-
-
-      $scope.preloaderByStatus = true;
-
-      var urlStatus = '';
-      var check = $scope.checkboxModel.value;
-      $scope.getDataOnclickStatus = function () {
-
-
-
-        if (!check) {
-          var groupCode = row.entity.groupCode,
-            statusCode = row.entity.code,
-            year = row.entity.statusYear;
-
-
-          urlStatus = 'https://analytic-centre.tk:8081/api/v1/RU/slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + '';
-          // подгружает данные http
-          $http({
-            method: 'GET',
-            url: urlStatus,
-            headers: {
-              sessionKey: 'admin'
-            }
-          }).then(function (value) {
-            $scope.showGrid = value.data;
-            $scope.preloaderByStatus = false;
-          }, function (reason) {
-            console.log(reason);
-          });
-
-        } else {
-          console.log(check);
-          var groupCodeByDeleted = row.entity.groupCode,
-            statusCodeByDeleted = row.entity.code,
-            yearByDeleted = row.entity.statusYear;
-
-
-          urlStatus = 'https://analytic-centre.tk:8081/api/v1/RU/slices?deleted=true&groupCode=' + groupCodeByDeleted + '&statusCode=' + statusCodeByDeleted + '&year=' + yearByDeleted + '';
-          // подгружает данные http
-          $http({
-            method: 'GET',
-            url: urlStatus,
-            headers: {
-              sessionKey: 'admin'
-            }
-          }).then(function (value) {
-            $scope.showGrid = value.data;
-            $scope.preloaderByStatus = false;
-          }, function (reason) {
-            console.log(reason);
-          });
-        }
-
-
-      };
-      $scope.getDataOnclickStatus();
-
-
-      // Тут данные добавляются
-      $scope.gridApi.treeBase.on.rowExpanded($scope, function (row) {
-
-        if (row.entity.isDataLoaded === undefined && row.entity.$$treeLevel !== 0) {
-
-          $interval(function () {
-            var selectedRowHashkey = row.entity.$$hashKey,
-              selectedRowIndex = 0;
-
-            $scope.gridOptions.data.forEach(function (value, index) {
-              if (selectedRowHashkey === value.$$hashKey) {
-                selectedRowIndex = index + 1;
-              }
-            });
-
-            $scope.showGrid.forEach(function (statusData) {
-              // $scope.dataByStatus = statusData;
-              $scope.gridOptions.data.splice(selectedRowIndex, 0, statusData);
-              console.log(statusData);
-            });
-            //Тут дублирует записи
-            $scope.showGrid = [];
-            $scope.showGrid.length = 0;
-
-            row.entity.isDataLoaded = true;
-          }, 1000, 1);
-        } else {
-          console.log('This row already has data');
-        }
-      });
-      $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
-    }
-  };
 
 
   $scope.user = [];
@@ -904,15 +818,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   // $scope.userRole = USER_ROLES.ZERO;
   /*=====  Получение данных end ======*/
 
-
-  /*by status from rowEntity show another block for Preliminary status*/
-  // if (lastPreliminaryStatus === STATUS_CODES.PRELIMINARY){
-  //   $scope.lastPreliminaryStatus = true;
-  // } else {
-  //   console.log('not preliminary status')
-  //
-  // }
-  /*by status from rowEntity show another block for Preliminary status*/
 
 
   

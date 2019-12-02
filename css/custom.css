@@ -322,12 +322,24 @@ form.tab-form-demo .tab-pane {
 .indentInline{
     margin: 10px 15px;
 }
-
-#grid1 .ui-grid-icon-plus-squared{
-    display: none;
+#grid1 .ui-grid-icon-plus-squared {
+    cursor: pointer;
+    font-size: 15px;
 }
-#grid1 .ui-grid-icon-minus-squared{
-    display: none;
+#grid1 .ui-grid-icon-minus-squared {
+    cursor: pointer;
+    font-size: 15px;
+}
+#grid1 .ui-grid-icon-plus-squared:before{
+    font-family: 'FontAwesome';
+    content:'\f07b';
+}
+#grid1 .ui-grid-icon-minus-squared:before{
+    font-family: 'FontAwesome';
+    content:'\f07c';
+}
+#grid1 .grid1575272482506 .ui-grid-pinned-container-left, #grid1  .grid1575272482506 .ui-grid-pinned-container-left .ui-grid-render-container-left .ui-grid-viewport {
+    width: 55px;
 }
 
 #grid1 .ui-grid-render-container{

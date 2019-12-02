@@ -131,13 +131,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
         name: 'name',
         width: '450',
         displayName: 'Группы',
-        cellTemplate: "<div style='margin: 0 10px' class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">" +
-          "<img id='{{row.entity.$$hashKey}}' " +
-          "ng-hide='row.treeLevel == undefined' " +
-
-          "style='width: 24px; margin: 0 10px; cursor: pointer' " +
-          "src='' " +
-          "alt=''>{{COL_FIELD CUSTOM_FILTERS}}</div>"
+        cellTemplate: "<div style=\"margin: 0 10px;\" class=\"ui-grid-cell-contents ng-binding ng-scope {{row.treeNode.state}}-row-{{row.treeLevel}}\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">" +
+          "<span></span>{{COL_FIELD CUSTOM_FILTERS}}</div>"
       },
       {
         name: 'id',
@@ -179,7 +174,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
     $scope.gridApi.treeBase.on.rowExpanded($scope, function (row) {
 
-      console.log(row)
+      console.log(row);
 
       if (row.entity.$$treeLevel !== 0 && !row.isSlicesLoaded){
         var groupCode = row.entity.groupCode,
@@ -403,7 +398,7 @@ app.controller('modalOperBySrezCtrl', function ($scope, $uibModal, $rootScope, $
 /**
  *  ModalContentCtrl
  */
-app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, value, $rootScope, $sce, $timeout, $log, $interval) {
+app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'value', '$rootScope', '$sce', '$timeout', '$log', '$interval', 'uiGridTreeViewConstants', 'uiGridGroupingConstants', 'uiGridConstants', function ($scope, $http, $uibModalInstance, value, $rootScope, $sce, $timeout, $log, $interval, uiGridTreeViewConstants, uiGridGroupingConstants, uiGridConstants, uiGridTreeBaseService) {
 
   $scope.statSliceNum         = value.id;
   $scope.statSlicePeriod      = value.period;
@@ -448,8 +443,10 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
 
 
   if ($scope.isGroup100) {
+    $scope.reportCorpusDataLoaded = false;
+
     /*=====  Sets correct $$treeLevel ======*/
-    var writeoutNodeRegions1 = function (childArray, currentLevel, dataArray) {
+    var writeoutNodeReportCorpus = function (childArray, currentLevel, dataArray) {
       childArray.forEach(function (childNode) {
         if (childNode.children) {
           childNode.$$treeLevel = currentLevel;
@@ -457,9 +454,10 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
           childNode.$$treeLevel = 'last'; 
         }
         dataArray.push(childNode);
-        writeoutNodeRegions1(childNode.children, currentLevel + 1, dataArray);
+        writeoutNodeReportCorpus(childNode.children, currentLevel + 1, dataArray);
       });
     };
+    /*=====  Sets correct $$treeLevel END ======*/
 
     $http({
       method: 'GET',
@@ -470,7 +468,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
     }).then(function(response){
       $scope.reportCorpusData = [];
       var responseDataset = response.data;
-      writeoutNodeRegions1(responseDataset, 0, $scope.reportCorpusData);
+      writeoutNodeReportCorpus(responseDataset, 0, $scope.reportCorpusData);
 
       $scope.reportCorpus = {
         data: $scope.reportCorpusData,
@@ -492,6 +490,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
 
           $scope.gridApi.treeBase.on.rowExpanded($scope, function(row) {
             if ((row.entity.$$treeLevel == 1 && !row.reportCorpusNodeLoaded) || (row.entity.$$treeLevel == 0 && row.entity.children.length == 0 && !row.reportCorpusNodeLoaded)) {
+              $scope.reportCorpusDataLoaded = true;
               var expandedRowIndex = $scope.reportCorpus.data.findIndex(x => x.$$hashKey === row.entity.$$hashKey);
               $http({
                 method: 'GET',
@@ -508,6 +507,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
                   $scope.reportCorpus.data.splice(expandedRowIndex+1+index,0, element);
                 });
                 row.reportCorpusNodeLoaded = true;
+                $scope.reportCorpusDataLoaded = false;
               });
             }
           });
@@ -516,13 +516,13 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
           });
         },
       };
+      
       $scope.isTabsLoaded = true;
-      $scope.reportCorpus.tabInfo = {
-        name: '1-П',
-        code: '801'
-      };
+      $scope.reportCorpus.tabInfo = {name: '1-П',code: '801'};
+
     });
   }
+
 
   /*=====  Regions grid - get data from backend ======*/
   $http({
@@ -594,7 +594,6 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
       });
       // END Each function for reports with orgs
       $scope.onRegisterApiInit();
-
       // Скрыть индикатор загрузки и показать данные формы
       if (!$scope.isGroup100) $scope.isTabsLoaded = true;
     }, function (reason) {
@@ -617,8 +616,6 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
     $scope.regionsGridApiOptions[index] = {gridRegionsDataset, gridApiRegionsName};
   };
   /*=====  Set datasets and dynamically generate names for grid api end ======*/
-  // console.log($scope.regionsGridApiOptions);
-  // $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[0]);
   /*=====  Initialize onRegisterApi event handler function with dynamic data ======*/
   $scope.onRegisterApiInit = function () {
     $scope.selectedDeps = [];
@@ -637,18 +634,14 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
     $scope.regionsGridApiOptions.forEach(function (item, index) {
       item.gridRegionsDataset.onRegisterApi = function (gridApi) {
         item.gridApiRegionsName = gridApi;
-        // console.log(item.gridApiRegionsName);
-        // item.gridApiRegionsName.treeBase.toggleRowTreeState(item.gridApiRegionsName.grid.renderContainers.body.visibleRowCache[0]);
-       
         gridApi.selection.on.rowSelectionChanged($scope, function (row) {
           $scope.selectedRegions[index] = item.gridApiRegionsName.selection.getSelectedRows();
         });
       };
-    });
+    }); 
   };
   /*=====  Initialize onRegisterApi event handler function with dynamic data end ======*/
-  // $scope.regionsGridApiOptions[0].gridApiRegionsName.treeBase.toggleRowTreeState($scope.regionsGridApiOptions[0].grid.renderContainers.body.visibleRowCache[0]);
-  // $scope.regionsGridApiOptions[0].gridApiRegionsName.selection.toggleRowSelection($scope.regionsGridApiOptions[0].gridRegionsDataset.data[removedRegIndex]);
+
   /*=====  Get and save current reports's name, code ======*/
   $scope.getCurrentReportTab = function (name, code) {
     $scope.isCatalogTab      = false;
@@ -789,7 +782,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
   };
   /*=====  Close modal end ======*/
 
-});
+}]);
 
 
 app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalInstance, value, STATUS_CODES, USER_ROLES, BUTTONS, $uibModal, $timeout) {

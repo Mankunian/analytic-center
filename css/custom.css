@@ -147,7 +147,7 @@ form.tab-form-demo .tab-pane {
   box-sizing: border-box;
 }
 .report-corpus-grid-modal {
-    width: 990px;
+    width: 1020px;
     height: 465px;
 }
 .request-report-grid-modal {
@@ -330,14 +330,14 @@ form.tab-form-demo .tab-pane {
     cursor: pointer;
     font-size: 15px;
 }
-#grid1 .ui-grid-icon-plus-squared:before{
+/*#grid1 .ui-grid-icon-plus-squared:before{
     font-family: 'FontAwesome';
     content:'\f07b';
 }
 #grid1 .ui-grid-icon-minus-squared:before{
     font-family: 'FontAwesome';
     content:'\f07c';
-}
+}*/
 #grid1 .grid1575272482506 .ui-grid-pinned-container-left, #grid1  .grid1575272482506 .ui-grid-pinned-container-left .ui-grid-render-container-left .ui-grid-viewport {
     width: 55px;
 }
@@ -462,24 +462,49 @@ input.form-control {
   transform: translateY(-50%);
 }
 .linePreloader{
-    width:200px;
-    height:4px;
-    background:linear-gradient(to right,green,green);
-    background-color:#ccc;
-    position:fixed;
-    top:0;
-    bottom:0;
-    left:0;
-    right:0;
-    margin:auto;
-    border-radius:4px;
-    background-size:20%;
-    background-repeat:repeat-y;
-    background-position:-25% 0;
-    animation:scroll 1.2s ease-in-out infinite;
-  }
+  width:100%;
+  height:4px;
+  background:linear-gradient(to right,#214878,#214878);
+  z-index: 990;
+  margin:auto;
+  border-radius:4px;
+  background-size:20%;
+  background-repeat:repeat-y;
+  background-position:-25% 0;
+  animation:scroll 1.2s ease-in-out infinite;
   
-  @keyframes scroll{
-    50%{background-size:80%}
-    100%{background-position:125% 0;}
-  }
+}
+.linePreloader.isVisible {
+  visibility: visible;
+}
+
+@keyframes scroll{
+  50%{background-size:80%}
+  100%{background-position:125% 0;}
+}
+.ui-grid-cell-contents.collapsed-row,
+.ui-grid-cell-contents.expanded-row {
+  position: relative;
+}
+.expanded-row-0>span,
+.expanded-row-1>span,
+.collapsed-row-0>span,
+.collapsed-row-1>span {
+  content: '';
+  position: static;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 10px;
+  width: 20px;
+  height: 20px;
+  -webkit-background-size: contain;
+  background-size: contain;
+}
+.expanded-row-0>span,
+.expanded-row-1>span {
+  background-image: url(/img/folder-op.png);
+}
+.collapsed-row-0>span,
+.collapsed-row-1>span {
+  background-image: url(/img/folder-cl.png);
+}

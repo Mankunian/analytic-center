@@ -22,7 +22,7 @@ app.constant('STATUS_CODES', {
   WAITING_FOR_PROCESSING: '6', // В ожидании обработки
   IN_AGREEMENT: '7' // На согласовании
 }).constant('USER_ROLES', {
-  ONE: '1',
+  ONE: '19000090',
   ZERO: '0'
 }).constant('BUTTONS', {
   APPROVE: '0', // Согласовать
@@ -30,8 +30,6 @@ app.constant('STATUS_CODES', {
   DELETE: '2', // Удалить
   PRELIMINARY: '3', // Перевести в предварительный
   SEND: '4' // На согласование
-
-
 }).run(function ($rootScope, STATUS_CODES, USER_ROLES, BUTTONS) {
   $rootScope.STATUS_CODES = STATUS_CODES;
   $rootScope.USER_ROLES = USER_ROLES;
@@ -802,8 +800,9 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   $scope.srezNo = value.id;
   $scope.period = value.period;
   $scope.srezToNum = value.maxRecNum;
-  // Получаем код статуса со строки - row.entity
+  $scope.showTabs = false;
 
+  // Получаем код статуса со строки - row.entity
   $scope.rowEntityStatusCode = value.statusCode; // Here show buttons by current Status
   $scope.statusCode = value.statusCode;
 
@@ -811,14 +810,14 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
 
 
   // Определяем роль пользователя
-  $scope.userRole = USER_ROLES.ZERO;
+  // $scope.userRole = USER_ROLES.ZERO;
+  $scope.userRole = USER_ROLES.ONE;
   // (user.terrCode = 19000090) ? user.terrCode=USER_ROLES.ONE : user.terrCode=USER_ROLES.ZERO;
   /*=====  Получение данных end ======*/
 
-
-  $scope.activeTabIndex = 0;
   /*Получаем дерево статусов в зависимости от Номера среза*/
   $scope.getStatusTree = function () {
+    $scope.showTabs = false;
     $http({
       method: 'GET',
       url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/' + $scope.srezNo + '/history',
@@ -829,36 +828,20 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
       $scope.history = response.data;
       //Make tab active depends on last index of status
       $scope.activeTabIndex = $scope.history.length - 1;
+      $scope.showTabs = true;
 
-        $scope.history.forEach(function (historyObj) {
-        $scope.historyObj = historyObj;
-      });
-        $scope.rowEntityStatusCode = $scope.historyObj.statusCode;
+      $scope.historyObj = $scope.history[$scope.activeTabIndex];
+      $scope.rowEntityStatusCode = $scope.historyObj.statusCode;
 
-
-
-
-
-
-
-
-      $scope.getStatusCode($scope.historyObj);
+      $scope.getStatusInfo($scope.historyObj);
     });
   };
   $scope.getStatusTree();
-  /*Получаем дерево статусов в зависимости от Номера среза*/
-
-
-
-
-
-
+  /*Получаем дерево статусов в зависимости от Номера среза END*/
 
   /*=====  Получаем код статуса после клика на статус
   в дереве статусов и перезаписываем полученный из row.entity ======*/
-  $scope.getStatusCode = function (selectedStatus) {
-
-
+  $scope.getStatusInfo = function (selectedStatus) {
 
     // $scope.rowEntityStatusCode = selectedStatus.statusCode; // 1 Окончательный
     console.log(selectedStatus); // here set ng class background blue for last as last element of history status
@@ -903,56 +886,28 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
       });
     }
 
-
     /*=====  Сравниваем полученный код статуса и меняем URL HTTP запроса ======*/
     switch ($scope.statusCode) {
       case STATUS_CODES.FORMED_WITH_ERROR: // Сформирован с ошибкой
-        $scope.statusName = selectedStatus.statusName;
-        $scope.personName = selectedStatus.personName;
-        $scope.statusDate = selectedStatus.statusDate;
-        $scope.created = value.created;
-        $scope.completed = value.completed;
-        $scope.errorMsg = selectedStatus.msg;
+        selectedStatus.created   = value.created; 
+        selectedStatus.completed = value.completed;
+        $scope.statusInfo        = selectedStatus;
         break;
       case STATUS_CODES.APPROVED: // Окончательный
-        $scope.statusName = selectedStatus.statusName;
-        $scope.personName = selectedStatus.personName;
-        $scope.statusDate = selectedStatus.statusDate;
+        $scope.statusInfo        = selectedStatus;
         break;
-      case $scope.lastPreliminaryStatus: // Предварительный
-
-          $scope.statusName = selectedStatus.statusName;
-          $scope.personName = selectedStatus.personName;
-          $scope.statusDate = selectedStatus.statusDate;
-          break;
-
       case STATUS_CODES.PRELIMINARY:
-        $scope.statusName = selectedStatus.statusName;
-        $scope.personName = selectedStatus.personName;
-        $scope.statusDate = selectedStatus.statusDate;
-
-        $scope.created = value.created;
-        $scope.completed = value.completed;
+        if (selectedStatus != $scope.historyObj) {
+          selectedStatus.created   = value.created; 
+          selectedStatus.completed = value.completed;
+        }
+        $scope.statusInfo        = selectedStatus;
         break;
       case STATUS_CODES.IN_AGREEMENT: // На согласовании
-        $scope.statusName = selectedStatus.statusName;
-        $scope.personName = selectedStatus.personName;
-        $scope.statusDate = selectedStatus.statusDate;
+        $scope.statusInfo        = selectedStatus;
         break;
-
-
       case STATUS_CODES.DELETED: // Удален
-        $scope.statusName = selectedStatus.statusName;
-        $scope.personName = selectedStatus.personName;
-        $scope.statusDate = selectedStatus.statusDate;
-        break;
-
-
-      case STATUS_CODES.IN_PROCESSING: // В обработке
-        url = 'preliminary.json';
-        break;
-      case STATUS_CODES.CANCELED_BY_USER: // Отменен пользователем
-        url = 'canceledByUser.json';
+        $scope.statusInfo        = selectedStatus;
         break;
       default:
         // statements_def
@@ -963,8 +918,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
 
 
   $scope.statusAction = function (btnNum) {
-    console.log(btnNum);
-
     var btnActionUrl = '';
     switch (btnNum) {
       case btnNum = BUTTONS.SEND:
@@ -983,7 +936,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         btnActionUrl = 'delete'; // Удалить
         break;
     }
-
 
     $http({
       method: 'PUT',
@@ -1005,7 +957,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
 
   };
 
-
   $scope.modalRejectionReason = function (rowEntity) {
     if (rowEntity.approveCode === '2') {
       $uibModal.open({
@@ -1025,10 +976,9 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
             $uibModalInstance.dismiss('cancel');
           };
         }
-      })
+      });
     }
   };
-
 
   $scope.cancel = function () {
     $uibModalInstance.dismiss();

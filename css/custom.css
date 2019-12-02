@@ -351,8 +351,6 @@ form.tab-form-demo .tab-pane {
 .slice-date-input-group {
   margin-left: 25px;
 }
-
-
 .nav-tabs>li>a {
   border-radius: 0;
 }
@@ -453,3 +451,35 @@ input.form-control {
   border-radius: 3px 3px 0 0;
   cursor: pointer;
 }
+.statusTree {
+  position: relative;
+}
+.statusTree .statusTree-preloader {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.linePreloader{
+    width:200px;
+    height:4px;
+    background:linear-gradient(to right,green,green);
+    background-color:#ccc;
+    position:fixed;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+    margin:auto;
+    border-radius:4px;
+    background-size:20%;
+    background-repeat:repeat-y;
+    background-position:-25% 0;
+    animation:scroll 1.2s ease-in-out infinite;
+  }
+  
+  @keyframes scroll{
+    50%{background-size:80%}
+    100%{background-position:125% 0;}
+  }

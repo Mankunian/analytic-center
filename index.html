@@ -87,8 +87,15 @@
     </div>    
   </div>
 </header>
-<nav class="main-navigation">
+<nav class="main-navigation" ng-controller="userCtrl">
   <span>Статистические срезы</span>
+
+  <div style="float: right; margin: 3px">
+    <select class="form-control" ng-change="roleSelected(userRole)" ng-model="userRole">
+      <!--<option value="" disabled selected style='display:none;'>Выберите роль из списка</option>-->
+      <option ng-repeat="role in roleList" value="{{role.code}}">{{role.name}}</option>
+    </select>
+  </div>
 </nav>
 <div ng-controller="MainCtrl">
   <div class="container-fluid main">

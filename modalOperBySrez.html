@@ -61,11 +61,11 @@
 
 
             <div ng-if="userRole == USER_ROLES.ZERO">
-              <button ng-click="statusAction(BUTTONS.APPROVE) " class="btn" ng-if="
+              <button ng-click="statusAction(BUTTONS.APPROVE, 1) " class="btn" ng-if="
               rowEntityStatusCode == STATUS_CODES.IN_AGREEMENT">Согласовать
               </button>
 
-              <button ng-click="statusAction(BUTTONS.APPROVE)" class="btn" ng-if="
+              <button id="myBtn" ng-click="statusAction(BUTTONS.APPROVE, 2)" class="btn" ng-if="
               rowEntityStatusCode == STATUS_CODES.IN_AGREEMENT">Отказать
               </button>
             </div>
@@ -141,6 +141,29 @@
         </div>
 
         <!--Инфо по статусу Удален-->
+
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" role="dialog">
+          <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3 class="modal-title">Причина отказа в согласовании</h3>
+              </div>
+              <div class="modal-body">
+                <textarea ng-model="msg" rows="3" style="width: 100%; padding: 10px" placeholder="Напишите причину отказа"></textarea>
+              </div>
+              <div class="modal-footer">
+                <button ng-click="sendReason(msg)" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
 
 
       </div>

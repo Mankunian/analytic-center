@@ -22,7 +22,7 @@ app.constant('STATUS_CODES', {
   WAITING_FOR_PROCESSING: '6', // В ожидании обработки
   IN_AGREEMENT: '7' // На согласовании
 }).constant('USER_ROLES', {
-  ONE: '1',
+  ONE: '19000090',
   ZERO: '0'
 }).constant('BUTTONS', {
   APPROVE: '0', // Согласовать
@@ -41,6 +41,32 @@ app.constant('STATUS_CODES', {
 app.config(['$qProvider', function ($qProvider) {
   $qProvider.errorOnUnhandledRejections(false);
 }]);
+
+
+app.controller('userCtrl', function ($scope, $http, $rootScope) {
+
+  // $scope.userRole = '19000090';
+
+  $scope.roleSelected = function(role){
+    $rootScope.userRole = role;
+    console.log($rootScope.userRole)
+  };
+
+  $http({
+    method: 'GET',
+    url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/territories',
+    headers: {
+      sessionKey: 'admin'
+    }
+  }).then(function (response) {
+    $scope.roleList = response.data;
+  }, function (reason) {
+    console.log(reason)
+  })
+
+
+
+});
 
 app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGridTreeViewConstants', '$interval', function ($scope, $http, $rootScope, uiGridTreeBaseService, $interval) {
 
@@ -95,6 +121,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   };
 
   $scope.getStatSrez();
+
 
   //Получить № статсреза
   var operBySrez = '<div  ' +
@@ -340,10 +367,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   var dateToString = dd + '.' + mm + '.' + yy;
 }]);
 
-
-/**
- *  ModalControlCtrl
- */
 app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope, STATUS_CODES) {
 
   $rootScope.open = function (value) {
@@ -370,19 +393,12 @@ app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope, STAT
       });
 
       modalInstance.result.then(function (response) {
-        // $scope.result = `${response} button hitted`;
+        console.log(response);
       });
-      console.log('Open');
     }
-
-
   };
 });
 
-
-/**
- *  ModalOperBySrezCtrl
- */
 app.controller('modalOperBySrezCtrl', function ($scope, $uibModal, $rootScope, $http, STATUS_CODES) {
 
   $rootScope.openOperBySrez = function (rowEntity) {
@@ -407,9 +423,6 @@ app.controller('modalOperBySrezCtrl', function ($scope, $uibModal, $rootScope, $
   };
 });
 
-/**
- *  ModalContentCtrl
- */
 app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, value, $rootScope, $sce, $timeout, $log, $interval) {
 
   $scope.statSliceNum         = value.id;
@@ -798,8 +811,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
 
 });
 
-
-app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalInstance, value, STATUS_CODES, USER_ROLES, BUTTONS, $uibModal, $timeout) {
+app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalInstance, value, STATUS_CODES, USER_ROLES, BUTTONS, $uibModal, $timeout, $rootScope) {
 
   /*=====  Получение данных ======*/
   $scope.statusInfoData = [];
@@ -816,17 +828,18 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
 
 
   // Определяем роль пользователя
-  // $scope.userRole = USER_ROLES.ONE;
-  $scope.userRole = USER_ROLES.ZERO;
+  // $scope.userRole = $rootScope.userRole
+  // ($scope.userRole = '19000090') ? $scope.userRole=USER_ROLES.ONE : $scope.userRole=USER_ROLES.ZERO;
+
+
+
+  // if ($rootScope.userRole === '19000090') {$rootScope.userRole = USER_ROLES.ONE} else {$rootScope.userRole = USER_ROLES.ZERO}
+  if ($rootScope.userRole === '19000090') {
+    $scope.userRole = USER_ROLES.ONE;
+  } else {
+    $scope.userRole = USER_ROLES.ZERO;
+  }
   /*=====  Получение данных end ======*/
-
-
-
-  
-
-
-
-
 
 
   $scope.activeTabIndex = 0;
@@ -847,14 +860,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         $scope.historyObj = historyObj;
       });
         $scope.rowEntityStatusCode = $scope.historyObj.statusCode;
-
-
-
-
-
-
-
-
       $scope.getStatusCode($scope.historyObj);
     });
   };
@@ -870,8 +875,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   /*=====  Получаем код статуса после клика на статус
   в дереве статусов и перезаписываем полученный из row.entity ======*/
   $scope.getStatusCode = function (selectedStatus) {
-
-
+    $rootScope.historyId = selectedStatus.id;
 
     // $scope.rowEntityStatusCode = selectedStatus.statusCode; // 1 Окончательный
     console.log(selectedStatus); // here set ng class background blue for last as last element of history status
@@ -975,7 +979,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   };
 
 
-  $scope.statusAction = function (btnNum) {
+  $scope.statusAction = function (btnNum, approveCode) {
     console.log(btnNum);
 
     var btnActionUrl = '';
@@ -990,40 +994,74 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         btnActionUrl = 'confirm'; // Утвердить
         break;
       case btnNum = BUTTONS.APPROVE:
-        btnActionUrl = 'approve'; // Согласовать && Отказать
-        var approveObj = {
-          "historyId": 1,
-          "approveCode": 2,
-          "territoryCode": 19000090,
-          "msg": "Отказано"
-        };
+        btnActionUrl = 'approve';
+        if (approveCode === 1) {
+          var msg = '';
+
+          var approveObj = {
+            "historyId": $scope.historyObj.id,
+            "approveCode": approveCode,
+            "territoryCode": $rootScope.userRole*1,
+            "msg": msg
+          };
+
+          $http({
+            method: 'PUT',
+            url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/' + $scope.srezNo + '/' + btnActionUrl,
+            data: approveObj,
+            headers: {
+              sessionKey: 'admin'
+            }
+          }).then(function (response) {
+            console.log(response);
+            $timeout(alert('Операция успешно совершена'), 2000);
+            $scope.rowEntityStatusCode = $scope.statusCode;
+            $scope.getStatusTree();
+
+
+          }, function (reason) {
+            console.log(reason);
+
+          });
+        }
+        else{
+
+          $(document).ready(function(){
+            $("#myBtn").click(function(){
+              $("#myModal").modal();
+            });
+          });
+
+
+          $scope.sendReason = function (msg) {
+            console.log(msg)
+          }
+
+
+
+          /*var modalInstance =  $uibModal.open({
+            templateUrl: 'editReason.html',
+            controller: function ($scope, $uibModalInstance) {
+              $scope.ok = function (msgReason) {
+                $scope.msgReason = msgReason;
+                $uibModalInstance.close(msgReason);
+              };
+
+              $scope.cancel = function () {
+                $uibModalInstance.dismiss('cancel');
+              };
+            }
+          });
+
+          modalInstance.result.then(function() {
+          });*/
+        }
         break;
       case btnNum = BUTTONS.DELETE:
         btnActionUrl = 'delete'; // Удалить
         break;
     }
 
-
-    console.log(approveObj);
-
-    $http({
-      method: 'PUT',
-      url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/' + $scope.srezNo + '/' + btnActionUrl,
-      headers: {
-        sessionKey: 'admin'
-      },
-      data: approveObj
-    }).then(function (response) {
-      console.log(response);
-      $timeout(alert('Операция успешно совершена'), 2000);
-      $scope.rowEntityStatusCode = $scope.statusCode;
-      $scope.getStatusTree();
-
-
-    }, function (reason) {
-      console.log(reason);
-
-    });
 
   };
 

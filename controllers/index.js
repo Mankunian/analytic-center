@@ -549,15 +549,15 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
 
     $http({
       method: 'GET',
-      // url: 'https://18.140.232.52:8081/api/v1/RU/slices/governments/parents',
-      url: './json/parents.json',
+      url: 'https://18.140.232.52:8081/api/v1/RU/slices/governments/parents',
       headers: {
         sessionKey: 'admin'
       }
     }).then(function(response){
       $scope.reportCorpusData = [];
-      writeoutNodeRegions1(response.data, 0, $scope.reportCorpusData);
-      console.log(response);
+      var responseDataset = response.data;
+      writeoutNodeRegions1(responseDataset, 0, $scope.reportCorpusData);
+
       $scope.reportCorpus = {
         data: $scope.reportCorpusData,
         showGridFooter: false,
@@ -593,7 +593,6 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
                 $scope.reportCorpusChildren.forEach( function(element, index) {
                   $scope.reportCorpus.data.splice(expandedRowIndex+1+index,0, element);
                 });
-                console.log($scope.reportCorpus);
                 row.reportCorpusNodeLoaded = true;
               });
             }
@@ -603,6 +602,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
           });
         },
       };
+      $scope.isTabsLoaded = true;
       $scope.reportCorpus.tabInfo = {
         name: '1-П',
         code: '801'
@@ -682,7 +682,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
       $scope.onRegisterApiInit();
 
       // Скрыть индикатор загрузки и показать данные формы
-      $scope.isTabsLoaded = true;
+      if (!$scope.isGroup100) $scope.isTabsLoaded = true;
     }, function (reason) {
       console.log(reason);
     });

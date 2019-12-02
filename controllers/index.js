@@ -806,7 +806,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   $scope.rowEntityStatusCode = value.statusCode; // Here show buttons by current Status
   $scope.statusCode = value.statusCode;
 
-  // var lastPreliminaryStatus = value.statusCode;
+  $scope.lastPreliminaryStatus = value.statusCode;
 
 
   // Определяем роль пользователя
@@ -845,10 +845,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
       $scope.history = response.data;
       //Make tab active depends on last index of status
       $scope.activeTabIndex = $scope.history.length - 1;
-      
-
-
-
 
         $scope.history.forEach(function (historyObj) {
         $scope.historyObj = historyObj
@@ -951,23 +947,20 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         $scope.personName = selectedStatus.personName;
         $scope.statusDate = selectedStatus.statusDate;
         break;
-      case STATUS_CODES.PRELIMINARY: // Предварительный
+      case $scope.lastPreliminaryStatus: // Предварительный
 
           $scope.statusName = selectedStatus.statusName;
           $scope.personName = selectedStatus.personName;
           $scope.statusDate = selectedStatus.statusDate;
+          break;
+
+      case STATUS_CODES.PRELIMINARY:
+        $scope.statusName = selectedStatus.statusName;
+        $scope.personName = selectedStatus.personName;
+        $scope.statusDate = selectedStatus.statusDate;
 
         $scope.created = value.created;
         $scope.completed = value.completed;
-
-
-
-          // if ($scope.lastElementHistoryStatus.statusCode === STATUS_CODES.PRELIMINARY) {
-          //
-          // }
-
-
-
         break;
       case STATUS_CODES.IN_AGREEMENT: // На согласовании
         $scope.statusName = selectedStatus.statusName;

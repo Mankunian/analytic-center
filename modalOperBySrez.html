@@ -27,16 +27,9 @@
             <div class="statusTree">
 
               <uib-tabset class="statusHistory" id="tabs" active="activeTabIndex" vertical="true" type="pills">
-                <uib-tab
-                         class="last"
-                         ng-style="{'margin-left': $index*15 + 'px'}"
-                         ng-repeat="status in history"
-                         ng-click="getStatusCode(status)"
-                         style="width: fit-content; margin: 5px"
-                         index="$index"
-                         heading="{{status.statusName}}">
-
-                </uib-tab>
+                <uib-tab ng-style="{'margin-left': $index*15 + 'px'}" ng-repeat="status in history"
+                         ng-click="getStatusCode(status)" style="width: fit-content; margin: 5px" index="$index"
+                         heading="{{status.statusName}}"></uib-tab>
               </uib-tabset>
             </div>
 
@@ -79,6 +72,10 @@
           </div>
         </div>
 
+        <div ng-if="history[activeTabIndex].statusCode === STATUS_CODES.PRELIMINARY">
+          Работает
+        </div>
+
 
         <!--Инфо по статусу Сформирован с ошибкой-->
         <div ng-if="statusCode == STATUS_CODES.FORMED_WITH_ERROR" class="col-md-7 noPadding">
@@ -118,8 +115,8 @@
             <h5><b>Срез перевел:</b> {{personName}}</h5>
             <h5><b>Время перевода среза:</b> {{statusDate}}</h5>
             <div>
-              <h5 ng-if="created"><b>Время начала формирования:</b> {{created}}</h5>
-              <h5 ng-if="completed"><b>Время окончания формирования: </b> {{completed}}</h5>
+              <h5><b>Время начала формирования:</b> {{created}}</h5>
+              <h5><b>Время окончания формирования: </b> {{completed}}</h5>
             </div>
           </div>
         </div>

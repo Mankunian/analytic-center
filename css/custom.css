@@ -453,3 +453,7 @@ input.form-control {
   border-radius: 3px 3px 0 0;
   cursor: pointer;
 }
+
+.disabled-group{
+    background-color: #8a8f94;
+}

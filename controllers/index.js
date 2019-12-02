@@ -184,6 +184,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       console.log(row)
 
       if (row.entity.$$treeLevel !== 0 && !row.isSlicesLoaded){
+        $scope.preloaderByStatus = true;
         var groupCode = row.entity.groupCode,
           statusCode = row.entity.code,
           year = row.entity.statusYear;
@@ -198,11 +199,12 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
           $scope.showGrid = value.data;
           console.log(value.data);
           var expandedRowStatusIndex = $scope.gridOptions.data.findIndex(x => x.$$hashKey === row.entity.$$hashKey);
-          // $scope.preloaderByStatus = false;
+
           $scope.showGrid.forEach( function(element, index) {
             $scope.gridOptions.data.splice(expandedRowStatusIndex+1+index,0, element);
           });
           row.isSlicesLoaded = true;
+          $scope.preloaderByStatus = false;
 
         }, function (reason) {
           console.log(reason);
@@ -814,8 +816,8 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
 
 
   // Определяем роль пользователя
-  $scope.userRole = USER_ROLES.ONE;
-  // $scope.userRole = USER_ROLES.ZERO;
+  // $scope.userRole = USER_ROLES.ONE;
+  $scope.userRole = USER_ROLES.ZERO;
   /*=====  Получение данных end ======*/
 
 
@@ -988,7 +990,13 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         btnActionUrl = 'confirm'; // Утвердить
         break;
       case btnNum = BUTTONS.APPROVE:
-        btnActionUrl = 'approve'; // Согласовать
+        btnActionUrl = 'approve'; // Согласовать && Отказать
+        var approveObj = {
+          "historyId": 1,
+          "approveCode": 2,
+          "territoryCode": 19000090,
+          "msg": "Отказано"
+        };
         break;
       case btnNum = BUTTONS.DELETE:
         btnActionUrl = 'delete'; // Удалить
@@ -996,12 +1004,15 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
     }
 
 
+    console.log(approveObj);
+
     $http({
       method: 'PUT',
       url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/' + $scope.srezNo + '/' + btnActionUrl,
       headers: {
         sessionKey: 'admin'
-      }
+      },
+      data: approveObj
     }).then(function (response) {
       console.log(response);
       $timeout(alert('Операция успешно совершена'), 2000);

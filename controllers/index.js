@@ -9,8 +9,7 @@ var app = angular.module('app', [
   'ui.grid.edit',
   'ui.grid.selection',
   'ui.grid.resizeColumns',
-  'ui.grid.treeView',
-  'ui.grid.expandable'
+  'ui.grid.treeView'
 ]);
 
 app.constant('STATUS_CODES', {
@@ -533,6 +532,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
   };
   /*=====  Получение списка отчетов для формирования вкладок end ======*/
 
+
   if ($scope.isGroup100) {
     /*=====  Sets correct $$treeLevel ======*/
     var writeoutNodeRegions1 = function (childArray, currentLevel, dataArray) {
@@ -570,7 +570,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
         enableSelectAll: true,
         multiSelect: true,
         columnDefs: [
-          {name: 'code', width: '17%', displayName: 'Код органа', cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': (row.treeLevel == 'last') ? grid.options.treeIndent * 3 + 'px' : grid.options.treeIndent * (row.treeLevel + 1) + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>"},
+          {name: 'searchPattern', width: '17%', displayName: 'Код органа', cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': (row.treeLevel == 'last') ? grid.options.treeIndent * 3 + 'px' : grid.options.treeIndent * (row.treeLevel + 1) + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>"},
           {name: 'name', width: '83%', displayName: 'Наименование', cellTemplate: "<div class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': (row.treeLevel == 'last') ? grid.options.treeIndent * 3 + 'px' : grid.options.treeIndent * (row.treeLevel + 1) + 'px'}\">{{COL_FIELD CUSTOM_FILTERS}}</div>"}
         ],
         onRegisterApi: function( gridApi ) {
@@ -703,7 +703,8 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
     $scope.regionsGridApiOptions[index] = {gridRegionsDataset, gridApiRegionsName};
   };
   /*=====  Set datasets and dynamically generate names for grid api end ======*/
-
+  // console.log($scope.regionsGridApiOptions);
+  // $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[0]);
   /*=====  Initialize onRegisterApi event handler function with dynamic data ======*/
   $scope.onRegisterApiInit = function () {
     $scope.selectedDeps = [];
@@ -722,16 +723,17 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
     $scope.regionsGridApiOptions.forEach(function (item, index) {
       item.gridRegionsDataset.onRegisterApi = function (gridApi) {
         item.gridApiRegionsName = gridApi;
+        // console.log(item.gridApiRegionsName);
+        // item.gridApiRegionsName.treeBase.toggleRowTreeState(item.gridApiRegionsName.grid.renderContainers.body.visibleRowCache[0]);
+       
         gridApi.selection.on.rowSelectionChanged($scope, function (row) {
           $scope.selectedRegions[index] = item.gridApiRegionsName.selection.getSelectedRows();
         });
-
       };
     });
   };
   /*=====  Initialize onRegisterApi event handler function with dynamic data end ======*/
   // $scope.regionsGridApiOptions[0].gridApiRegionsName.treeBase.toggleRowTreeState($scope.regionsGridApiOptions[0].grid.renderContainers.body.visibleRowCache[0]);
-
   // $scope.regionsGridApiOptions[0].gridApiRegionsName.selection.toggleRowSelection($scope.regionsGridApiOptions[0].gridRegionsDataset.data[removedRegIndex]);
   /*=====  Get and save current reports's name, code ======*/
   $scope.getCurrentReportTab = function (name, code) {

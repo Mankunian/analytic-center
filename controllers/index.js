@@ -70,6 +70,11 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       }
     }).then(function (value) {
       $scope.groups = value.data;
+      angular.forEach($scope.groups, function (v) {
+        if (v.status === 2){
+          v.disabled = true;
+        }
+      })
     });
   };
   $scope.getGroups();
@@ -387,7 +392,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       data: dataObj
     }).then(function (response) {
 
-      $scope.user = [];
+      $scope.user.length = 0;
       $scope.showGrid = response.data;
 
 
@@ -427,7 +432,7 @@ app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope, STAT
 
   $rootScope.open = function (value) {
 
-    
+
     if (value.statusCode == STATUS_CODES.IN_PROCESSING || value.statusCode == STATUS_CODES.WAITING_FOR_PROCESSING){
       console.log('Not Open');
       alert('По данному статусу невозможно получить отчет!');
@@ -839,7 +844,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
     if ($scope.langData.selectedRepLang.id === '1') selectedLang = 'kz';
 
     if ($scope.requestedReportsQuery != undefined && $scope.requestedReportsQuery.length > 0) {
-      
+
       $scope.readyReports = [];
       $http({
         method: 'POST',
@@ -879,6 +884,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
 
 
 app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalInstance, value, STATUS_CODES, USER_ROLES, BUTTONS, $uibModal, $timeout) {
+
   /*=====  Получение данных ======*/
   $scope.statusInfoData = [];
   var url = '';
@@ -888,15 +894,32 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   // Получаем код статуса со строки - row.entity
 
   $scope.rowEntityStatusCode = value.statusCode; // Here show buttons by current Status
-
   $scope.statusCode = value.statusCode;
-  // $scope.statusCode = STATUS_CODES.FORMED_WITH_ERROR;
+
+  $scope.lastPreliminaryStatus = value.statusCode;
 
 
   // Определяем роль пользователя
   $scope.userRole = USER_ROLES.ONE;
   // $scope.userRole = USER_ROLES.ZERO;
   /*=====  Получение данных end ======*/
+
+
+  /*by status from rowEntity show another block for Preliminary status*/
+  // if (lastPreliminaryStatus === STATUS_CODES.PRELIMINARY){
+  //   $scope.lastPreliminaryStatus = true;
+  // } else {
+  //   console.log('not preliminary status')
+  //
+  // }
+  /*by status from rowEntity show another block for Preliminary status*/
+
+
+  
+
+
+
+
 
 
   $scope.activeTabIndex = 0;
@@ -913,12 +936,18 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
       //Make tab active depends on last index of status
       $scope.activeTabIndex = $scope.history.length - 1;
 
-
         $scope.history.forEach(function (historyObj) {
         $scope.historyObj = historyObj;
       });
-        console.log($scope.historyObj);
         $scope.rowEntityStatusCode = $scope.historyObj.statusCode;
+
+
+
+
+
+
+
+
       $scope.getStatusCode($scope.historyObj);
     });
   };
@@ -926,12 +955,19 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   /*Получаем дерево статусов в зависимости от Номера среза*/
 
 
+
+
+
+
+
   /*=====  Получаем код статуса после клика на статус
   в дереве статусов и перезаписываем полученный из row.entity ======*/
   $scope.getStatusCode = function (selectedStatus) {
 
+
+
     // $scope.rowEntityStatusCode = selectedStatus.statusCode; // 1 Окончательный
-    // console.log(selectedStatus);
+    console.log(selectedStatus); // here set ng class background blue for last as last element of history status
     $scope.statusCode = selectedStatus.statusCode;
 
     if (selectedStatus.statusCode === STATUS_CODES.IN_AGREEMENT) {
@@ -957,7 +993,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
           rowHeight: 35,
           columnDefs: [
             {name: 'territoryName', width: '250', displayName: 'Терр.управление'},
-            {name: 'approveDate', width: '170', displayName: 'Дата-время согласования'},
+            {name: 'approveDate', width: '170', displayName: 'Дата-время'},
             {
               name: 'approveName',
               width: '150',
@@ -989,10 +1025,18 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         $scope.personName = selectedStatus.personName;
         $scope.statusDate = selectedStatus.statusDate;
         break;
-      case STATUS_CODES.PRELIMINARY: // Предварительный
+      case $scope.lastPreliminaryStatus: // Предварительный
+
+          $scope.statusName = selectedStatus.statusName;
+          $scope.personName = selectedStatus.personName;
+          $scope.statusDate = selectedStatus.statusDate;
+          break;
+
+      case STATUS_CODES.PRELIMINARY:
         $scope.statusName = selectedStatus.statusName;
         $scope.personName = selectedStatus.personName;
         $scope.statusDate = selectedStatus.statusDate;
+
         $scope.created = value.created;
         $scope.completed = value.completed;
         break;
@@ -1056,7 +1100,10 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
     }).then(function (response) {
       console.log(response);
       $timeout(alert('Операция успешно совершена'), 2000);
+      $scope.rowEntityStatusCode = $scope.statusCode;
       $scope.getStatusTree();
+
+
     }, function (reason) {
       console.log(reason);
 

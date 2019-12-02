@@ -89,13 +89,25 @@ h5 {
 }
 
 div#tabs.statusHistory ul li:last-child{
-    background: #337ab7;
+    /*background: #337ab7;*/
 }
 
 div#tabs.statusHistory ul li:last-child a{
-    color: white;
+    /*color: white;*/
 }
 
 .nav-pills>li>a{
     border-radius: 0;
+}
+
+.last:last-of-type{
+    background: #2E86CD;
+}
+
+.last:last-of-type a{
+    color: white;
+}
+
+.last:hover:last-of-type{
+    background: #555555;
 }

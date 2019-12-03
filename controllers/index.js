@@ -461,7 +461,6 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
   };
   /*=====  Получение списка отчетов для формирования вкладок end ======*/
 
-
   if ($scope.isGroup100) {
     $scope.reportCorpusDataLoaded = false;
 

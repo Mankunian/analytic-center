@@ -30,8 +30,6 @@ app.constant('STATUS_CODES', {
   DELETE: '2', // Удалить
   PRELIMINARY: '3', // Перевести в предварительный
   SEND: '4' // На согласование
-
-
 }).run(function ($rootScope, STATUS_CODES, USER_ROLES, BUTTONS) {
   $rootScope.STATUS_CODES = STATUS_CODES;
   $rootScope.USER_ROLES = USER_ROLES;
@@ -122,7 +120,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
   $scope.getStatSrez();
 
-
   //Получить № статсреза
   var operBySrez = '<div  ' +
     'ng-controller="modalOperBySrezCtrl" ' +
@@ -160,13 +157,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
         name: 'name',
         width: '450',
         displayName: 'Группы',
-        cellTemplate: "<div style='margin: 0 10px' class=\"ui-grid-cell-contents ng-binding ng-scope\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">" +
-          "<img id='{{row.entity.$$hashKey}}' " +
-          "ng-hide='row.treeLevel == undefined' " +
-
-          "style='width: 24px; margin: 0 10px; cursor: pointer' " +
-          "src='' " +
-          "alt=''>{{COL_FIELD CUSTOM_FILTERS}}</div>"
+        cellTemplate: "<div style=\"margin: 0 10px;\" class=\"ui-grid-cell-contents ng-binding ng-scope {{row.treeNode.state}}-row-{{row.treeLevel}}\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">" +
+          "<span></span>{{COL_FIELD CUSTOM_FILTERS}}</div>"
       },
       {
         name: 'id',
@@ -208,7 +200,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
     $scope.gridApi.treeBase.on.rowExpanded($scope, function (row) {
 
-      console.log(row)
+      console.log(row);
 
       if (row.entity.$$treeLevel !== 0 && !row.isSlicesLoaded){
         $scope.preloaderByStatus = true;
@@ -423,8 +415,11 @@ app.controller('modalOperBySrezCtrl', function ($scope, $uibModal, $rootScope, $
   };
 });
 
-app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, value, $rootScope, $sce, $timeout, $log, $interval) {
 
+/**
+ *  ModalContentCtrl
+ */
+app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'value', '$rootScope', '$sce', '$timeout', '$log', '$interval', 'uiGridTreeViewConstants', 'uiGridGroupingConstants', 'uiGridConstants', function ($scope, $http, $uibModalInstance, value, $rootScope, $sce, $timeout, $log, $interval, uiGridTreeViewConstants, uiGridGroupingConstants, uiGridConstants, uiGridTreeBaseService) {
   $scope.statSliceNum         = value.id;
   $scope.statSlicePeriod      = value.period;
   $scope.isTabsLoaded         = false;
@@ -468,8 +463,10 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
 
 
   if ($scope.isGroup100) {
+    $scope.reportCorpusDataLoaded = false;
+
     /*=====  Sets correct $$treeLevel ======*/
-    var writeoutNodeRegions1 = function (childArray, currentLevel, dataArray) {
+    var writeoutNodeReportCorpus = function (childArray, currentLevel, dataArray) {
       childArray.forEach(function (childNode) {
         if (childNode.children) {
           childNode.$$treeLevel = currentLevel;
@@ -477,9 +474,10 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
           childNode.$$treeLevel = 'last'; 
         }
         dataArray.push(childNode);
-        writeoutNodeRegions1(childNode.children, currentLevel + 1, dataArray);
+        writeoutNodeReportCorpus(childNode.children, currentLevel + 1, dataArray);
       });
     };
+    /*=====  Sets correct $$treeLevel END ======*/
 
     $http({
       method: 'GET',
@@ -490,7 +488,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
     }).then(function(response){
       $scope.reportCorpusData = [];
       var responseDataset = response.data;
-      writeoutNodeRegions1(responseDataset, 0, $scope.reportCorpusData);
+      writeoutNodeReportCorpus(responseDataset, 0, $scope.reportCorpusData);
 
       $scope.reportCorpus = {
         data: $scope.reportCorpusData,
@@ -512,6 +510,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
 
           $scope.gridApi.treeBase.on.rowExpanded($scope, function(row) {
             if ((row.entity.$$treeLevel == 1 && !row.reportCorpusNodeLoaded) || (row.entity.$$treeLevel == 0 && row.entity.children.length == 0 && !row.reportCorpusNodeLoaded)) {
+              $scope.reportCorpusDataLoaded = true;
               var expandedRowIndex = $scope.reportCorpus.data.findIndex(x => x.$$hashKey === row.entity.$$hashKey);
               $http({
                 method: 'GET',
@@ -528,6 +527,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
                   $scope.reportCorpus.data.splice(expandedRowIndex+1+index,0, element);
                 });
                 row.reportCorpusNodeLoaded = true;
+                $scope.reportCorpusDataLoaded = false;
               });
             }
           });
@@ -536,13 +536,13 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
           });
         },
       };
+
       $scope.isTabsLoaded = true;
-      $scope.reportCorpus.tabInfo = {
-        name: '1-П',
-        code: '801'
-      };
+      $scope.reportCorpus.tabInfo = {name: '1-П',code: '801'};
+
     });
   }
+
 
   /*=====  Regions grid - get data from backend ======*/
   $http({
@@ -637,8 +637,6 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
     $scope.regionsGridApiOptions[index] = {gridRegionsDataset, gridApiRegionsName};
   };
   /*=====  Set datasets and dynamically generate names for grid api end ======*/
-  // console.log($scope.regionsGridApiOptions);
-  // $scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[0]);
   /*=====  Initialize onRegisterApi event handler function with dynamic data ======*/
   $scope.onRegisterApiInit = function () {
     $scope.selectedDeps = [];
@@ -657,9 +655,6 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
     $scope.regionsGridApiOptions.forEach(function (item, index) {
       item.gridRegionsDataset.onRegisterApi = function (gridApi) {
         item.gridApiRegionsName = gridApi;
-        // console.log(item.gridApiRegionsName);
-        // item.gridApiRegionsName.treeBase.toggleRowTreeState(item.gridApiRegionsName.grid.renderContainers.body.visibleRowCache[0]);
-       
         gridApi.selection.on.rowSelectionChanged($scope, function (row) {
           $scope.selectedRegions[index] = item.gridApiRegionsName.selection.getSelectedRows();
         });
@@ -667,8 +662,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
     });
   };
   /*=====  Initialize onRegisterApi event handler function with dynamic data end ======*/
-  // $scope.regionsGridApiOptions[0].gridApiRegionsName.treeBase.toggleRowTreeState($scope.regionsGridApiOptions[0].grid.renderContainers.body.visibleRowCache[0]);
-  // $scope.regionsGridApiOptions[0].gridApiRegionsName.selection.toggleRowSelection($scope.regionsGridApiOptions[0].gridRegionsDataset.data[removedRegIndex]);
+
   /*=====  Get and save current reports's name, code ======*/
   $scope.getCurrentReportTab = function (name, code) {
     $scope.isCatalogTab      = false;
@@ -809,7 +803,7 @@ app.controller('ModalContentCtrl', function ($scope, $http, $uibModalInstance, v
   };
   /*=====  Close modal end ======*/
 
-});
+}]);
 
 app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalInstance, value, STATUS_CODES, USER_ROLES, BUTTONS, $uibModal, $timeout, $rootScope) {
 
@@ -819,8 +813,9 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   $scope.srezNo = value.id;
   $scope.period = value.period;
   $scope.srezToNum = value.maxRecNum;
-  // Получаем код статуса со строки - row.entity
+  $scope.showTabs = false;
 
+  // Получаем код статуса со строки - row.entity
   $scope.rowEntityStatusCode = value.statusCode; // Here show buttons by current Status
   $scope.statusCode = value.statusCode;
 
@@ -845,6 +840,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   $scope.activeTabIndex = 0;
   /*Получаем дерево статусов в зависимости от Номера среза*/
   $scope.getStatusTree = function () {
+    $scope.showTabs = false;
     $http({
       method: 'GET',
       url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/' + $scope.srezNo + '/history',
@@ -855,26 +851,20 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
       $scope.history = response.data;
       //Make tab active depends on last index of status
       $scope.activeTabIndex = $scope.history.length - 1;
+      $scope.showTabs = true;
 
-        $scope.history.forEach(function (historyObj) {
-        $scope.historyObj = historyObj;
-      });
-        $scope.rowEntityStatusCode = $scope.historyObj.statusCode;
-      $scope.getStatusCode($scope.historyObj);
+      $scope.historyObj = $scope.history[$scope.activeTabIndex];
+      $scope.rowEntityStatusCode = $scope.historyObj.statusCode;
+
+      $scope.getStatusInfo($scope.historyObj);
     });
   };
   $scope.getStatusTree();
-  /*Получаем дерево статусов в зависимости от Номера среза*/
-
-
-
-
-
-
+  /*Получаем дерево статусов в зависимости от Номера среза END*/
 
   /*=====  Получаем код статуса после клика на статус
   в дереве статусов и перезаписываем полученный из row.entity ======*/
-  $scope.getStatusCode = function (selectedStatus) {
+  $scope.getStatusInfo = function (selectedStatus) {
     $rootScope.historyId = selectedStatus.id;
 
     // $scope.rowEntityStatusCode = selectedStatus.statusCode; // 1 Окончательный
@@ -920,56 +910,28 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
       });
     }
 
-
     /*=====  Сравниваем полученный код статуса и меняем URL HTTP запроса ======*/
     switch ($scope.statusCode) {
       case STATUS_CODES.FORMED_WITH_ERROR: // Сформирован с ошибкой
-        $scope.statusName = selectedStatus.statusName;
-        $scope.personName = selectedStatus.personName;
-        $scope.statusDate = selectedStatus.statusDate;
-        $scope.created = value.created;
-        $scope.completed = value.completed;
-        $scope.errorMsg = selectedStatus.msg;
+        selectedStatus.created   = value.created;
+        selectedStatus.completed = value.completed;
+        $scope.statusInfo        = selectedStatus;
         break;
       case STATUS_CODES.APPROVED: // Окончательный
-        $scope.statusName = selectedStatus.statusName;
-        $scope.personName = selectedStatus.personName;
-        $scope.statusDate = selectedStatus.statusDate;
+        $scope.statusInfo        = selectedStatus;
         break;
-      case $scope.lastPreliminaryStatus: // Предварительный
-
-          $scope.statusName = selectedStatus.statusName;
-          $scope.personName = selectedStatus.personName;
-          $scope.statusDate = selectedStatus.statusDate;
-          break;
-
       case STATUS_CODES.PRELIMINARY:
-        $scope.statusName = selectedStatus.statusName;
-        $scope.personName = selectedStatus.personName;
-        $scope.statusDate = selectedStatus.statusDate;
-
-        $scope.created = value.created;
-        $scope.completed = value.completed;
+        if (selectedStatus != $scope.historyObj) {
+          selectedStatus.created   = value.created;
+          selectedStatus.completed = value.completed;
+        }
+        $scope.statusInfo        = selectedStatus;
         break;
       case STATUS_CODES.IN_AGREEMENT: // На согласовании
-        $scope.statusName = selectedStatus.statusName;
-        $scope.personName = selectedStatus.personName;
-        $scope.statusDate = selectedStatus.statusDate;
+        $scope.statusInfo        = selectedStatus;
         break;
-
-
       case STATUS_CODES.DELETED: // Удален
-        $scope.statusName = selectedStatus.statusName;
-        $scope.personName = selectedStatus.personName;
-        $scope.statusDate = selectedStatus.statusDate;
-        break;
-
-
-      case STATUS_CODES.IN_PROCESSING: // В обработке
-        url = 'preliminary.json';
-        break;
-      case STATUS_CODES.CANCELED_BY_USER: // Отменен пользователем
-        url = 'canceledByUser.json';
+        $scope.statusInfo        = selectedStatus;
         break;
       default:
         // statements_def
@@ -979,9 +941,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   };
 
 
-  $scope.statusAction = function (btnNum, approveCode) {
-    console.log(btnNum);
-
+  $scope.statusAction = function (btnNum,approveCode) {
     var btnActionUrl = '';
     switch (btnNum) {
       case btnNum = BUTTONS.SEND:
@@ -1030,8 +990,8 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         else{
 
           $(document).ready(function(){
-            $("#myBtn").click(function(){
-              $("#myModal").modal();
+            $("#rejectionReasonBtn").click(function(){
+              $("#rejectionReasonModal").modal();
             });
           });
 
@@ -1058,6 +1018,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
               console.log(response);
               $scope.approveBtnDisabled = true;
               $timeout(alert('Операция успешно совершена'), 2000);
+              $("#rejectionReasonModal").modal("hide");
               $scope.getStatusTree();
 
 
@@ -1065,29 +1026,19 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
               console.log(reason);
 
             });
-
-
           };
 
           $scope.cancelReasonModal = function () {
+            console.log('closed')
+            $("#rejectionReasonModal").modal("hide");
           };
-
-
-
-
         }
-
-
-
         break;
       case btnNum = BUTTONS.DELETE:
         btnActionUrl = 'delete'; // Удалить
         break;
     }
-
-
   };
-
 
   $scope.modalRejectionReason = function (rowEntity) {
     if (rowEntity.approveCode === '2') {
@@ -1096,10 +1047,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         controller: function ($scope, $uibModalInstance) {
           // $scope.userRole = USER_ROLES.ZERO;
           $scope.userRole = USER_ROLES.ONE;
-
           $scope.rejectionMsg = rowEntity.msg;
-
-
           $scope.ok = function () {
             $uibModalInstance.close();
           };
@@ -1108,10 +1056,9 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
             $uibModalInstance.dismiss('cancel');
           };
         }
-      })
+      });
     }
   };
-
 
   $scope.cancel = function () {
     $uibModalInstance.dismiss();

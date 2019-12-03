@@ -64,9 +64,6 @@ app.controller('userCtrl', function ($scope, $http, $rootScope, CONFIGS) {
   }, function (reason) {
     console.log(reason);
   });
-
-
-
 });
 
 app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGridTreeViewConstants', '$interval', 'CONFIGS', function ($scope, $http, $rootScope, uiGridTreeBaseService, $interval, CONFIGS) {

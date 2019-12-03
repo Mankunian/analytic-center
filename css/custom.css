@@ -472,10 +472,14 @@ input.form-control {
   background-repeat:repeat-y;
   background-position:-25% 0;
   animation:scroll 1.2s ease-in-out infinite;
-  
+
 }
 .linePreloader.isVisible {
   visibility: visible;
+}
+
+.disabled-group{
+    background-color: #8a8f94;
 }
 
 @keyframes scroll{
@@ -502,9 +506,9 @@ input.form-control {
 }
 .expanded-row-0>span,
 .expanded-row-1>span {
-  background-image: url(/img/folder-op.png);
+  background-image: url(../img/folder-op.png);
 }
 .collapsed-row-0>span,
 .collapsed-row-1>span {
-  background-image: url(/img/folder-cl.png);
+  background-image: url(../img/folder-cl.png);
 }

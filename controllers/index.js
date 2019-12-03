@@ -43,11 +43,11 @@ app.config(['$qProvider', function ($qProvider) {
 
 app.controller('userCtrl', function ($scope, $http, $rootScope) {
 
-  // $scope.userRole = '19000090';
+  $scope.userRole = '19000090';
+  $rootScope.userRole = $scope.userRole;
 
   $scope.roleSelected = function(role){
-    $rootScope.userRole = role;
-    console.log($rootScope.userRole)
+      $rootScope.userRole = role;
   };
 
   $http({
@@ -821,14 +821,8 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
 
   $scope.lastPreliminaryStatus = value.statusCode;
 
+  console.log($rootScope.userRole);
 
-  // Определяем роль пользователя
-  // $scope.userRole = $rootScope.userRole
-  // ($scope.userRole = '19000090') ? $scope.userRole=USER_ROLES.ONE : $scope.userRole=USER_ROLES.ZERO;
-
-
-
-  // if ($rootScope.userRole === '19000090') {$rootScope.userRole = USER_ROLES.ONE} else {$rootScope.userRole = USER_ROLES.ZERO}
   if ($rootScope.userRole === '19000090') {
     $scope.userRole = USER_ROLES.ONE;
   } else {

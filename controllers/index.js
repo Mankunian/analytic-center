@@ -474,7 +474,6 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
       });
     };
     /*=====  Sets correct $$treeLevel END ======*/
-
     $http({
       method: 'GET',
       url: 'https://18.140.232.52:8081/api/v1/RU/slices/governments/parents',

@@ -1023,6 +1023,23 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         btnActionUrl = 'delete'; // Удалить
         break;
     }
+
+
+    $http({
+      method: 'PUT',
+      url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/' + $scope.srezNo + '/' + btnActionUrl,
+      // data: approveObj,
+      headers: {
+        sessionKey: 'admin'
+      }
+    }).then(function (response) {
+      console.log(response);
+      $scope.approveBtnDisabled = true;
+      $timeout(alert('Операция успешно совершена'), 2000);
+      $scope.getStatusTree();
+    }, function (reason) {
+      console.log(reason);
+    });
   };
 
   $scope.modalRejectionReason = function (rowEntity) {

@@ -44,7 +44,6 @@ app.config(['$qProvider', function ($qProvider) {
   $qProvider.errorOnUnhandledRejections(false);
 }]);
 
-
 app.controller('userCtrl', function ($scope, $http, $rootScope, CONFIGS) {
 
   $scope.userRole = '19000090';

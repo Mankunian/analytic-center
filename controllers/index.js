@@ -474,7 +474,6 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
       });
     };
     /*=====  Sets correct $$treeLevel END ======*/
-
     $http({
       method: 'GET',
       url: 'https://18.140.232.52:8081/api/v1/RU/slices/governments/parents',
@@ -930,7 +929,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
     /*=====  Сравниваем полученный код статуса и меняем URL HTTP запроса end ======*/
   };
 
-
   $scope.statusAction = function (btnNum,approveCode) {
     var btnActionUrl = '';
     switch (btnNum) {
@@ -1023,7 +1021,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
       $uibModal.open({
         templateUrl: 'rejectionReason.html',
         controller: function ($scope, $uibModalInstance) {
-          // $scope.userRole = USER_ROLES.ZERO;
           $scope.userRole = USER_ROLES.ONE;
           $scope.rejectionMsg = rowEntity.msg;
           $scope.ok = function () {

@@ -104,7 +104,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   $scope.getGroups();
   //Получение списка групп
 
-
   //Получить № статсреза
   $scope.getStatSrez = function () {
     $http({

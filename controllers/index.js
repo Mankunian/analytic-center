@@ -216,7 +216,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
           }
         }).then(function (value) {
           $scope.showGrid = value.data;
-          console.log(value.data);
           var expandedRowStatusIndex = $scope.gridOptions.data.findIndex(x => x.$$hashKey === row.entity.$$hashKey);
 
           $scope.showGrid.forEach( function(element, index) {
@@ -274,7 +273,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       headers: {
         sessionKey: 'admin'
       }
-      // url: './json/regions.json'
     }).then(function (response) {
       $scope.loader = false;
       $scope.showGrid = response.data;
@@ -284,7 +282,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
         dataSet[index].children.forEach(function (status) {
           status.groupCode = dataSet[index].code;
         });
-
 
         $scope.gridOptions.data = [];
         writeoutNode(dataSet, 0, $scope.gridOptions.data);
@@ -314,7 +311,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       "startDate": dateFromString,
       "endDate": dateToString,
       "maxRecNum": $scope.statsrez,
-      // "region": 19,
       "groups": $scope.group
     };
 
@@ -353,11 +349,11 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   var dateFromString = dd + '.' + mm + '.' + yy;
 
 
-  var dd = ('0' + $scope.dateTo.getDate()).slice(-2);
-  var mm = ('0' + ($scope.dateTo.getMonth() + 1)).slice(-2);
-  var yy = $scope.dateTo.getFullYear();
+  var ddTo = ('0' + $scope.dateTo.getDate()).slice(-2);
+  var mmTo = ('0' + ($scope.dateTo.getMonth() + 1)).slice(-2);
+  var yyTo = $scope.dateTo.getFullYear();
 
-  var dateToString = dd + '.' + mm + '.' + yy;
+  var dateToString = ddTo + '.' + mmTo + '.' + yyTo;
 }]);
 
 app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope, STATUS_CODES) {
@@ -481,7 +477,6 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
       });
     };
     /*=====  Sets correct $$treeLevel END ======*/
-
     $http({
       method: 'GET',
       url: 'https://18.140.232.52:8081/api/v1/RU/slices/governments/parents',
@@ -514,7 +509,6 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
           $scope.gridApi.treeBase.on.rowExpanded($scope, function(row) {
             if ((row.entity.$$treeLevel == 1 && !row.reportCorpusNodeLoaded) || (row.entity.$$treeLevel == 0 && row.entity.children.length == 0 && !row.reportCorpusNodeLoaded)) {
               $scope.reportCorpusDataLoaded = true;
-              var expandedRowIndex = $scope.reportCorpus.data.findIndex(x => x.$$hashKey === row.entity.$$hashKey);
               $http({
                 method: 'GET',
                 url: 'https://18.140.232.52:8081/api/v1/RU/slices/governments/children?searchPattern='+row.entity.searchPattern,
@@ -522,7 +516,9 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
                   sessionKey: 'admin'
                 }
               }).then(function(response){
+                var expandedRowIndex = $scope.reportCorpus.data.findIndex(x => x.$$hashKey === row.entity.$$hashKey);
                 $scope.reportCorpusChildren = response.data;
+
                 $scope.reportCorpusChildren.forEach( function(item) {
                   item.$$treeLevel = row.entity.$$treeLevel + 1;
                 });
@@ -568,7 +564,6 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
       headers: {
         sessionKey: 'admin'
       }
-      // url: './json/test.json'
     }).then(function (response) {
       $scope.reports_n_deps = response.data;
 
@@ -944,7 +939,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
     /*=====  Сравниваем полученный код статуса и меняем URL HTTP запроса end ======*/
   };
 
-
   $scope.statusAction = function (btnNum,approveCode) {
     var btnActionUrl = '';
     switch (btnNum) {
@@ -961,15 +955,12 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         btnActionUrl = 'approve';
         if (approveCode === 1) {
           var msg = '';
-
-
           var approveObj = {
             "historyId": $scope.historyObj.id,
             "approveCode": approveCode,
             "territoryCode": $rootScope.userRole*1,
             "msg": msg
           };
-
           $http({
             method: 'PUT',
             url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/' + $scope.srezNo + '/' + btnActionUrl,
@@ -982,28 +973,17 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
             $scope.approveBtnDisabled = true;
             $timeout(alert('Операция успешно совершена'), 2000);
             $scope.getStatusTree();
-
-
           }, function (reason) {
             console.log(reason);
-
           });
-
-
         }
         else{
-
           $(document).ready(function(){
             $("#rejectionReasonBtn").click(function(){
               $("#rejectionReasonModal").modal();
             });
           });
-
-
           $scope.sendReason = function (msg) {
-            console.log(msg);
-
-
             var rejectObj = {
               "historyId": $scope.historyObj.id,
               "approveCode": approveCode,
@@ -1023,18 +1003,20 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
               $scope.approveBtnDisabled = true;
               $timeout(alert('Операция успешно совершена'), 2000);
               $("#rejectionReasonModal").modal("hide");
+              $("#rejectionReasonModal").on('hidden.bs.modal', function (e) {
+                $('body').addClass('modal-open');
+              });
               $scope.getStatusTree();
-
-
             }, function (reason) {
               console.log(reason);
-
             });
           };
 
           $scope.cancelReasonModal = function () {
-            console.log('closed')
             $("#rejectionReasonModal").modal("hide");
+            $("#rejectionReasonModal").on('hidden.bs.modal', function (e) {
+              $('body').addClass('modal-open');
+            });
           };
         }
         break;
@@ -1049,13 +1031,11 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
       $uibModal.open({
         templateUrl: 'rejectionReason.html',
         controller: function ($scope, $uibModalInstance) {
-          // $scope.userRole = USER_ROLES.ZERO;
           $scope.userRole = USER_ROLES.ONE;
           $scope.rejectionMsg = rowEntity.msg;
           $scope.ok = function () {
             $uibModalInstance.close();
           };
-
           $scope.cancel = function () {
             $uibModalInstance.dismiss('cancel');
           };

@@ -407,6 +407,7 @@ app.controller('modalOperBySrezCtrl', function ($scope, $uibModal, $rootScope, $
     });
     modalInstance.result.finally(function(){
       // do your work here
+      //update getSliceReport() here to update first table ui-grid
       console.log('call function update table');
 
     });

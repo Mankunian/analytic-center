@@ -388,7 +388,7 @@ app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope, STAT
   };
 });
 
-app.controller('modalOperBySrezCtrl', function ($scope, $uibModal, $rootScope, $http, STATUS_CODES) {
+app.controller('modalOperBySrezCtrl', function ($scope, $uibModal, $rootScope) {
 
   $rootScope.openOperBySrez = function (rowEntity) {
     $scope.dataSendByModal = rowEntity;
@@ -859,13 +859,10 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   в дереве статусов и перезаписываем полученный из row.entity ======*/
   $scope.getStatusInfo = function (selectedStatus) {
     $rootScope.historyId = selectedStatus.id;
-
-    // $scope.rowEntityStatusCode = selectedStatus.statusCode; // 1 Окончательный
-    console.log(selectedStatus); // here set ng class background blue for last as last element of history status
     $scope.statusCode = selectedStatus.statusCode;
 
     if (selectedStatus.statusCode === STATUS_CODES.IN_AGREEMENT) {
-      function approving() {
+      $scope.approving = function() {
         $http({
           method: 'GET',
           url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/' + selectedStatus.sliceId + '/history/' + selectedStatus.id + '/approving',
@@ -904,11 +901,13 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         }, function (reason) {
           console.log(reason);
         });
-      }
-      approving();
+      };
+      $scope.approving();
+
+      $interval( function(){$scope.approving(); }, 5000);
     }
 
-    $interval( function(){approving(); }, 5000);
+
 
     /*=====  Сравниваем полученный код статуса и меняем URL HTTP запроса ======*/
     switch ($scope.statusCode) {

@@ -16,28 +16,28 @@ app.constant('CONFIGS', {
   // URL: 'http://192.168.210.10:8081/api/v1/RU/',
   URL: 'https://analytic-centre.tk:8081/api/v1/RU/' // DEV URL
 }).constant('STATUS_CODES', {
-  IN_PROCESSING: '0', // В обработке
-  APPROVED: '1', // Утвержден
-  PRELIMINARY: '2', // Предварительный
-  DELETED: '3', // Удален
-  CANCELED_BY_USER: '4', // Отменен пользователем
-  FORMED_WITH_ERROR: '5', // Сформирован с ошибкой
+  IN_PROCESSING         : '0', // В обработке
+  APPROVED              : '1', // Утвержден
+  PRELIMINARY           : '2', // Предварительный
+  DELETED               : '3', // Удален
+  CANCELED_BY_USER      : '4', // Отменен пользователем
+  FORMED_WITH_ERROR     : '5', // Сформирован с ошибкой
   WAITING_FOR_PROCESSING: '6', // В ожидании обработки
-  IN_AGREEMENT: '7' // На согласовании
+  IN_AGREEMENT          : '7' // На согласовании
 }).constant('USER_ROLES', {
-  ONE: '19000090',
+  ONE : '19000090',
   ZERO: '0'
 }).constant('BUTTONS', {
-  APPROVE: '0', // Согласовать
-  CONFIRM: '1', // Утвердить/ Окончательный
-  DELETE: '2', // Удалить
+  APPROVE    : '0', // Согласовать
+  CONFIRM    : '1', // Утвердить/ Окончательный
+  DELETE     : '2', // Удалить
   PRELIMINARY: '3', // Перевести в предварительный
-  SEND: '4' // На согласование
+  SEND       : '4' // На согласование
 }).run(function ($rootScope, STATUS_CODES, USER_ROLES, BUTTONS, CONFIGS) {
   $rootScope.STATUS_CODES = STATUS_CODES;
-  $rootScope.USER_ROLES = USER_ROLES;
-  $rootScope.BUTTONS = BUTTONS;
-  $rootScope.CONFIGS = CONFIGS;
+  $rootScope.USER_ROLES   = USER_ROLES;
+  $rootScope.BUTTONS      = BUTTONS;
+  $rootScope.CONFIGS      = CONFIGS;
 });
 
 app.config(['$qProvider', function ($qProvider) {

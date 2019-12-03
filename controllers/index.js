@@ -12,28 +12,32 @@ var app = angular.module('app', [
   'ui.grid.treeView'
 ]);
 
-app.constant('STATUS_CODES', {
-  IN_PROCESSING: '0', // В обработке
-  APPROVED: '1', // Утвержден
-  PRELIMINARY: '2', // Предварительный
-  DELETED: '3', // Удален
-  CANCELED_BY_USER: '4', // Отменен пользователем
-  FORMED_WITH_ERROR: '5', // Сформирован с ошибкой
+app.constant('CONFIGS', {
+  URL     : 'http://192.168.210.10:8081/api/v1/RU/',
+  URL_DEV : 'https://analytic-centre.tk:8081/api/v1/RU/'
+}).constant('STATUS_CODES', {
+  IN_PROCESSING         : '0', // В обработке
+  APPROVED              : '1', // Утвержден
+  PRELIMINARY           : '2', // Предварительный
+  DELETED               : '3', // Удален
+  CANCELED_BY_USER      : '4', // Отменен пользователем
+  FORMED_WITH_ERROR     : '5', // Сформирован с ошибкой
   WAITING_FOR_PROCESSING: '6', // В ожидании обработки
-  IN_AGREEMENT: '7' // На согласовании
+  IN_AGREEMENT          : '7' // На согласовании
 }).constant('USER_ROLES', {
-  ONE: '19000090',
+  ONE : '19000090',
   ZERO: '0'
 }).constant('BUTTONS', {
-  APPROVE: '0', // Согласовать
-  CONFIRM: '1', // Утвердить/ Окончательный
-  DELETE: '2', // Удалить
+  APPROVE    : '0', // Согласовать
+  CONFIRM    : '1', // Утвердить/ Окончательный
+  DELETE     : '2', // Удалить
   PRELIMINARY: '3', // Перевести в предварительный
-  SEND: '4' // На согласование
-}).run(function ($rootScope, STATUS_CODES, USER_ROLES, BUTTONS) {
+  SEND       : '4' // На согласование
+}).run(function ($rootScope, STATUS_CODES, USER_ROLES, BUTTONS, CONFIGS) {
   $rootScope.STATUS_CODES = STATUS_CODES;
-  $rootScope.USER_ROLES = USER_ROLES;
-  $rootScope.BUTTONS = BUTTONS;
+  $rootScope.USER_ROLES   = USER_ROLES;
+  $rootScope.BUTTONS      = BUTTONS;
+  $rootScope.CONFIGS      = CONFIGS;
 });
 
 app.config(['$qProvider', function ($qProvider) {
@@ -41,7 +45,7 @@ app.config(['$qProvider', function ($qProvider) {
 }]);
 
 
-app.controller('userCtrl', function ($scope, $http, $rootScope) {
+app.controller('userCtrl', function ($scope, $http, $rootScope, CONFIGS) {
 
   $scope.userRole = '19000090';
   $rootScope.userRole = $scope.userRole;
@@ -52,27 +56,27 @@ app.controller('userCtrl', function ($scope, $http, $rootScope) {
 
   $http({
     method: 'GET',
-    url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/territories',
+    url: CONFIGS.URL_DEV+'slices/territories',
     headers: {
       sessionKey: 'admin'
     }
   }).then(function (response) {
     $scope.roleList = response.data;
   }, function (reason) {
-    console.log(reason)
-  })
+    console.log(reason);
+  });
 
 
 
 });
 
-app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGridTreeViewConstants', '$interval', function ($scope, $http, $rootScope, uiGridTreeBaseService, $interval) {
+app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGridTreeViewConstants', '$interval', 'CONFIGS', function ($scope, $http, $rootScope, uiGridTreeBaseService, $interval, CONFIGS) {
 
   //Получение списка статусов
   $scope.getStatus = function () {
     $http({
       method: 'GET',
-      url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/statuses',
+      url: CONFIGS.URL_DEV+'slices/statuses',
       headers: {
         sessionKey: 'admin'
       }
@@ -88,7 +92,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   $scope.getGroups = function () {
     $http({
       method: 'GET',
-      url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/groups',
+      url: CONFIGS.URL_DEV+'slices/groups',
       headers: {
         sessionKey: 'admin'
       }
@@ -109,7 +113,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   $scope.getStatSrez = function () {
     $http({
       method: 'GET',
-      url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/max',
+      url: CONFIGS.URL_DEV+'slices/max',
       headers: {
         sessionKey: 'admin'
       }
@@ -210,7 +214,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
         $http({
           method: 'GET',
-          url: 'https://analytic-centre.tk:8081/api/v1/RU/slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + '',
+          url: CONFIGS.URL_DEV+'slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + '',
           headers: {
             sessionKey: 'admin'
           }
@@ -260,9 +264,9 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   $scope.showDeletedReports = function (check) {
     $scope.loader = true;
     if (check) {
-      url = 'https://analytic-centre.tk:8081/api/v1/RU/slices/parents?deleted=true';
+      url = CONFIGS.URL_DEV+'slices/parents?deleted=true';
     } else {
-      url = 'https://analytic-centre.tk:8081/api/v1/RU/slices/parents?deleted=false';
+      url = CONFIGS.URL_DEV+'slices/parents?deleted=false';
     }
 
     var dataSet = [];
@@ -316,7 +320,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
     $http({
       method: 'POST',
-      url: 'https://analytic-centre.tk:8081/api/v1/ru/slices',
+      url: CONFIGS.URL_DEV+'slices',
       headers: {
         sessionKey: 'admin'
       },
@@ -415,7 +419,8 @@ app.controller('modalOperBySrezCtrl', function ($scope, $uibModal, $rootScope, $
 /**
  *  ModalContentCtrl
  */
-app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'value', '$rootScope', '$sce', '$timeout', '$log', '$interval', 'uiGridTreeViewConstants', 'uiGridGroupingConstants', 'uiGridConstants', function ($scope, $http, $uibModalInstance, value, $rootScope, $sce, $timeout, $log, $interval, uiGridTreeViewConstants, uiGridGroupingConstants, uiGridConstants, uiGridTreeBaseService) {
+app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'value', '$rootScope', '$sce', '$timeout', '$log', '$interval', 'uiGridTreeViewConstants', 'uiGridGroupingConstants', 'uiGridConstants', 'CONFIGS',  function ($scope, $http, $uibModalInstance, value, $rootScope, $sce, $timeout, $log, $interval, uiGridTreeViewConstants, uiGridGroupingConstants, uiGridConstants, uiGridTreeBaseService, CONFIGS) {
+  console.log('asd');
   $scope.statSliceNum         = value.id;
   $scope.statSlicePeriod      = value.period;
   $scope.isTabsLoaded         = false;
@@ -444,7 +449,7 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
   /*=====  Получение списка отчетов для формирования вкладок ======*/
   $http({
     method: 'GET',
-    url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/reports?sliceId=' + $scope.statSliceNum,
+    url: CONFIGS.URL_DEV+'slices/reports?sliceId=' + $scope.statSliceNum,
     headers: {
       sessionKey: 'admin'
     }
@@ -475,7 +480,7 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
     /*=====  Sets correct $$treeLevel END ======*/
     $http({
       method: 'GET',
-      url: 'https://18.140.232.52:8081/api/v1/RU/slices/governments/parents',
+      url: CONFIGS.URL_DEV+'slices/governments/parents',
       headers: {
         sessionKey: 'admin'
       }
@@ -507,7 +512,7 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
               $scope.reportCorpusDataLoaded = true;
               $http({
                 method: 'GET',
-                url: 'https://18.140.232.52:8081/api/v1/RU/slices/governments/children?searchPattern='+row.entity.searchPattern,
+                url: CONFIGS.URL_DEV+'slices/governments/children?searchPattern='+row.entity.searchPattern,
                 headers: {
                   sessionKey: 'admin'
                 }
@@ -542,7 +547,7 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
   /*=====  Regions grid - get data from backend ======*/
   $http({
     method: 'GET',
-    url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/regsTree',
+    url: CONFIGS.URL_DEV+'slices/regsTree',
     headers: {
       sessionKey: 'admin'
     }
@@ -556,7 +561,7 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
     /*=====  Deps grid - get data from backend ======*/
     $http({
       method: 'GET',
-      url: 'https://analytic-centre.tk:8081/api/v1/ru/slices/reports?sliceId=' + $scope.statSliceNum + '&withOrgs=true',
+      url: CONFIGS.URL_DEV+'slices/reports?sliceId=' + $scope.statSliceNum + '&withOrgs=true',
       headers: {
         sessionKey: 'admin'
       }
@@ -765,7 +770,7 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
       $scope.readyReports = [];
       $http({
         method: 'POST',
-        url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/reports/createReports?repLang='+selectedLang,
+        url: CONFIGS.URL_DEV+'slices/reports/createReports?repLang='+selectedLang,
         headers: {
           sessionKey: 'admin'
         },
@@ -775,7 +780,7 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
         var reportValues = response.data;
         var counter = 0;
         reportValues.forEach(function (element, index) {
-          var reportDownloadUrl = "https://analytic-centre.tk:8081/api/v1/RU/slices/reports/" + element.value + "/download";
+          var reportDownloadUrl = CONFIGS.URL_DEV+'slices/reports/' + element.value + '/download';
           var readyReportItem = {
             url : reportDownloadUrl,
             name : $scope.requestedReports[counter]
@@ -813,8 +818,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   $scope.rowEntityStatusCode = value.statusCode; // Here show buttons by current Status
   $scope.statusCode = value.statusCode;
 
-  $scope.lastPreliminaryStatus = value.statusCode;
-
   console.log($rootScope.userRole);
 
   if ($rootScope.userRole === '19000090') {
@@ -831,7 +834,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
     $scope.showTabs = false;
     $http({
       method: 'GET',
-      url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/' + $scope.srezNo + '/history',
+      url: CONFIGS.URL_DEV+'slices/' + $scope.srezNo + '/history',
       headers: {
         sessionKey: 'admin'
       }
@@ -862,7 +865,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
     if (selectedStatus.statusCode === STATUS_CODES.IN_AGREEMENT) {
       $http({
         method: 'GET',
-        url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/' + selectedStatus.sliceId + '/history/' + selectedStatus.id + '/approving',
+        url: CONFIGS.URL_DEV+'slices/' + selectedStatus.sliceId + '/history/' + selectedStatus.id + '/approving',
         headers: {
           sessionKey: 'admin'
         }
@@ -952,7 +955,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
           };
           $http({
             method: 'PUT',
-            url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/' + $scope.srezNo + '/' + btnActionUrl,
+            url: CONFIGS.URL_DEV+'slices/' + $scope.srezNo + '/' + btnActionUrl,
             data: approveObj,
             headers: {
               sessionKey: 'admin'
@@ -982,7 +985,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
 
             $http({
               method: 'PUT',
-              url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/' + $scope.srezNo + '/' + btnActionUrl,
+              url: CONFIGS.URL_DEV+'slices/' + $scope.srezNo + '/' + btnActionUrl,
               data: rejectObj,
               headers: {
                 sessionKey: 'admin'

@@ -998,6 +998,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         if (approveCode === 1) {
           var msg = '';
 
+
           var approveObj = {
             "historyId": $scope.historyObj.id,
             "approveCode": approveCode,
@@ -1014,8 +1015,8 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
             }
           }).then(function (response) {
             console.log(response);
+            $scope.approveBtnDisabled = true;
             $timeout(alert('Операция успешно совершена'), 2000);
-            $scope.rowEntityStatusCode = $scope.statusCode;
             $scope.getStatusTree();
 
 
@@ -1023,6 +1024,8 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
             console.log(reason);
 
           });
+
+
         }
         else{
 
@@ -1034,28 +1037,48 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
 
 
           $scope.sendReason = function (msg) {
-            console.log(msg)
-          }
+            console.log(msg);
+
+
+            var rejectObj = {
+              "historyId": $scope.historyObj.id,
+              "approveCode": approveCode,
+              "territoryCode": $rootScope.userRole*1,
+              "msg": msg
+            };
+
+            $http({
+              method: 'PUT',
+              url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/' + $scope.srezNo + '/' + btnActionUrl,
+              data: rejectObj,
+              headers: {
+                sessionKey: 'admin'
+              }
+            }).then(function (response) {
+              console.log(response);
+              $scope.approveBtnDisabled = true;
+              $timeout(alert('Операция успешно совершена'), 2000);
+              $scope.getStatusTree();
+
+
+            }, function (reason) {
+              console.log(reason);
+
+            });
+
+
+          };
+
+          $scope.cancelReasonModal = function () {
+          };
 
 
 
-          /*var modalInstance =  $uibModal.open({
-            templateUrl: 'editReason.html',
-            controller: function ($scope, $uibModalInstance) {
-              $scope.ok = function (msgReason) {
-                $scope.msgReason = msgReason;
-                $uibModalInstance.close(msgReason);
-              };
 
-              $scope.cancel = function () {
-                $uibModalInstance.dismiss('cancel');
-              };
-            }
-          });
-
-          modalInstance.result.then(function() {
-          });*/
         }
+
+
+
         break;
       case btnNum = BUTTONS.DELETE:
         btnActionUrl = 'delete'; // Удалить

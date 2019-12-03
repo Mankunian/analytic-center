@@ -278,6 +278,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     }).then(function (response) {
       $scope.loader = false;
       $scope.showGrid = response.data;
+      console.log('update table when close modal');
       $scope.showGrid.forEach(function (data, index) {
         dataSet.push(data);
         dataSet[index].children.forEach(function (status) {
@@ -405,11 +406,13 @@ app.controller('modalOperBySrezCtrl', function ($scope, $uibModal, $rootScope, $
       resolve: {
         value: function () {
           return $scope.dataSendByModal;
-        },
+        }
       }
     });
-    modalInstance.result.then(function (response) {
-      console.log('response');
+    modalInstance.result.finally(function(){
+      // do your work here
+      console.log('call function update table');
+
     });
 
   };
@@ -805,7 +808,7 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
 
 }]);
 
-app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalInstance, value, STATUS_CODES, USER_ROLES, BUTTONS, $uibModal, $timeout, $rootScope) {
+app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalInstance, value, STATUS_CODES, USER_ROLES, BUTTONS, $uibModal, $timeout, $rootScope, $interval) {
 
   /*=====  Получение данных ======*/
   $scope.statusInfoData = [];
@@ -866,43 +869,50 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
     $scope.statusCode = selectedStatus.statusCode;
 
     if (selectedStatus.statusCode === STATUS_CODES.IN_AGREEMENT) {
-      $http({
-        method: 'GET',
-        url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/' + selectedStatus.sliceId + '/history/' + selectedStatus.id + '/approving',
-        headers: {
-          sessionKey: 'admin'
-        }
-      }).then(function (response) {
-        $scope.statusInfoData = response.data;
+      function approving() {
+        $http({
+          method: 'GET',
+          url: 'https://analytic-centre.tk:8081/api/v1/RU/slices/' + selectedStatus.sliceId + '/history/' + selectedStatus.id + '/approving',
+          headers: {
+            sessionKey: 'admin'
+          }
+        }).then(function (response) {
+          $scope.statusInfoData = response.data;
 
-        $scope.gridOptionsAgreement = {
-          data: response.data,
-          showGridFooter: false,
-          enableColumnMenus: false,
-          showTreeExpandNoChildren: false,
-          enableHiding: false,
-          enableSorting: false,
-          enableFiltering: false,
-          enableRowSelection: true,
-          enableSelectAll: false,
-          rowHeight: 35,
-          columnDefs: [
-            {name: 'territoryName', width: '250', displayName: 'Терр.управление'},
-            {name: 'approveDate', width: '170', displayName: 'Дата-время'},
-            {
-              name: 'approveName',
-              width: '150',
-              displayName: 'Статус',
-              cellTemplate: '<div style="margin: 5px 0; text-align: center"><a ng-click="grid.appScope.modalRejectionReason(row.entity)" ng-style= "{ color: row.entity.approveCode == \'2\' ? \'red\' : \'\' }">{{COL_FIELD CUSTOM_FILTERS}}</a></div>'
-            },
-            {name: 'personName', width: '170', displayName: 'ФИО'}
-          ]
-        };
-        // $scope.getStatusTree();
-      }, function (reason) {
-        console.log(reason);
-      });
+          $scope.gridOptionsAgreement = {
+            data: response.data,
+            showGridFooter: false,
+            enableColumnMenus: false,
+            showTreeExpandNoChildren: false,
+            enableHiding: false,
+            enableSorting: false,
+            enableFiltering: false,
+            enableRowSelection: true,
+            enableSelectAll: false,
+            rowHeight: 35,
+            columnDefs: [
+              {name: 'territoryName', width: '250', displayName: 'Терр.управление'},
+              {name: 'approveDate', width: '170', displayName: 'Дата-время'},
+              {
+                name: 'approveName',
+                width: '150',
+                displayName: 'Статус',
+                cellTemplate: '<div style="margin: 5px 0; text-align: center"><a ng-click="grid.appScope.modalRejectionReason(row.entity)" ng-style= "{ color: row.entity.approveCode == \'2\' ? \'red\' : \'\' }">{{COL_FIELD CUSTOM_FILTERS}}</a></div>'
+              },
+              {name: 'personName', width: '170', displayName: 'ФИО'}
+            ]
+          };
+
+
+
+        }, function (reason) {
+          console.log(reason);
+        });
+      }
+      approving();
     }
+
+    $interval( function(){approving(); }, 5000);
 
     /*=====  Сравниваем полученный код статуса и меняем URL HTTP запроса ======*/
     switch ($scope.statusCode) {

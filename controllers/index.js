@@ -371,6 +371,7 @@ app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope, STAT
         controller: "ModalContentCtrl",
         size: 'xlg',
         backdrop : 'static',
+        keyboard: false,
         windowTopClass: 'getReportModal',
         resolve: {
           value: function () {
@@ -395,6 +396,7 @@ app.controller('modalOperBySrezCtrl', function ($scope, $uibModal, $rootScope, C
       templateUrl: 'modalOperBySrez.html',
       controller: 'modalContentOperBySrezCtrl',
       size: 'xlg',
+      keyboard: false,
       backdrop: 'static',
       windowTopClass: 'getReportModal',
       resolve: {

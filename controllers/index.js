@@ -222,9 +222,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
             statusCode = row.entity.code,
             year       = row.entity.statusYear;
 
-
-
-        console.log($scope.checkboxModel.value);
         var checkDeleted = '';
         if ($scope.checkboxModel.value === true){
           checkDeleted = true
@@ -241,6 +238,9 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
           var expandedRowStatusIndex = $scope.gridOptions.data.findIndex(x => x.$$hashKey === row.entity.$$hashKey);
 
           $scope.showGrid.forEach( function(element, index) {
+            // console.log(element);
+            // console.log(index);
+            //todo here need to equal two object for expandRow
             $scope.gridOptions.data.splice(expandedRowStatusIndex+1+index,0, element);
           });
           row.isSlicesLoaded = true;
@@ -360,7 +360,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
       $scope.objectByOrderSrez = response.data;
       angular.forEach($scope.objectByOrderSrez, function (value) {
-        console.log(value)
+        console.log(value);
         //todo передать в getSliceGroups(), там проверять на наличие этого rowEntity и по его index открывать групприровку
       });
       $scope.getSliceGroups();
@@ -890,7 +890,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
       $scope.history             = response.data;
       $scope.activeTabIndex      = $scope.history.length - 1; //get last index of array history
       $scope.lastElementOfHistory      = $scope.history[0]; // try to get first element of array history
-      console.log($scope.lastElementOfHistory);
       $scope.isHistoryTreeLoaded = true;
       $scope.historyObj          = $scope.history[$scope.activeTabIndex];
       $scope.rowEntityStatusCode = $scope.historyObj.statusCode;

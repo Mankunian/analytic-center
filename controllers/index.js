@@ -13,8 +13,8 @@ var app = angular.module('app', [
 ]);
 
 app.constant('CONFIGS', {
-  // URL: 'http://192.168.210.10:8081/api/v1/RU/',
-  URL: 'https://analytic-centre.tk:8081/api/v1/RU/' // DEV URL
+  URL: 'http://192.168.210.10:8081/api/v1/RU/'
+  // URL: 'https://analytic-centre.tk:8081/api/v1/RU/' // DEV URL
 }).constant('STATUS_CODES', {
   IN_PROCESSING         : '0', // В обработке
   APPROVED              : '1', // Утвержден
@@ -58,7 +58,6 @@ app.controller('userCtrl', function ($scope, $http, $rootScope, CONFIGS) {
 
   $scope.roleSelected = function(role){
       $rootScope.userRole = role;
-      console.log($rootScope.userRole);
   };
 
   $http({
@@ -217,22 +216,20 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     $scope.gridApi = gridApi;
 
     $scope.gridApi.treeBase.on.rowExpanded($scope, function (row) {
-
-      console.log(row);
-
       if (row.entity.$$treeLevel !== 0 && !row.isSlicesLoaded){
         $scope.preloaderByStatus = true;
         var groupCode  = row.entity.groupCode,
             statusCode = row.entity.code,
             year       = row.entity.statusYear;
 
-      if($scope.checkboxModel){
-        var checkDeleted = true;
-      } else {checkDeleted = false}
+        var checkDeleted = '';
+        if ($scope.checkboxModel.value === true){
+          checkDeleted = true
+        } else checkDeleted = false;
 
         $http({
           method: 'GET',
-          url: CONFIGS.URL+'slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + '',
+          url: CONFIGS.URL+'slices?deleted='+checkDeleted+'&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + '',
           headers: {
             sessionKey: 'admin'
           }
@@ -241,6 +238,9 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
           var expandedRowStatusIndex = $scope.gridOptions.data.findIndex(x => x.$$hashKey === row.entity.$$hashKey);
 
           $scope.showGrid.forEach( function(element, index) {
+            // console.log(element);
+            // console.log(index);
+            //todo here need to equal two object for expandRow
             $scope.gridOptions.data.splice(expandedRowStatusIndex+1+index,0, element);
           });
           row.isSlicesLoaded = true;
@@ -282,7 +282,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
   var url = '';
   $scope.loader = false;
-  $scope.showDeletedReports = function (check) {
+  $scope.getSliceGroups = function (check) {
+
     $scope.loader = true;
     if (check) {
       url = CONFIGS.URL+'slices/parents?deleted=true';
@@ -320,7 +321,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   };
 
 
-  $scope.showDeletedReports();
+  $scope.getSliceGroups();
 
 
 
@@ -357,6 +358,14 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       $scope.showGrid = response.data;
 
 
+      $scope.objectByOrderSrez = response.data;
+      angular.forEach($scope.objectByOrderSrez, function (value) {
+        console.log(value);
+        //todo передать в getSliceGroups(), там проверять на наличие этого rowEntity и по его index открывать групприровку
+      });
+      $scope.getSliceGroups();
+
+
     }, function (reason) {
       if (reason.data) $rootScope.serverErr(reason.data.error);
       console.log(reason);
@@ -390,8 +399,7 @@ app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope, STAT
   $rootScope.open = function (value) {
 
 
-    if (value.statusCode == STATUS_CODES.IN_PROCESSING || value.statusCode == STATUS_CODES.WAITING_FOR_PROCESSING){
-      console.log('Not Open');
+    if (value.statusCode == STATUS_CODES.IN_PROCESSING || value.statusCode == STATUS_CODES.WAITING_FOR_PROCESSING || value.statusCode == STATUS_CODES.FORMED_WITH_ERROR){
       alert('По данному статусу невозможно получить отчет!');
 
     } else {
@@ -439,7 +447,6 @@ app.controller('modalOperBySrezCtrl', function ($scope, $uibModal, $rootScope, C
     modalInstance.result.finally(function(){
       // do your work here
       //update getSliceReport() here to update first table ui-grid
-      console.log('call function update table');
 
     });
 
@@ -893,13 +900,13 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
       }
     }).then(function (response) {
       $scope.history             = response.data;
-      $scope.activeTabIndex      = $scope.history.length - 1; //Make tab active depends on last index of status
+      $scope.activeTabIndex      = $scope.history.length - 1; //get last index of array history
+      $scope.lastElementOfHistory      = $scope.history[0]; // try to get first element of array history
       $scope.isHistoryTreeLoaded = true;
       $scope.historyObj          = $scope.history[$scope.activeTabIndex];
       $scope.rowEntityStatusCode = $scope.historyObj.statusCode;
-      
-      $scope.getStatusInfo($scope.historyObj);
 
+      $scope.getStatusInfo($scope.historyObj);
     }, function(reason){
       if (reason.data) {
         $scope.isHistoryTreeLoaded = false;
@@ -980,15 +987,15 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         break;
 
       case STATUS_CODES.PRELIMINARY:
-        if (selectedStatus != $scope.historyObj) {
+        if (selectedStatus === $scope.lastElementOfHistory) {
           selectedStatus.created   = value.created;
           selectedStatus.completed = value.completed;
         }
-        $scope.statusInfo = selectedStatus;
+        $scope.statusInfo        = selectedStatus;
         break;
 
       case STATUS_CODES.IN_AGREEMENT: // На согласовании
-        $scope.statusInfo = selectedStatus;
+        $scope.statusInfo        = selectedStatus;
         break;
 
       case STATUS_CODES.DELETED: // Удален
@@ -1042,6 +1049,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
           });
         }
         else{
+
           $(document).ready(function(){
             $("#rejectionReasonBtn").click(function(){
               $("#rejectionReasonModal").modal();

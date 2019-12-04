@@ -334,6 +334,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       $scope.user.length = 0;
       $scope.showGrid = response.data;
 
+      $scope.showDeletedReports();
+
 
     }, function (reason) {
       console.log(reason);

@@ -29,7 +29,7 @@
               </div>
               <uib-tabset class="statusHistory" ng-if="isHistoryTreeLoaded" id="tabs" data-tabactive="activeTabInd" active="activeTabIndex" vertical="true" type="pills">
                 <uib-tab ng-style="{'margin-left': $index*15 + 'px'}" ng-repeat="status in history"
-                         ng-click="getStatusInfo(status)" style="width: fit-content; margin: 5px" index="$index"
+                         ng-click="getStatusInfo(status, $index)" style="width: fit-content; margin: 5px" index="$index"
                          heading="{{status.statusName}}"></uib-tab>
               </uib-tabset>
             </div>
@@ -60,9 +60,8 @@
               </button>
             </div>
 
-
-              <div ng-if="userRole == USER_ROLES.ZERO">
-                <button ng-disabled="approveBtnDisabled" ng-click="statusAction(BUTTONS.APPROVE, 1) " class="btn" ng-if="
+              <div ng-if="userRole == USER_ROLES.ZERO" ng-hide="isApproved">
+                <button ng-disabled="approveBtnDisabled || isApproved" ng-click="statusAction(BUTTONS.APPROVE, 1) " class="btn" ng-if="
               rowEntityStatusCode == STATUS_CODES.IN_AGREEMENT">Согласовать
                 </button>
 

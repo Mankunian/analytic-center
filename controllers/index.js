@@ -13,8 +13,8 @@ var app = angular.module('app', [
 ]);
 
 app.constant('CONFIGS', {
-  // URL: 'http://192.168.210.10:8081/api/v1/RU/',
-  URL: 'https://analytic-centre.tk:8081/api/v1/RU/' // DEV URL
+  URL: 'http://192.168.210.10:8081/api/v1/RU/',
+  // URL: 'https://analytic-centre.tk:8081/api/v1/RU/' // DEV URL
 }).constant('STATUS_CODES', {
   IN_PROCESSING         : '0', // В обработке
   APPROVED              : '1', // Утвержден
@@ -825,21 +825,33 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
         },
         data: $scope.requestedReportsQuery
       }).then(function (response) {
+        console.log(response.data);
         $scope.isReadyReportsLoaded = true;
-        var reportValues = response.data;
-        var counter = 0;
+        var reportValues       = response.data,
+            counter            = 0,
+            reportDownloadUrl  = '',
+            reportDownloadName = '',
+            reportErrMsg       = 'Отсутствует шаблон отчета';
+
         reportValues.forEach(function (element, index) {
-          var reportDownloadUrl = CONFIGS.URL+'slices/reports/' + element.value + '/download';
+          if (element.value == -1) {
+            reportDownloadUrl = '#';
+            reportDownloadName = reportErrMsg;
+          } else {
+            reportDownloadUrl = CONFIGS.URL+'slices/reports/' + element.value + '/download';
+            reportDownloadName = $scope.requestedReports[counter];
+          }
+
           var readyReportItem = {
             url : reportDownloadUrl,
-            name : $scope.requestedReports[counter]
+            name : reportDownloadName
           };
           $scope.readyReports.push(readyReportItem);
           counter++;
         });
       }, function (reason) {
         if (reason.data) {
-          $scope.isReadyReportsLoaded = false;
+          $scope.isReadyReportsLoaded = true;
           $rootScope.serverErr(reason.data.error);
         }
         console.log(reason);
@@ -921,6 +933,14 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
           }
         }).then(function (response) {
           $scope.statusInfoData = response.data;
+
+          // var index = $scope.statusInfoData.findIndex( item => item.territoryCode == $rootScope.userRole );
+          // if ($scope.statusInfoData[index].approveCode != null) {
+          //   $rootScope.isApproved = true;
+          // } else {
+          //   $rootScope.isApproved = false;
+          // }
+
           $scope.gridOptionsAgreement = {
             data: response.data,
             showGridFooter: false,
@@ -944,9 +964,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
               {name: 'personName', width: '170', displayName: 'ФИО'}
             ]
           };
-
-
-          // $interval( function(){$scope.updateApprovingTable(); }, 20000);
         }, function (reason) {
           if (reason.data) $rootScope.serverErr(reason.data.error);
           console.log(reason);
@@ -954,7 +971,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
       };
       $scope.updateApprovingTable();
 
-
+      // $interval( function(){$scope.updateApprovingTable(); }, 10000);
     }
 
     /*=====  Сравниваем полученный код статуса и меняем URL HTTP запроса ======*/

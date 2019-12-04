@@ -392,7 +392,7 @@ app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope, STAT
   $rootScope.open = function (value) {
 
 
-    if (value.statusCode == STATUS_CODES.IN_PROCESSING || value.statusCode == STATUS_CODES.WAITING_FOR_PROCESSING){
+    if (value.statusCode == STATUS_CODES.IN_PROCESSING || value.statusCode == STATUS_CODES.WAITING_FOR_PROCESSING || value.statusCode == STATUS_CODES.FORMED_WITH_ERROR){
       alert('По данному статусу невозможно получить отчет!');
 
     } else {

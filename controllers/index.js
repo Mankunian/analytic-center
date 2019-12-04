@@ -262,7 +262,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
   var url = '';
   $scope.loader = false;
-  $scope.showDeletedReports = function (check) {
+  $scope.getSliceGroups = function (check) {
     $scope.loader = true;
     if (check) {
       url = CONFIGS.URL+'slices/parents?deleted=true';
@@ -298,7 +298,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   };
 
 
-  $scope.showDeletedReports();
+  $scope.getSliceGroups();
 
 
 
@@ -334,7 +334,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       $scope.user.length = 0;
       $scope.showGrid = response.data;
 
-      $scope.showDeletedReports();
+      $scope.getSliceGroups();
 
 
     }, function (reason) {

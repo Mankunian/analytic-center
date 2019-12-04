@@ -116,7 +116,7 @@
 
               <div class="col-md-6">
                 <div class="pull-left">
-                  <button title="Обновить таблицу" ng-click="showDeletedReports()"
+                  <button title="Обновить таблицу" ng-click="getSliceGroups()"
                           class="btn btn-primary"><i class="fas fa-sync"></i></button>
                 </div>
               </div>
@@ -125,7 +125,7 @@
                 <div class="pull-right">
                   <label class="containerLabel" >
                     <input ng-model="checkboxModel.value"
-                           ng-change="showDeletedReports(checkboxModel.value)"
+                           ng-change="getSliceGroups(checkboxModel.value)"
 
 
                            type="checkbox">Показать удаленные

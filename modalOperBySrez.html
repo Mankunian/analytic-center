@@ -12,11 +12,10 @@
           <div class="col-md-5 noPadding">
             <div style="min-height: 70vh; height: 100%; padding: 0 10px">
 
-              <div class="col-md-12">
-                <div class="row">
-                  <div style="float: left">
-                    <h5><b>№ среза:</b> {{srezNo}}</h5>
-
+            <div class="col-md-12">
+              <div class="row">
+                <div style="float: left">
+                  <h5><b>№ среза:</b> {{srezNo}}</h5>
                 </div>
                 <div style="float: right">
                   <h5><b>Период:</b> {{period}}</h5>
@@ -25,10 +24,10 @@
             </div>
 
             <div class="statusTree">
-              <div class="preloader-block ready-reports statusTree-preloader" ng-if="!showTabs">
+              <div class="preloader-block ready-reports statusTree-preloader" ng-if="!isHistoryTreeLoaded">
                 <div class="lds-ring-readyReports"><div></div><div></div><div></div><div></div></div>
               </div>
-              <uib-tabset class="statusHistory" ng-if="showTabs" id="tabs" data-tabactive="activeTabInd" active="activeTabIndex" vertical="true" type="pills">
+              <uib-tabset class="statusHistory" ng-if="isHistoryTreeLoaded" id="tabs" data-tabactive="activeTabInd" active="activeTabIndex" vertical="true" type="pills">
                 <uib-tab ng-style="{'margin-left': $index*15 + 'px'}" ng-repeat="status in history"
                          ng-click="getStatusInfo(status)" style="width: fit-content; margin: 5px" index="$index"
                          heading="{{status.statusName}}"></uib-tab>
@@ -139,9 +138,7 @@
             <h5><b>Время удаления среза:</b> {{statusDate}}</h5>
           </div>
         </div>
-
         <!--Инфо по статусу Удален-->
-
 
       </div>
     </div>
@@ -150,12 +147,9 @@
     <button class="btn btn-danger" ng-click="cancel()">Отмена</button>
   </div>
 
-
-
   <!-- Modal -->
   <div class="modal fade" id="rejectionReasonModal" role="dialog">
     <div class="modal-dialog">
-
       <!-- Modal content-->
       <div class="modal-content">
         <div class="modal-header">

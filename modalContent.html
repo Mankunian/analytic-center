@@ -2,7 +2,7 @@
   <button type="button" class="close" data-dismiss="modal" ng-click="cancel()" >×</button>
   <h3 class="modal-heading">Получение отчетов</h3>
 </div>
-<div class="modal-body report-modal" ng-class="{isTabsLoaded : isTabsLoaded}">
+<div class="modal-body report-modal" ng-class="{'isTabsLoaded' : isTabsLoaded, 'modalCorpus': isGroup100, 'modalReport' : !isGroup100}">
   <div class="preloader-block" ng-if="!isTabsLoaded">
     <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
   </div>

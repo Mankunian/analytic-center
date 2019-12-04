@@ -39,7 +39,9 @@ app.constant('CONFIGS', {
   $rootScope.BUTTONS      = BUTTONS;
   $rootScope.CONFIGS      = CONFIGS;
   $rootScope.serverErr = function(errMsg){
-    alert(errMsg);
+    if (errMsg != undefined) {
+      alert(errMsg);
+    }
   };
 });
 

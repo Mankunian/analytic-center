@@ -512,3 +512,17 @@ input.form-control {
 .collapsed-row-1>span {
   background-image: url(../img/folder-cl.png);
 }
+
+
+.form-control.userRoleCombobox{
+    border-radius: 0;
+    border: 1px solid #1975C0;
+    color: #fff;
+    background: #1975C0;
+    height: 50px;
+    position: absolute;
+    display: block;
+    width: auto;
+    bottom: 0;
+    right: 50px;
+}

@@ -204,9 +204,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     $scope.gridApi = gridApi;
 
     $scope.gridApi.treeBase.on.rowExpanded($scope, function (row) {
-
-      console.log(row);
-
       if (row.entity.$$treeLevel !== 0 && !row.isSlicesLoaded){
         $scope.preloaderByStatus = true;
         var groupCode = row.entity.groupCode,
@@ -281,7 +278,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     }).then(function (response) {
       $scope.loader = false;
       $scope.showGrid = response.data;
-      console.log('update table when close modal');
       $scope.showGrid.forEach(function (data, index) {
         dataSet.push(data);
         dataSet[index].children.forEach(function (status) {
@@ -291,7 +287,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
         $scope.gridOptions.data = [];
         writeoutNode(dataSet, 0, $scope.gridOptions.data);
       });
-      console.log(dataSet);
     }, function (reason) {
       console.log(reason)
     });
@@ -370,7 +365,6 @@ app.controller('ModalControlCtrl', function ($scope, $uibModal, $rootScope, STAT
 
 
     if (value.statusCode == STATUS_CODES.IN_PROCESSING || value.statusCode == STATUS_CODES.WAITING_FOR_PROCESSING){
-      console.log('Not Open');
       alert('По данному статусу невозможно получить отчет!');
 
     } else {
@@ -418,7 +412,6 @@ app.controller('modalOperBySrezCtrl', function ($scope, $uibModal, $rootScope, C
     modalInstance.result.finally(function(){
       // do your work here
       //update getSliceReport() here to update first table ui-grid
-      console.log('call function update table');
 
     });
 
@@ -877,7 +870,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
           }
         }).then(function (response) {
           $scope.statusInfoData = response.data;
-          // console.log($scope.statusInfoData);
           $scope.gridOptionsAgreement = {
             data: response.data,
             showGridFooter: false,

@@ -463,7 +463,7 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
   }).then(function (response) {
     $scope.reportTabs = response.data;
   }, function (reason) {
-    console.log(reason)
+    console.log(reason);
   });
 
   $scope.getReportInfo = function (index) {

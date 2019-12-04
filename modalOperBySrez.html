@@ -133,9 +133,9 @@
         <!--Инфо по статусу Удален-->
         <div ng-if="statusCode == STATUS_CODES.DELETED" class="col-md-7 noPadding">
           <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
-            <h5><b>Статус:</b> {{statusName}}</h5>
-            <h5><b>Срез удалил:</b> {{personName}}</h5>
-            <h5><b>Время удаления среза:</b> {{statusDate}}</h5>
+            <h5><b>Статус:</b> {{statusInfo.statusName}}</h5>
+            <h5><b>Срез удалил:</b> {{statusInfo.personName}}</h5>
+            <h5><b>Время удаления среза:</b> {{statusInfo.statusDate}}</h5>
           </div>
         </div>
         <!--Инфо по статусу Удален-->

@@ -13,8 +13,8 @@ var app = angular.module('app', [
 ]);
 
 app.constant('CONFIGS', {
-  // URL: 'http://192.168.210.10:8081/api/v1/RU/',
-  URL: 'https://analytic-centre.tk:8081/api/v1/RU/' // DEV URL
+  URL: 'http://192.168.210.10:8081/api/v1/RU/',
+  // URL: 'https://analytic-centre.tk:8081/api/v1/RU/' // DEV URL
 }).constant('STATUS_CODES', {
   IN_PROCESSING         : '0', // В обработке
   APPROVED              : '1', // Утвержден
@@ -38,6 +38,13 @@ app.constant('CONFIGS', {
   $rootScope.USER_ROLES   = USER_ROLES;
   $rootScope.BUTTONS      = BUTTONS;
   $rootScope.CONFIGS      = CONFIGS;
+  $rootScope.serverErr = function(errMsg){
+    if (errMsg != undefined) {
+      alert(errMsg);
+    } else {
+      alert('Произошла ошибка на сервере.');
+    }
+  };
 });
 
 app.config(['$qProvider', function ($qProvider) {
@@ -62,6 +69,8 @@ app.controller('userCtrl', function ($scope, $http, $rootScope, CONFIGS) {
   }).then(function (response) {
     $scope.roleList = response.data;
   }, function (reason) {
+    $scope.loader = false;
+    if (reason.data) $rootScope.serverErr(reason.data.error);
     console.log(reason);
   });
 });
@@ -79,7 +88,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     }).then(function (value) {
       $scope.status = value.data;
     }, function (reason) {
-      console.log(reason)
+      if (reason.data) $rootScope.serverErr(reason.data.error);
+      console.log(reason);
     });
   };
   $scope.getStatus();
@@ -102,7 +112,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
         }
       });
     }, function (reason) {
-      console.log(reason)
+      if (reason.data) $rootScope.serverErr(reason.data.error);
+      console.log(reason);
     });
   };
   $scope.getGroups();
@@ -119,7 +130,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     }).then(function (value) {
       $scope.statsrez = value.data.value;
     }, function (reason) {
-      console.log(reason)
+      if (reason.data) $rootScope.serverErr(reason.data.error);
+      console.log(reason);
     });
   };
 
@@ -181,10 +193,10 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       },
 
       {
-        name: 'created',
+        name: 'completed',
         displayName: 'Сформирован',
         width: '200',
-        cellTemplate: '<div class="indentInline">{{row.entity.created}}</div>'
+        cellTemplate: '<div class="indentInline">{{row.entity.completed}}</div>'
       },
       {
         name: 'button',
@@ -206,9 +218,9 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
     $scope.gridApi.treeBase.on.rowExpanded($scope, function (row) {
       if (row.entity.$$treeLevel !== 0 && !row.isSlicesLoaded){
         $scope.preloaderByStatus = true;
-        var groupCode = row.entity.groupCode,
-          statusCode = row.entity.code,
-          year = row.entity.statusYear;
+        var groupCode  = row.entity.groupCode,
+            statusCode = row.entity.code,
+            year       = row.entity.statusYear;
 
         $http({
           method: 'GET',
@@ -227,7 +239,10 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
           $scope.preloaderByStatus = false;
 
         }, function (reason) {
-          console.log(reason);
+          if (reason.data) {
+            $scope.preloaderByStatus = false;
+            $rootScope.serverErr(reason.data.error);
+          }
         });
 
       }
@@ -288,7 +303,11 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
         writeoutNode(dataSet, 0, $scope.gridOptions.data);
       });
     }, function (reason) {
-      console.log(reason)
+      if (reason.data) {
+        $scope.loader = false;
+        $rootScope.serverErr(reason.data.error);
+        console.log('dada');
+      }
     });
   };
 
@@ -333,6 +352,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
 
     }, function (reason) {
+      if (reason.data) $rootScope.serverErr(reason.data.error);
       console.log(reason);
     });
 
@@ -427,7 +447,6 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
   $scope.statSlicePeriod      = value.period;
   $scope.isTabsLoaded         = false;
   $scope.isReportsSelected    = false;
-  $scope.tabsIsRefreshed      = false;
   $scope.isReadyReportsLoaded = true;
   $scope.isGroup100           = false;
 
@@ -458,6 +477,10 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
   }).then(function (response) {
     $scope.reportTabs = response.data;
   }, function (reason) {
+    if (reason.data) {
+      $scope.isTabsLoaded = false;
+      $rootScope.serverErr(reason.data.error);
+    }
     console.log(reason);
   });
 
@@ -545,7 +568,8 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
       $scope.reportCorpus.tabInfo = {name: '1-П',code: '801'};
 
     }, function (reason) {
-      console.log(reason)
+      if (reason.data) $rootScope.serverErr(reason.data.error);
+      console.log(reason);
     });
   }
 
@@ -623,11 +647,13 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
       // Скрыть индикатор загрузки и показать данные формы
       if (!$scope.isGroup100) $scope.isTabsLoaded = true;
     }, function (reason) {
+      if (reason.data) $rootScope.serverErr(reason.data.error);
       console.log(reason);
     });
     /*=====  Deps grid - get data from backend ======*/
   }, function (reason) {
-    console.log(reason)
+    if (reason.data) $rootScope.serverErr(reason.data.error);
+    console.log(reason);
   });
   /*=====  Regions grid - get data from backend end ======*/
 
@@ -797,6 +823,10 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
           counter++;
         });
       }, function (reason) {
+        if (reason.data) {
+          $scope.isReadyReportsLoaded = false;
+          $rootScope.serverErr(reason.data.error);
+        }
         console.log(reason);
       });
 
@@ -849,6 +879,11 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
       $scope.rowEntityStatusCode = $scope.historyObj.statusCode;
 
       $scope.getStatusInfo($scope.historyObj);
+    }, function(reason){
+      if (reason.data) {
+        $scope.isHistoryTreeLoaded = false;
+        $rootScope.serverErr(reason.data.error);
+      }
     });
   };
   $scope.getStatusTree();
@@ -894,6 +929,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
             ]
           };
         }, function (reason) {
+          if (reason.data) $rootScope.serverErr(reason.data.error);
           console.log(reason);
         });
       };
@@ -971,12 +1007,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
             $timeout(alert(warningMsg), 2000);
             $scope.getStatusTree();
           }, function (reason) {
-            // var wчarningMsg = '';
-            // if (!response.data.errorMsg) {
-            //   warningMsg = 'Невозможно повторно совершить действие!';
-            // } else {
-            //   warningMsg = 'Операция успешно совершена';
-            // }
+            if (reason.data) $rootScope.serverErr(reason.data.error);
             console.log(reason);
           });
         }
@@ -1015,6 +1046,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
 
               $scope.getStatusTree();
             }, function (reason) {
+              if (reason.data) $rootScope.serverErr(reason.data.error);
               console.log(reason);
             });
           };
@@ -1045,6 +1077,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         $timeout(alert('Операция успешно совершена'), 2000);
         $scope.getStatusTree();
       }, function (reason) {
+        if (reason.data) $rootScope.serverErr(reason.data.error);
         console.log(reason);
       });
     }

@@ -13,8 +13,8 @@ var app = angular.module('app', [
 ]);
 
 app.constant('CONFIGS', {
-  URL: 'http://192.168.210.10:8081/api/v1/RU/',
-  // URL: 'https://analytic-centre.tk:8081/api/v1/RU/' // DEV URL
+  // URL: 'http://192.168.210.10:8081/api/v1/RU/',
+  URL: 'https://analytic-centre.tk:8081/api/v1/RU/' // DEV URL
 }).constant('STATUS_CODES', {
   IN_PROCESSING         : '0', // В обработке
   APPROVED              : '1', // Утвержден
@@ -222,9 +222,17 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
             statusCode = row.entity.code,
             year       = row.entity.statusYear;
 
+
+
+        console.log($scope.checkboxModel.value);
+        var checkDeleted = '';
+        if ($scope.checkboxModel.value === true){
+          checkDeleted = true
+        } else checkDeleted = false;
+
         $http({
           method: 'GET',
-          url: CONFIGS.URL+'slices?deleted=false&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + '',
+          url: CONFIGS.URL+'slices?deleted='+checkDeleted+'&groupCode=' + groupCode + '&statusCode=' + statusCode + '&year=' + year + '',
           headers: {
             sessionKey: 'admin'
           }

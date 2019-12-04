@@ -820,18 +820,14 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
 app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalInstance, value, STATUS_CODES, USER_ROLES, BUTTONS, $uibModal, $timeout, $rootScope, $interval, CONFIGS) {
 
   /*=====  Получение данных ======*/
-  $scope.statusInfoData = [];
-  var url = '';
-  $scope.srezNo = value.id;
-  $scope.period = value.period;
-  $scope.srezToNum = value.maxRecNum;
-  $scope.showTabs = false;
-
-  // Получаем код статуса со строки - row.entity
-  $scope.rowEntityStatusCode = value.statusCode; // Here show buttons by current Status
-  $scope.statusCode = value.statusCode;
-
-  $scope.lastPreliminaryStatus = value.statusCode;
+  $scope.statusInfoData      = [];
+  var url                    = '';
+  $scope.srezNo              = value.id;
+  $scope.period              = value.period;
+  $scope.srezToNum           = value.maxRecNum;
+  $scope.isHistoryTreeLoaded = false;
+  $scope.rowEntityStatusCode = value.statusCode; // Получаем код статуса со строки - row.entity
+  $scope.statusCode          = value.statusCode;
 
   if ($rootScope.userRole === '19000090') {
     $scope.userRole = USER_ROLES.ONE;
@@ -840,11 +836,10 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   }
   /*=====  Получение данных end ======*/
 
-
   $scope.activeTabIndex = 0;
   /*Получаем дерево статусов в зависимости от Номера среза*/
   $scope.getStatusTree = function () {
-    $scope.showTabs = false;
+    $scope.isHistoryTreeLoaded = false;
     $http({
       method: 'GET',
       url: CONFIGS.URL+'slices/' + $scope.srezNo + '/history',
@@ -852,12 +847,10 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         sessionKey: 'admin'
       }
     }).then(function (response) {
-      $scope.history = response.data;
-      //Make tab active depends on last index of status
-      $scope.activeTabIndex = $scope.history.length - 1;
-      $scope.showTabs = true;
-
-      $scope.historyObj = $scope.history[$scope.activeTabIndex];
+      $scope.history             = response.data;
+      $scope.activeTabIndex      = $scope.history.length - 1; //Make tab active depends on last index of status
+      $scope.isHistoryTreeLoaded = true;
+      $scope.historyObj          = $scope.history[$scope.activeTabIndex];
       $scope.rowEntityStatusCode = $scope.historyObj.statusCode;
 
       $scope.getStatusInfo($scope.historyObj);
@@ -870,10 +863,10 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   в дереве статусов и перезаписываем полученный из row.entity ======*/
   $scope.getStatusInfo = function (selectedStatus) {
     $rootScope.historyId = selectedStatus.id;
-    $scope.statusCode = selectedStatus.statusCode;
+    $scope.statusCode    = selectedStatus.statusCode;
 
     if (selectedStatus.statusCode === STATUS_CODES.IN_AGREEMENT) {
-      $scope.approving = function() {
+      $scope.updateApprovingTable = function() {
         $http({
           method: 'GET',
           url: CONFIGS.URL+'slices/' + selectedStatus.sliceId + '/history/' + selectedStatus.id + '/approving',
@@ -882,7 +875,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
           }
         }).then(function (response) {
           $scope.statusInfoData = response.data;
-
+          // console.log($scope.statusInfoData);
           $scope.gridOptionsAgreement = {
             data: response.data,
             showGridFooter: false,
@@ -906,19 +899,14 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
               {name: 'personName', width: '170', displayName: 'ФИО'}
             ]
           };
-
-
-
         }, function (reason) {
           console.log(reason);
         });
       };
-      $scope.approving();
+      $scope.updateApprovingTable();
 
-      $interval( function(){$scope.approving(); }, 5000);
+      $interval( function(){$scope.updateApprovingTable(); }, 5000);
     }
-
-
 
     /*=====  Сравниваем полученный код статуса и меняем URL HTTP запроса ======*/
     switch ($scope.statusCode) {
@@ -927,9 +915,11 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         selectedStatus.completed = value.completed;
         $scope.statusInfo        = selectedStatus;
         break;
+
       case STATUS_CODES.APPROVED: // Окончательный
         $scope.statusInfo        = selectedStatus;
         break;
+
       case STATUS_CODES.PRELIMINARY:
         if (selectedStatus != $scope.historyObj) {
           selectedStatus.created   = value.created;
@@ -937,12 +927,15 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         }
         $scope.statusInfo        = selectedStatus;
         break;
+
       case STATUS_CODES.IN_AGREEMENT: // На согласовании
         $scope.statusInfo        = selectedStatus;
         break;
+
       case STATUS_CODES.DELETED: // Удален
         $scope.statusInfo        = selectedStatus;
         break;
+
       default:
         // statements_def
         break;
@@ -980,15 +973,21 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
               sessionKey: 'admin'
             }
           }).then(function (response) {
-            console.log(response);
             $scope.approveBtnDisabled = true;
-            $timeout(alert('Операция успешно совершена'), 2000);
+            $timeout(alert(warningMsg), 2000);
             $scope.getStatusTree();
           }, function (reason) {
+            // var wчarningMsg = '';
+            // if (!response.data.errorMsg) {
+            //   warningMsg = 'Невозможно повторно совершить действие!';
+            // } else {
+            //   warningMsg = 'Операция успешно совершена';
+            // }
             console.log(reason);
           });
         }
         else{
+
           $(document).ready(function(){
             $("#rejectionReasonBtn").click(function(){
               $("#rejectionReasonModal").modal();
@@ -1013,10 +1012,13 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
               console.log(response);
               $scope.approveBtnDisabled = true;
               $timeout(alert('Операция успешно совершена'), 2000);
+
+
               $("#rejectionReasonModal").modal("hide");
               $("#rejectionReasonModal").on('hidden.bs.modal', function (e) {
                 $('body').addClass('modal-open');
               });
+
               $scope.getStatusTree();
             }, function (reason) {
               console.log(reason);
@@ -1036,22 +1038,23 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         break;
     }
 
+    if (btnNum != BUTTONS.APPROVE) {
+      $http({
+        method: 'PUT',
+        url: CONFIGS.URL+'slices/' + $scope.srezNo + '/' + btnActionUrl,
+        headers: {
+          sessionKey: 'admin'
+        }
+      }).then(function (response) {
+        console.log(response);
+        $scope.approveBtnDisabled = true;
+        $timeout(alert('Операция успешно совершена'), 2000);
+        $scope.getStatusTree();
+      }, function (reason) {
+        console.log(reason);
+      });
+    }
 
-    $http({
-      method: 'PUT',
-      url: CONFIGS.URL+'slices/' + $scope.srezNo + '/' + btnActionUrl,
-      // data: approveObj,
-      headers: {
-        sessionKey: 'admin'
-      }
-    }).then(function (response) {
-      console.log(response);
-      $scope.approveBtnDisabled = true;
-      $timeout(alert('Операция успешно совершена'), 2000);
-      $scope.getStatusTree();
-    }, function (reason) {
-      console.log(reason);
-    });
   };
 
   $scope.modalRejectionReason = function (rowEntity) {

@@ -13,8 +13,8 @@ var app = angular.module('app', [
 ]);
 
 app.constant('CONFIGS', {
-  URL: 'http://192.168.210.10:8081/api/v1/RU/',
-  // URL: 'https://analytic-centre.tk:8081/api/v1/RU/' // DEV URL
+  // URL: 'http://192.168.210.10:8081/api/v1/RU/',
+  URL: 'https://analytic-centre.tk:8081/api/v1/RU/' // DEV URL
 }).constant('STATUS_CODES', {
   IN_PROCESSING         : '0', // В обработке
   APPROVED              : '1', // Утвержден
@@ -1008,10 +1008,11 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
             }
           }).then(function (response) {
             $scope.approveBtnDisabled = true;
-            $timeout(alert(warningMsg), 2000);
+            $timeout(alert('Операция успешно совершена'), 2000);
             $scope.getStatusTree();
           }, function (reason) {
-            if (reason.data) $rootScope.serverErr(reason.data.error);
+            var errMsg = 'Вы уже провели процедуру согласования';
+            if (reason.data) $rootScope.serverErr(errMsg);
             console.log(reason);
           });
         }
@@ -1041,8 +1042,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
               console.log(response);
               $scope.approveBtnDisabled = true;
               $timeout(alert('Операция успешно совершена'), 2000);
-
-
               $("#rejectionReasonModal").modal("hide");
               $("#rejectionReasonModal").on('hidden.bs.modal', function (e) {
                 $('body').addClass('modal-open');
@@ -1050,7 +1049,8 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
 
               $scope.getStatusTree();
             }, function (reason) {
-              if (reason.data) $rootScope.serverErr(reason.data.error);
+              var errMsg = 'Вы уже провели процедуру согласования';
+              if (reason.data) $rootScope.serverErr(errMsg);
               console.log(reason);
             });
           };

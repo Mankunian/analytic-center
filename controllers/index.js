@@ -283,6 +283,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   var url = '';
   $scope.loader = false;
   $scope.getSliceGroups = function (check) {
+
     $scope.loader = true;
     if (check) {
       url = CONFIGS.URL+'slices/parents?deleted=true';
@@ -356,6 +357,12 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       $scope.user.length = 0;
       $scope.showGrid = response.data;
 
+
+      $scope.objectByOrderSrez = response.data;
+      angular.forEach($scope.objectByOrderSrez, function (value) {
+        console.log(value)
+        //todo передать в getSliceGroups(), там проверять на наличие этого rowEntity и по его index открывать групприровку
+      });
       $scope.getSliceGroups();
 
 
@@ -881,7 +888,9 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
       }
     }).then(function (response) {
       $scope.history             = response.data;
-      $scope.activeTabIndex      = $scope.history.length - 1; //Make tab active depends on last index of status
+      $scope.activeTabIndex      = $scope.history.length - 1; //get last index of array history
+      $scope.lastElementOfHistory      = $scope.history[0]; // try to get first element of array history
+      console.log($scope.lastElementOfHistory);
       $scope.isHistoryTreeLoaded = true;
       $scope.historyObj          = $scope.history[$scope.activeTabIndex];
       $scope.rowEntityStatusCode = $scope.historyObj.statusCode;
@@ -962,7 +971,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         break;
 
       case STATUS_CODES.PRELIMINARY:
-        if (selectedStatus != $scope.historyObj) {
+        if (selectedStatus === $scope.lastElementOfHistory) {
           selectedStatus.created   = value.created;
           selectedStatus.completed = value.completed;
         }

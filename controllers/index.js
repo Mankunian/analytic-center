@@ -78,6 +78,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       }
     }).then(function (value) {
       $scope.status = value.data;
+    }, function (reason) {
+      console.log(reason)
     });
   };
   $scope.getStatus();
@@ -99,6 +101,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
           v.disabled = true;
         }
       });
+    }, function (reason) {
+      console.log(reason)
     });
   };
   $scope.getGroups();
@@ -114,6 +118,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       }
     }).then(function (value) {
       $scope.statsrez = value.data.value;
+    }, function (reason) {
+      console.log(reason)
     });
   };
 
@@ -286,6 +292,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
         writeoutNode(dataSet, 0, $scope.gridOptions.data);
       });
       console.log(dataSet);
+    }, function (reason) {
+      console.log(reason)
     });
   };
 
@@ -454,6 +462,8 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
     }
   }).then(function (response) {
     $scope.reportTabs = response.data;
+  }, function (reason) {
+    console.log(reason)
   });
 
   $scope.getReportInfo = function (index) {
@@ -539,6 +549,8 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
       $scope.isTabsLoaded = true;
       $scope.reportCorpus.tabInfo = {name: '1-П',code: '801'};
 
+    }, function (reason) {
+      console.log(reason)
     });
   }
 
@@ -619,6 +631,8 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
       console.log(reason);
     });
     /*=====  Deps grid - get data from backend ======*/
+  }, function (reason) {
+    console.log(reason)
   });
   /*=====  Regions grid - get data from backend end ======*/
 
@@ -818,8 +832,6 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   $scope.statusCode = value.statusCode;
 
   $scope.lastPreliminaryStatus = value.statusCode;
-
-  console.log($rootScope.userRole);
 
   if ($rootScope.userRole === '19000090') {
     $scope.userRole = USER_ROLES.ONE;

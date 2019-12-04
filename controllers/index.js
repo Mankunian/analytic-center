@@ -189,10 +189,10 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       },
 
       {
-        name: 'created',
+        name: 'completed_date',
         displayName: 'Сформирован',
         width: '200',
-        cellTemplate: '<div class="indentInline">{{row.entity.created}}</div>'
+        cellTemplate: '<div class="indentInline">{{row.entity.completed_date}}</div>'
       },
       {
         name: 'button',

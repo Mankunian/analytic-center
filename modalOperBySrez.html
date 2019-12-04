@@ -123,6 +123,11 @@
             <h5><b>Статус:</b> {{statusInfo.statusName}}</h5>
             <h5><b>Срез отправил на согласование:</b> {{statusInfo.personName}}</h5>
             <h5><b>Время перевода на согласование:</b> {{statusInfo.statusDate}}</h5>
+
+
+              <button ng-if="gridOptionsAgreement" style="min-width: 0" title="Обновить таблицу" ng-click="updateApprovingTable()"
+                      class="btn btn-primary"><i class="fas fa-sync"></i></button>
+
             <div id="gridInAgreement" ui-grid="gridOptionsAgreement" ng-if="gridOptionsAgreement" ui-grid-cellnav
                  class="grid"></div>
           </div>

@@ -936,6 +936,9 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
               {name: 'personName', width: '170', displayName: 'ФИО'}
             ]
           };
+
+
+          // $interval( function(){$scope.updateApprovingTable(); }, 20000);
         }, function (reason) {
           if (reason.data) $rootScope.serverErr(reason.data.error);
           console.log(reason);
@@ -943,7 +946,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
       };
       $scope.updateApprovingTable();
 
-      $interval( function(){$scope.updateApprovingTable(); }, 5000);
+
     }
 
     /*=====  Сравниваем полученный код статуса и меняем URL HTTP запроса ======*/

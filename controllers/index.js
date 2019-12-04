@@ -41,6 +41,8 @@ app.constant('CONFIGS', {
   $rootScope.serverErr = function(errMsg){
     if (errMsg != undefined) {
       alert(errMsg);
+    } else {
+      alert('Произошла ошибка на сервере.');
     }
   };
 });

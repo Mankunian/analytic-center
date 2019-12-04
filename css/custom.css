@@ -407,6 +407,8 @@ button.btn:hover {
 .modal-header .close {
   opacity: 1;
   color: #fff;
+  font-size: 30px;
+  line-height: 0.7;
 }
 input.form-control {
   border-radius: 0;

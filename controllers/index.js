@@ -78,6 +78,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       }
     }).then(function (value) {
       $scope.status = value.data;
+    }, function (reason) {
+      console.log(reason)
     });
   };
   $scope.getStatus();
@@ -99,6 +101,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
           v.disabled = true;
         }
       });
+    }, function (reason) {
+      console.log(reason)
     });
   };
   $scope.getGroups();
@@ -114,6 +118,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       }
     }).then(function (value) {
       $scope.statsrez = value.data.value;
+    }, function (reason) {
+      console.log(reason)
     });
   };
 
@@ -286,6 +292,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
         writeoutNode(dataSet, 0, $scope.gridOptions.data);
       });
       console.log(dataSet);
+    }, function (reason) {
+      console.log(reason)
     });
   };
 
@@ -454,6 +462,8 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
     }
   }).then(function (response) {
     $scope.reportTabs = response.data;
+  }, function (reason) {
+    console.log(reason)
   });
 
   $scope.getReportInfo = function (index) {
@@ -539,6 +549,8 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
       $scope.isTabsLoaded = true;
       $scope.reportCorpus.tabInfo = {name: '1-П',code: '801'};
 
+    }, function (reason) {
+      console.log(reason)
     });
   }
 
@@ -619,6 +631,8 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
       console.log(reason);
     });
     /*=====  Deps grid - get data from backend ======*/
+  }, function (reason) {
+    console.log(reason)
   });
   /*=====  Regions grid - get data from backend end ======*/
 
@@ -812,7 +826,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   $scope.period              = value.period;
   $scope.srezToNum           = value.maxRecNum;
   $scope.isHistoryTreeLoaded = false;
-  $scope.rowEntityStatusCode = value.statusCode; // Получаем код статуса со строки - row.entity 
+  $scope.rowEntityStatusCode = value.statusCode; // Получаем код статуса со строки - row.entity
   $scope.statusCode          = value.statusCode;
 
   if ($rootScope.userRole === '19000090') {
@@ -835,7 +849,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
     }).then(function (response) {
       $scope.history             = response.data;
       $scope.activeTabIndex      = $scope.history.length - 1; //Make tab active depends on last index of status
-      $scope.isHistoryTreeLoaded = true;      
+      $scope.isHistoryTreeLoaded = true;
       $scope.historyObj          = $scope.history[$scope.activeTabIndex];
       $scope.rowEntityStatusCode = $scope.historyObj.statusCode;
 
@@ -905,7 +919,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
       case STATUS_CODES.APPROVED: // Окончательный
         $scope.statusInfo        = selectedStatus;
         break;
-      
+
       case STATUS_CODES.PRELIMINARY:
         if (selectedStatus != $scope.historyObj) {
           selectedStatus.created   = value.created;
@@ -913,15 +927,15 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
         }
         $scope.statusInfo        = selectedStatus;
         break;
-      
+
       case STATUS_CODES.IN_AGREEMENT: // На согласовании
         $scope.statusInfo        = selectedStatus;
         break;
-      
+
       case STATUS_CODES.DELETED: // Удален
         $scope.statusInfo        = selectedStatus;
         break;
-      
+
       default:
         // statements_def
         break;
@@ -1004,7 +1018,7 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
               $("#rejectionReasonModal").on('hidden.bs.modal', function (e) {
                 $('body').addClass('modal-open');
               });
-              
+
               $scope.getStatusTree();
             }, function (reason) {
               console.log(reason);

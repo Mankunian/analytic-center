@@ -1048,12 +1048,14 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
           });
         }
         else{
+          $scope.isApproveFormVisible = true;
 
-          $(document).ready(function(){
+          /*$(document).ready(function(){
             $("#rejectionReasonBtn").click(function(){
               $("#rejectionReasonModal").modal();
             });
-          });
+          });*/
+          // $scope.openRejectionReasonModal = true;
           $scope.sendReason = function (msg) {
             var rejectObj = {
               "historyId": $scope.historyObj.id,
@@ -1073,24 +1075,27 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
               console.log(response);
               $scope.approveBtnDisabled = true;
               $timeout(alert('Операция успешно совершена'), 2000);
-              $("#rejectionReasonModal").modal("hide");
+              /*$("#rejectionReasonModal").modal("hide");
               $("#rejectionReasonModal").on('hidden.bs.modal', function (e) {
                 $('body').addClass('modal-open');
-              });
+              });*/
+              $scope.isApproveFormVisible = false;
 
               $scope.getStatusTree();
             }, function (reason) {
               var errMsg = 'Вы уже провели процедуру согласования';
               if (reason.data) $rootScope.serverErr(errMsg);
               console.log(reason);
+              $scope.isApproveFormVisible = false;
             });
           };
 
           $scope.cancelReasonModal = function () {
-            $("#rejectionReasonModal").modal("hide");
+            /*$("#rejectionReasonModal").modal("hide");
             $("#rejectionReasonModal").on('hidden.bs.modal', function (e) {
               $('body').addClass('modal-open');
-            });
+            });*/
+            $scope.isApproveFormVisible = false;
           };
         }
         break;

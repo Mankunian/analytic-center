@@ -544,3 +544,71 @@ input.form-control {
     bottom: 0;
     right: 50px;
 }
+
+#rejectionModal{
+  width: 250px;
+  height: 250px;
+  background: #1b2735;
+}
+
+.inner {
+  position: absolute;
+  left: 50%;
+  top: 30%;
+  transform: translate(-50%, -50%);
+  max-width: 60%;
+  text-align: center;
+  width: 890px;
+  background: #fff;
+  height: 250px;
+}
+
+.inner-header{
+  background-color: #214878;
+  border: none;
+  padding: 5px;
+  color: #fff;
+}
+
+.inner-header .close{
+opacity: 1;
+color: #fff;
+font-size: 30px;
+line-height: 0.7;
+width: 40px;
+height: 40px;
+display: block;
+}
+
+.inner-header h4{
+  margin: 10px;
+  text-align: left;
+}
+
+.inner-body{
+  position: relative;
+  padding: 15px;
+}
+
+.inner-footer{
+  padding: 15px;
+  text-align: right;
+  border-top: 1px solid #e5e5e5;
+}
+
+.inner-body textarea{
+  width: 100%;
+  padding: 10px;
+  border: 1px solid grey;
+}
+.modal-inner-content:after {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background: rgba(0,0,0,0.5);
+}
+.modal-inner-content.isApproveFormVisible:after {
+  content: '';
+}

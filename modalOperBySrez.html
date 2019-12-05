@@ -1,176 +1,193 @@
 <link rel="stylesheet" href="css/operBySrez.css" type="text/css">
 
 <div ng-controller="modalOperBySrezCtrl">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" ng-click="cancel()">×</button>
-    <h4 class="modal-heading">Операции со срезами</h4>
-  </div>
-  <div class="modal-body">
-    <div class="row">
-      <div class="col-md-12">
-        <div>
-          <div class="col-md-5 noPadding">
-            <div style="min-height: 70vh; height: 100%; padding: 0 10px">
+  <div class="modal-inner-content" ng-class="{'isApproveFormVisible': isApproveFormVisible}">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" ng-click="cancel()">×</button>
+      <h4 class="modal-heading">Операции со срезами</h4>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-md-12">
+          <div>
+            <div class="col-md-5 noPadding">
+              <div style="min-height: 70vh; height: 100%; padding: 0 10px">
 
-            <div class="col-md-12">
-              <div class="row">
-                <div style="float: left">
-                  <h5><b>№ среза:</b> {{srezNo}}</h5>
-                </div>
-                <div style="float: right">
-                  <h5><b>Период:</b> {{period}}</h5>
+              <div class="col-md-12">
+                <div class="row">
+                  <div style="float: left">
+                    <h5><b>№ среза:</b> {{srezNo}}</h5>
+                  </div>
+                  <div style="float: right">
+                    <h5><b>Период:</b> {{period}}</h5>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div class="statusTree">
-              <div class="preloader-block ready-reports statusTree-preloader" ng-if="!isHistoryTreeLoaded">
-                <div class="lds-ring-readyReports"><div></div><div></div><div></div><div></div></div>
+              <div class="statusTree">
+                <div class="preloader-block ready-reports statusTree-preloader" ng-if="!isHistoryTreeLoaded">
+                  <div class="lds-ring-readyReports"><div></div><div></div><div></div><div></div></div>
+                </div>
+                <uib-tabset class="statusHistory" ng-if="isHistoryTreeLoaded" id="tabs" data-tabactive="activeTabInd" active="activeTabIndex" vertical="true" type="pills">
+                  <uib-tab ng-style="{'margin-left': $index*15 + 'px'}" ng-repeat="status in history"
+                           ng-click="getStatusInfo(status, $index)" style="width: fit-content; margin: 5px" index="$index"
+                           heading="{{status.statusName}}"></uib-tab>
+                </uib-tabset>
               </div>
-              <uib-tabset class="statusHistory" ng-if="isHistoryTreeLoaded" id="tabs" data-tabactive="activeTabInd" active="activeTabIndex" vertical="true" type="pills">
-                <uib-tab ng-style="{'margin-left': $index*15 + 'px'}" ng-repeat="status in history"
-                         ng-click="getStatusInfo(status, $index)" style="width: fit-content; margin: 5px" index="$index"
-                         heading="{{status.statusName}}"></uib-tab>
-              </uib-tabset>
-            </div>
 
-            <div ng-if="userRole == USER_ROLES.ONE">
+              <div ng-if="userRole == USER_ROLES.ONE">
 
 
-              <button ng-click="statusAction(BUTTONS.SEND)" class="btn" ng-if="
-              rowEntityStatusCode == STATUS_CODES.PRELIMINARY">На согласование
-              </button>
-
-
-              <button ng-click="statusAction(BUTTONS.PRELIMINARY)" class="btn" ng-if="
-              rowEntityStatusCode == STATUS_CODES.APPROVED">Перевести в Предварительный
-              </button>
-
-
-              <button class="btn" ng-if="
-              rowEntityStatusCode == STATUS_CODES.FORMED_WITH_ERROR
-              || rowEntityStatusCode == STATUS_CODES.PRELIMINARY
-              || rowEntityStatusCode == STATUS_CODES.IN_AGREEMENT" ng-click="statusAction(BUTTONS.DELETE)">Удалить
-              </button>
-
-
-              <button ng-click="statusAction(BUTTONS.CONFIRM)" class="btn" ng-if="
-              rowEntityStatusCode == STATUS_CODES.PRELIMINARY || rowEntityStatusCode == STATUS_CODES.IN_AGREEMENT">
-                Утвердить
-              </button>
-            </div>
-
-              <div ng-if="userRole == USER_ROLES.ZERO" ng-hide="isApproved">
-                <button ng-disabled="approveBtnDisabled || isApproved" ng-click="statusAction(BUTTONS.APPROVE, 1) " class="btn" ng-if="
-              rowEntityStatusCode == STATUS_CODES.IN_AGREEMENT">Согласовать
+                <button ng-click="statusAction(BUTTONS.SEND)" class="btn" ng-if="
+                rowEntityStatusCode == STATUS_CODES.PRELIMINARY">На согласование
                 </button>
 
-                <button ng-disabled="approveBtnDisabled" id="rejectionReasonBtn" ng-click="statusAction(BUTTONS.APPROVE, 2)" class="btn" ng-if="
-              rowEntityStatusCode == STATUS_CODES.IN_AGREEMENT">Отказать
+
+                <button ng-click="statusAction(BUTTONS.PRELIMINARY)" class="btn" ng-if="
+                rowEntityStatusCode == STATUS_CODES.APPROVED">Перевести в Предварительный
                 </button>
+
+
+                <button class="btn" ng-if="
+                rowEntityStatusCode == STATUS_CODES.FORMED_WITH_ERROR
+                || rowEntityStatusCode == STATUS_CODES.PRELIMINARY
+                || rowEntityStatusCode == STATUS_CODES.IN_AGREEMENT" ng-click="statusAction(BUTTONS.DELETE)">Удалить
+                </button>
+
+
+                <button ng-click="statusAction(BUTTONS.CONFIRM)" class="btn" ng-if="
+                rowEntityStatusCode == STATUS_CODES.PRELIMINARY || rowEntityStatusCode == STATUS_CODES.IN_AGREEMENT">
+                  Утвердить
+                </button>
+              </div>
+
+                <div ng-if="userRole == USER_ROLES.ZERO" ng-hide="isApproved">
+                  <button ng-disabled="approveBtnDisabled || isApproved" ng-click="statusAction(BUTTONS.APPROVE, 1) " class="btn" ng-if="
+                rowEntityStatusCode == STATUS_CODES.IN_AGREEMENT">Согласовать
+                  </button>
+
+                  <button ng-disabled="approveBtnDisabled" id="rejectionReasonBtn" ng-click="statusAction(BUTTONS.APPROVE, 2)" class="btn" ng-if="
+                rowEntityStatusCode == STATUS_CODES.IN_AGREEMENT">Отказать
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!--Инфо по статусу Сформирован с ошибкой-->
-        <div ng-if="statusCode == STATUS_CODES.FORMED_WITH_ERROR" class="col-md-7 noPadding">
-          <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
-            <h5><b>Статус:</b> {{statusInfo.statusName}}</h5>
-            <h5><b>Срез заказал:</b> {{statusInfo.personName}}</h5>
-            <h5><b>Время заказа среза:</b> {{statusInfo.statusDate}}</h5>
-            <h5><b>Время начала формирования:</b> {{statusInfo.created}}</h5>
-            <h5><b>Время окончания формирования: </b> {{statusInfo.completed}}</h5>
+          <!--Инфо по статусу Сформирован с ошибкой-->
+          <div ng-if="statusCode == STATUS_CODES.FORMED_WITH_ERROR" class="col-md-7 noPadding">
+            <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
+              <h5><b>Статус:</b> {{statusInfo.statusName}}</h5>
+              <h5><b>Срез заказал:</b> {{statusInfo.personName}}</h5>
+              <h5><b>Время заказа среза:</b> {{statusInfo.statusDate}}</h5>
+              <h5><b>Время начала формирования:</b> {{statusInfo.created}}</h5>
+              <h5><b>Время окончания формирования: </b> {{statusInfo.completed}}</h5>
 
-            <h5><b>Сообщение об ошибке:</b></h5>
+              <h5><b>Сообщение об ошибке:</b></h5>
 
-            <div style="border: 1px solid #a7a4a4; padding: 10px">
-              <h5 style="color: red">{{statusInfo.msg}}</h5>
-            </div>
+              <div style="border: 1px solid #a7a4a4; padding: 10px">
+                <h5 style="color: red">{{statusInfo.msg}}</h5>
+              </div>
 
-          </div>
-        </div>
-        <!--Инфо по статусу Сформирован с ошибкой-->
-
-        <!--Инфо по статусу Окончательный / Утвержден-->
-        <div ng-if="statusCode == STATUS_CODES.APPROVED" class="col-md-7 noPadding">
-          <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
-            <h5><b>Статус:</b> {{statusInfo.statusName}}</h5>
-            <h5><b>Срез утвердил:</b> {{statusInfo.personName}}</h5>
-            <h5><b>Время утверждения:</b> {{statusInfo.statusDate}}</h5>
-          </div>
-        </div>
-        <!--Инфо по статусу Окончательный / Утвержден-->
-
-        <!--Инфо по статусу Предварительный-->
-        <div ng-if="statusCode == STATUS_CODES.PRELIMINARY" class="col-md-7 noPadding">
-          <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
-            <h5><b>Статус:</b> {{statusInfo.statusName}}</h5>
-            <h5><b>Срез перевел:</b> {{statusInfo.personName}}</h5>
-            <h5><b>Время перевода среза:</b> {{statusInfo.statusDate}}</h5>
-            <div>
-              <h5 ng-if="statusInfo.created"><b>Время начала формирования:</b>{{statusInfo.created}}</h5>
-              <h5 ng-if="statusInfo.completed"><b>Время окончания формирования: </b> {{statusInfo.completed}}</h5>
             </div>
           </div>
-        </div>
-        <!--Инфо по статусу Предварительный-->
+          <!--Инфо по статусу Сформирован с ошибкой-->
 
-        <!--Инфо по статусу На согласовании-->
-        <div ng-if="statusCode == STATUS_CODES.IN_AGREEMENT" class="col-md-7 noPadding">
-          <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
-            <h5><b>Статус:</b> {{statusInfo.statusName}}</h5>
-            <h5><b>Срез отправил на согласование:</b> {{statusInfo.personName}}</h5>
-            <h5><b>Время перевода на согласование:</b> {{statusInfo.statusDate}}</h5>
-
-
-              <button ng-if="gridOptionsAgreement" style="min-width: 0" title="Обновить таблицу" ng-click="updateApprovingTable()"
-                      class="btn btn-primary"><i class="fas fa-sync"></i></button>
-
-            <div id="gridInAgreement" ui-grid="gridOptionsAgreement" ng-if="gridOptionsAgreement" ui-grid-cellnav
-                 class="grid"></div>
+          <!--Инфо по статусу Окончательный / Утвержден-->
+          <div ng-if="statusCode == STATUS_CODES.APPROVED" class="col-md-7 noPadding">
+            <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
+              <h5><b>Статус:</b> {{statusInfo.statusName}}</h5>
+              <h5><b>Срез утвердил:</b> {{statusInfo.personName}}</h5>
+              <h5><b>Время утверждения:</b> {{statusInfo.statusDate}}</h5>
+            </div>
           </div>
-        </div>
-        <!--Инфо по статусу На согласовании-->
+          <!--Инфо по статусу Окончательный / Утвержден-->
 
-
-        <!--Инфо по статусу Удален-->
-        <div ng-if="statusCode == STATUS_CODES.DELETED" class="col-md-7 noPadding">
-          <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
-            <h5><b>Статус:</b> {{statusInfo.statusName}}</h5>
-            <h5><b>Срез удалил:</b> {{statusInfo.personName}}</h5>
-            <h5><b>Время удаления среза:</b> {{statusInfo.statusDate}}</h5>
+          <!--Инфо по статусу Предварительный-->
+          <div ng-if="statusCode == STATUS_CODES.PRELIMINARY" class="col-md-7 noPadding">
+            <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
+              <h5><b>Статус:</b> {{statusInfo.statusName}}</h5>
+              <h5><b>Срез перевел:</b> {{statusInfo.personName}}</h5>
+              <h5><b>Время перевода среза:</b> {{statusInfo.statusDate}}</h5>
+              <div>
+                <h5 ng-if="statusInfo.created"><b>Время начала формирования:</b>{{statusInfo.created}}</h5>
+                <h5 ng-if="statusInfo.completed"><b>Время окончания формирования: </b> {{statusInfo.completed}}</h5>
+              </div>
+            </div>
           </div>
-        </div>
-        <!--Инфо по статусу Удален-->
+          <!--Инфо по статусу Предварительный-->
 
+          <!--Инфо по статусу На согласовании-->
+          <div ng-if="statusCode == STATUS_CODES.IN_AGREEMENT" class="col-md-7 noPadding">
+            <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
+              <h5><b>Статус:</b> {{statusInfo.statusName}}</h5>
+              <h5><b>Срез отправил на согласование:</b> {{statusInfo.personName}}</h5>
+              <h5><b>Время перевода на согласование:</b> {{statusInfo.statusDate}}</h5>
+
+
+                <button ng-if="gridOptionsAgreement" style="min-width: 0" title="Обновить таблицу" ng-click="updateApprovingTable()"
+                        class="btn btn-primary"><i class="fas fa-sync"></i></button>
+
+              <div id="gridInAgreement" ui-grid="gridOptionsAgreement" ng-if="gridOptionsAgreement" ui-grid-cellnav
+                   class="grid"></div>
+            </div>
+          </div>
+          <!--Инфо по статусу На согласовании-->
+
+
+          <!--Инфо по статусу Удален-->
+          <div ng-if="statusCode == STATUS_CODES.DELETED" class="col-md-7 noPadding">
+            <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
+              <h5><b>Статус:</b> {{statusInfo.statusName}}</h5>
+              <h5><b>Срез удалил:</b> {{statusInfo.personName}}</h5>
+              <h5><b>Время удаления среза:</b> {{statusInfo.statusDate}}</h5>
+            </div>
+          </div>
+          <!--Инфо по статусу Удален-->
+
+        </div>
       </div>
     </div>
-  </div>
-  <div class="modal-footer">
-    <button class="btn btn-danger" ng-click="cancel()">Отмена</button>
-  </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger" ng-click="cancel()">Отмена</button>
+    </div>
 
-  <!-- Modal -->
-  <div class="modal fade" id="rejectionReasonModal" role="dialog">
-    <div class="modal-dialog">
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h3 style="color: #fff" class="modal-title">Причина отказа в согласовании</h3>
+    <!-- Modal -->
+    <!--<div  class="modal fade" id="rejectionReasonModal" role="dialog">
+      <div class="modal-dialog">
+        &lt;!&ndash; Modal content&ndash;&gt;
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h3 style="color: #fff" class="modal-title">Причина отказа в согласовании</h3>
+          </div>
+          <div class="modal-body">
+            <textarea ng-model="msg" rows="3" style="width: 100%; padding: 10px" placeholder="Напишите причину отказа"></textarea>
+          </div>
+          <div class="modal-footer">
+            <button ng-click="sendReason(msg)" type="button" class="btn btn-default">Сохранить</button>
+            <button ng-click="cancelReasonModal()" type="button" class="btn btn-default">Вернуться</button>
+          </div>
         </div>
-        <div class="modal-body">
-          <textarea ng-model="msg" rows="3" style="width: 100%; padding: 10px" placeholder="Напишите причину отказа"></textarea>
-        </div>
-        <div class="modal-footer">
-          <button ng-click="sendReason(msg)" type="button" class="btn btn-default">Сохранить</button>
-          <button ng-click="cancelReasonModal()" type="button" class="btn btn-default">Вернуться</button>
-        </div>
+
       </div>
+    </div>-->
+  </div>
 
+  <div ng-if="isApproveFormVisible" class="inner">
+    <div class="inner-header">
+      <button type="button" class="close" ng-click="cancelReasonModal()">&times;</button>
+      <h4>Причина отказа в согласовании</h4>
+    </div>
+    <div class="inner-body">
+      <textarea ng-model="msg" rows="3" style="width: 100%; padding: 10px" placeholder="Напишите причину отказа"></textarea>
+    </div>
+    <div class="inner-footer">
+      <button ng-click="sendReason(msg)" type="button" class="btn btn-default">Сохранить</button>
+      <button ng-click="cancelReasonModal()" type="button" class="btn btn-default">Вернуться</button>
     </div>
   </div>
+
 </div>
 
 

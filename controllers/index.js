@@ -363,7 +363,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
         //todo передать в getSliceGroups(), там проверять на наличие этого rowEntity и по его index открывать групприровку
       });
       $scope.getSliceGroups();
-
+      alert('Срез успешно заказан! Номер среза - '+$scope.statsrez + '. Дата среза - '+dateFromString );
 
     }, function (reason) {
       if (reason.data) $rootScope.serverErr(reason.data.error);

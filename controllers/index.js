@@ -13,8 +13,8 @@ var app = angular.module('app', [
 ]);
 
 app.constant('CONFIGS', {
-  URL: 'http://192.168.210.10:8081/api/v1/RU/'
-  // URL: 'https://analytic-centre.tk:8081/api/v1/RU/' // DEV URL
+  // URL: 'http://192.168.210.10:8081/api/v1/RU/'
+  URL: 'https://analytic-centre.tk:8081/api/v1/RU/' // DEV URL
 }).constant('STATUS_CODES', {
   IN_PROCESSING         : '0', // В обработке
   APPROVED              : '1', // Утвержден
@@ -274,7 +274,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       writeoutNode(childNode.children, currentLevel + 1, dataArray);
     });
   };
-
 
   $scope.checkboxModel = {
     value: false

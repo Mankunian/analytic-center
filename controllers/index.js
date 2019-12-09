@@ -291,47 +291,13 @@ app.controller("MainCtrl", [
       childArray.forEach(function(childNode) {
         if (childNode.children.length > 0) {
           childNode.$$treeLevel = currentLevel;
+        } else {
+          if (id !== childNode.parentCategoryId || childNode.categoryId === childNode.parentCategoryId) {
+            childNode.$$treeLevel = currentLevel;
+          }
         }
-      }
-      dataArray.push(childNode);
-      writeoutNode(childNode.children, currentLevel + 1, dataArray);
-    });
-  };
-
-  $scope.checkboxModel = {
-    value: false
-  };
-
-  var url = '';
-  $scope.loader = false;
-  $scope.getSliceGroups = function (check) {
-
-    $scope.loader = true;
-    if (check) {
-      url = CONFIGS.URL+'slices/parents?deleted=true';
-    } else {
-      url = CONFIGS.URL+'slices/parents?deleted=false';
-    }
-
-    var dataSet = [];
-
-    $http({
-      method: 'GET',
-      url: url,
-      headers: {
-        sessionKey: 'admin'
-      }
-    }).then(function (response) {
-      $scope.loader = false;
-      $scope.showGrid = response.data;
-      $scope.showGrid.forEach(function (data, index) {
-        dataSet.push(data);
-        dataSet[index].children.forEach(function (status) {
-          status.groupCode = dataSet[index].code;
-        });
-
-        $scope.gridOptions.data = [];
-        writeoutNode(dataSet, 0, $scope.gridOptions.data);
+        dataArray.push(childNode);
+        writeoutNode(childNode.children, currentLevel + 1, dataArray);
       });
     };
 
@@ -1210,26 +1176,14 @@ app.controller("modalContentOperBySrezCtrl", function(
               if (reason.data) $rootScope.serverErr(errMsg);
               console.log(reason);
             }
-          }).then(function (response) {
-            $scope.approveBtnDisabled = true;
-            $timeout(alert('Операция успешно совершена'), 2000);
-            $scope.getStatusTree();
-          }, function (reason) {
-            var errMsg = 'Вы уже провели процедуру согласования';
-            if (reason.data) $rootScope.serverErr(errMsg);
-            console.log(reason);
-          });
-        }
-        else{
-          $scope.isApproveFormVisible = true;
-
-          /*$(document).ready(function(){
-            $("#rejectionReasonBtn").click(function(){
+          );
+        } else {
+          $(document).ready(function() {
+            $("#rejectionReasonBtn").click(function() {
               $("#rejectionReasonModal").modal();
             });
-          });*/
-          // $scope.openRejectionReasonModal = true;
-          $scope.sendReason = function (msg) {
+          });
+          $scope.sendReason = function(msg) {
             var rejectObj = {
               historyId: $scope.historyObj.id,
               approveCode: approveCode,
@@ -1242,33 +1196,33 @@ app.controller("modalContentOperBySrezCtrl", function(
               url: CONFIGS.URL + "slices/" + $scope.srezNo + "/" + btnActionUrl,
               data: rejectObj,
               headers: {
-                sessionKey: 'admin'
-              }
-            }).then(function (response) {
-              console.log(response);
-              $scope.approveBtnDisabled = true;
-              $timeout(alert('Операция успешно совершена'), 2000);
-              /*$("#rejectionReasonModal").modal("hide");
-              $("#rejectionReasonModal").on('hidden.bs.modal', function (e) {
-                $('body').addClass('modal-open');
-              });*/
-              $scope.isApproveFormVisible = false;
+                sessionKey: "admin",
+              },
+            }).then(
+              function(response) {
+                console.log(response);
+                $scope.approveBtnDisabled = true;
+                $timeout(alert("Операция успешно совершена"), 2000);
+                $("#rejectionReasonModal").modal("hide");
+                $("#rejectionReasonModal").on("hidden.bs.modal", function(e) {
+                  $("body").addClass("modal-open");
+                });
 
-              $scope.getStatusTree();
-            }, function (reason) {
-              var errMsg = 'Вы уже провели процедуру согласования';
-              if (reason.data) $rootScope.serverErr(errMsg);
-              console.log(reason);
-              $scope.isApproveFormVisible = false;
-            });
+                $scope.getStatusTree();
+              },
+              function(reason) {
+                var errMsg = "Вы уже провели процедуру согласования";
+                if (reason.data) $rootScope.serverErr(errMsg);
+                console.log(reason);
+              }
+            );
           };
 
-          $scope.cancelReasonModal = function () {
+          $scope.cancelReasonModal = function() {
             $("#rejectionReasonModal").modal("hide");
-            $("#rejectionReasonModal").on('hidden.bs.modal', function (e) {
-              $('body').addClass('modal-open');
-            });*/
-            $scope.isApproveFormVisible = false;
+            $("#rejectionReasonModal").on("hidden.bs.modal", function(e) {
+              $("body").addClass("modal-open");
+            });
           };
         }
         break;

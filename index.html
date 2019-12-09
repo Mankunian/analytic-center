@@ -92,7 +92,8 @@
   <span>Статистические срезы</span>
 
   <div style="float: right; margin: 3px">
-    <select ng-if="roleList" class="form-control userRoleCombobox" ng-change="roleSelected(userRole)" ng-model="userRole">
+    <select ng-if="roleList" class="form-control userRoleCombobox" ng-change="roleSelected(userRole)"
+            ng-model="userRole">
       <!--<option value="" disabled selected style='display:none;'>Выберите роль из списка</option>-->
       <option ng-repeat="role in roleList" value="{{role.code}}">{{role.name}}</option>
     </select>
@@ -106,9 +107,15 @@
           <li class="active changeClass"><a data-toggle="tab" href="#home">Срезы</a></li>
           <li class="changeClass"><a data-toggle="tab" href="#menu1">Заказать</a></li>
         </ul>
-        <div ng-if="loader" class="loader">
-          <div class="bar"></div>
+        <div style="width: 100%; height: 5px; background: transparent">
+          <div ng-if="loader" class="loader">
+            <div class="bar"></div>
+          </div>
+          <div ng-if="preloaderByStatus" class="loader">
+            <div class="bar"></div>
+          </div>
         </div>
+
         <div class="tab-content">
           <div id="home" class="tab-pane fade in active">
 
@@ -123,8 +130,13 @@
 
               <div class="col-md-6 col-xs-6">
                 <div class="pull-right">
-                  <label class="containerLabel" >
-                    <input ng-model="checkboxModel.value" ng-change="getSliceGroups(checkboxModel.value)" type="checkbox">Показать удаленные
+                  <label class="containerLabel">
+                    <input ng-model="checkboxModel.value"
+                           ng-change="getSliceGroups(checkboxModel.value)"
+
+
+                           type="checkbox">Показать удаленные
+==== BASE ====
                     <span class="checkmark"></span>
                   </label>
                 </div>
@@ -134,12 +146,9 @@
 
             <div class="row">
               <div class="col-md-12" style="padding-bottom: 25px; padding-top: 10px">
-                <div ng-if="preloaderByStatus" class="loader">
-                  <div class="bar"></div>
-                </div>
                 <div ng-if="showGrid" style="width: 100%" id="grid1" ui-grid="gridOptions"
                      ui-grid-grouping
-                     ui-grid-resize-columns  ui-grid-expandable class="grid"></div>
+                     ui-grid-resize-columns ui-grid-expandable class="grid"></div>
               </div>
             </div>
 
@@ -164,7 +173,8 @@
                     <div class="col-lg-6 col-md-12">
                       <div class="box">
                         <label class="containerLabel" ng-repeat="group in groups">
-                          <input ng-disabled="group.disabled" ng-checked="vChecked" type="checkbox" checklist-model="user"
+                          <input ng-disabled="group.disabled" ng-checked="vChecked" type="checkbox"
+                                 checklist-model="user"
                                  checklist-value="group.code">{{group.name}}
                           <span ng-class="{'disabled-group': group.status == 2}" class="checkmark"></span>
                         </label>

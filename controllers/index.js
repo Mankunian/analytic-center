@@ -138,7 +138,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   $scope.getStatSrez();
 
   //Получить № статсреза
-  var operBySrez = '<div  ' +
+  var operBySrez = '<div style="text-align: center"  ' +
     'ng-controller="modalOperBySrezCtrl" ' +
     'ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" ' +
     'class="ui-grid-cell-contents"> ' +
@@ -180,14 +180,6 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
           "    margin: 5px 60px;\n" +
           "    font-weight: 600;' ng-click='grid.appScope.open(row.entity)' ng-controller=\"ModalControlCtrl\" ng-hide=\"row.treeLevel==0 || row.treeLevel == 1\"><a>{{row.entity.id_period}}</a></button></div>"
       },
-      /*{
-        name: 'id',
-        width: '300',
-        sort: 'asc',
-        enableColumnResizing: true,
-        displayName: 'Номер среза / Период',
-        cellTemplate: '<div ng-hide="row.treeLevel==0 || row.treeLevel == 1"  ng-controller="ModalControlCtrl"><button style="margin: 5px 0; font-weight: 600; border: none; background: transparent" class="btn btn-default"  ng-click="grid.appScope.open(row.entity)"><a>№{{row.entity.id}} период {{row.entity.period}}</a></button></div>'
-      },*/
       {
         name: 'maxRecNum',
         displayName: 'На номер',
@@ -203,14 +195,14 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       },
       {
         name: 'button',
-        width: '200',
+        width: '250',
         displayName: 'Действие',
         cellTemplate: operBySrez
       },
       {
         name: 'region',
         displayName: 'По органу',
-        width: '200',
+        width: '250',
         cellTemplate: '<div class="indentInline">{{row.entity.region}}</div>'
       }
     ]

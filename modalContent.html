@@ -21,14 +21,19 @@
             </div>
           </div>
           <div class="col-md-12">
-            <div class="form-group">
+            <div class="form-group langs-checkboxes">
               <label for="langSelect">Язык отчета</label>
-              <select name="langSelect" id="langSelect"
-              ng-options="option.name for option in langData.langs track by option.id"
-              ng-model="langData.selectedRepLang" class="form-control"></select>
+              <label class="containerLabel">
+                <input type="checkbox" ng-model="reportLangs.ru.isSelected" ng-checked="reportLangs.ru.isInterfaceLang">{{reportLangs.ru.name}}
+                <span class="checkmark"></span>
+              </label>
+              <label class="containerLabel">
+                <input type="checkbox" ng-model="reportLangs.kz.isSelected" ng-checked="reportLangs.kz.isInterfaceLang">{{reportLangs.kz.name}}
+                <span class="checkmark"></span>
+              </label>
             </div>
           </div>
-        </form>   			
+        </form>
       </div>
       <div class="row" style="border-top: 1px solid #e5e5e5; padding-top: 15px;">
         <div class="col-md-6">
@@ -52,7 +57,7 @@
               <li ng-repeat="item in readyReports">
                 <a href="{{item.url}}">{{item.name | limitTo: 55}}{{item.name.length > 55 ? '&hellip;' : ''}}</a>
               </li>
-            </ul>                  
+            </ul>
           </div>
         </div>
       </div>

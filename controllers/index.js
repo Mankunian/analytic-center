@@ -138,7 +138,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
   $scope.getStatSrez();
 
   //Получить № статсреза
-  var operBySrez = '<div style="text-align: center"  ' +
+  var operBySrez = '<div ' +
     'ng-controller="modalOperBySrezCtrl" ' +
     'ng-if="!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null || ( row.groupHeader && col.grouping.groupPriority === row.treeLevel )" ' +
     'class="ui-grid-cell-contents"> ' +
@@ -183,26 +183,26 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
       {
         name: 'maxRecNum',
         displayName: 'На номер',
-        width: '300',
+        width: '150',
         cellTemplate: '<div class="indentInline">{{row.entity.maxRecNum}}</div>'
       },
 
       {
         name: 'completed',
         displayName: 'Сформирован',
-        width: '250',
+        width: '200',
         cellTemplate: '<div class="indentInline">{{row.entity.completed}}</div>'
       },
       {
         name: 'button',
-        width: '250',
+        width: '175',
         displayName: 'Действие',
         cellTemplate: operBySrez
       },
       {
         name: 'region',
         displayName: 'По органу',
-        width: '250',
+        width: '*',
         cellTemplate: '<div class="indentInline">{{row.entity.region}}</div>'
       }
     ]
@@ -357,7 +357,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
         //todo передать в getSliceGroups(), там проверять на наличие этого rowEntity и по его index открывать групприровку
       });
       $scope.getSliceGroups();
-      alert('Срез успешно заказан! Номер среза - '+$scope.sliceNumber + '. Дата среза - '+dateFromString );
+      alert('Будет сформирован срез №'+$scope.sliceNumber + ' период '+dateFromString+' по '+ dateToString );
 
     }, function (reason) {
       if (reason.data) $rootScope.serverErr(reason.data.error);

@@ -175,27 +175,30 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
         width: '450',
         displayName: 'Группы',
         cellTemplate: "<div style=\"margin: 0 10px;\" class=\"ui-grid-cell-contents ng-binding ng-scope {{row.treeNode.state}}-row-{{row.treeLevel}}\" ng-style=\"{'padding-left': grid.options.treeIndent * row.treeLevel + 'px'}\">" +
-          "<span></span>{{COL_FIELD CUSTOM_FILTERS}}</div>"
+          "<span></span>{{COL_FIELD CUSTOM_FILTERS}} <button style='border: none;\n" +
+          "    background: transparent;\n" +
+          "    margin: 5px 60px;\n" +
+          "    font-weight: 600;' ng-click='grid.appScope.open(row.entity)' ng-controller=\"ModalControlCtrl\" ng-hide=\"row.treeLevel==0 || row.treeLevel == 1\"><a>{{row.entity.id_period}}</a></button></div>"
       },
-      {
+      /*{
         name: 'id',
         width: '300',
         sort: 'asc',
         enableColumnResizing: true,
         displayName: 'Номер среза / Период',
         cellTemplate: '<div ng-hide="row.treeLevel==0 || row.treeLevel == 1"  ng-controller="ModalControlCtrl"><button style="margin: 5px 0; font-weight: 600; border: none; background: transparent" class="btn btn-default"  ng-click="grid.appScope.open(row.entity)"><a>№{{row.entity.id}} период {{row.entity.period}}</a></button></div>'
-      },
+      },*/
       {
         name: 'maxRecNum',
         displayName: 'На номер',
-        width: '200',
+        width: '300',
         cellTemplate: '<div class="indentInline">{{row.entity.maxRecNum}}</div>'
       },
 
       {
         name: 'completed',
         displayName: 'Сформирован',
-        width: '200',
+        width: '250',
         cellTemplate: '<div class="indentInline">{{row.entity.completed}}</div>'
       },
       {
@@ -238,8 +241,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
           var expandedRowStatusIndex = $scope.gridOptions.data.findIndex(x => x.$$hashKey === row.entity.$$hashKey);
 
           $scope.showGrid.forEach( function(element, index) {
-            // console.log(element);
-            // console.log(index);
+            element.id_period = '№' + element.id +' период '+ element.period;
             //todo here need to equal two object for expandRow
             $scope.gridOptions.data.splice(expandedRowStatusIndex+1+index,0, element);
           });
@@ -359,11 +361,11 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridGroupingConstants', 'uiGri
 
       $scope.objectByOrderSrez = response.data;
       angular.forEach($scope.objectByOrderSrez, function (value) {
-        console.log(value);
+        $scope.sliceNumber = value.id;
         //todo передать в getSliceGroups(), там проверять на наличие этого rowEntity и по его index открывать групприровку
       });
       $scope.getSliceGroups();
-      alert('Срез успешно заказан! Номер среза - '+$scope.statsrez + '. Дата среза - '+dateFromString );
+      alert('Срез успешно заказан! Номер среза - '+$scope.sliceNumber + '. Дата среза - '+dateFromString );
 
     }, function (reason) {
       if (reason.data) $rootScope.serverErr(reason.data.error);
@@ -512,7 +514,7 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
         if (childNode.children) {
           childNode.$$treeLevel = currentLevel;
         } else {
-          childNode.$$treeLevel = 'last'; 
+          childNode.$$treeLevel = 'last';
         }
         dataArray.push(childNode);
         writeoutNodeReportCorpus(childNode.children, currentLevel + 1, dataArray);
@@ -771,7 +773,7 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
                 "regCode": region.code
               };
               counter++;
-            }); 
+            });
           }
         });
       });
@@ -790,7 +792,7 @@ app.controller('ModalContentCtrl', ['$scope', '$http', '$uibModalInstance', 'val
     removedDepValue = $scope.requestedReportsQuery[key].orgCode;
     removedRegValue = $scope.requestedReportsQuery[key].regCode;
     removedTabValue = $scope.requestedReportsQuery[key].reportCode;
-    
+
     $scope.requestedReports.splice(key, 1);
     $scope.requestedReportsQuery.splice(key, 1);
     removedTabIndex = $scope.reportTabs.findIndex(x => x.code === removedTabValue);
@@ -919,6 +921,12 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   /*=====  Получаем код статуса после клика на статус
   в дереве статусов и перезаписываем полученный из row.entity ======*/
   $scope.getStatusInfo = function (selectedStatus) {
+
+    console.log(selectedStatus);
+
+
+
+
     $rootScope.historyId = selectedStatus.id;
     $scope.statusCode    = selectedStatus.statusCode;
 

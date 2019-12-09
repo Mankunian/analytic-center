@@ -16,7 +16,7 @@ app
   .constant("CONFIGS", {
     // URL: 'http://192.168.210.10:8081/api/v1/RU/'
     URL: "https://analytic-centre.tk:8081/api/v1/RU/", // DEV URL
-    INTERFACE_LANG : 'ru'
+    INTERFACE_LANG: "ru",
   })
   .constant("STATUS_CODES", {
     IN_PROCESSING: "0", // В обработке
@@ -45,7 +45,9 @@ app
     $rootScope.BUTTONS = BUTTONS;
     $rootScope.CONFIGS = CONFIGS;
     $rootScope.serverErr = function(errMsg) {
-      errMsg != undefined ? alert(errMsg) : alert("Произошла ошибка на сервере.");
+      errMsg != undefined
+        ? alert(errMsg)
+        : alert("Произошла ошибка на сервере.");
     };
   });
 
@@ -82,7 +84,14 @@ app.controller("MainCtrl", [
   "uiGridTreeViewConstants",
   "$interval",
   "CONFIGS",
-  function($scope, $http, $rootScope, uiGridTreeBaseService, $interval, CONFIGS) {
+  function(
+    $scope,
+    $http,
+    $rootScope,
+    uiGridTreeBaseService,
+    $interval,
+    CONFIGS
+  ) {
     //Получение списка статусов
     $scope.getStatus = function() {
       $http({
@@ -207,14 +216,16 @@ app.controller("MainCtrl", [
           name: "maxRecNum",
           displayName: "На номер",
           width: "200",
-          cellTemplate: '<div class="indentInline">{{row.entity.maxRecNum}}</div>',
+          cellTemplate:
+            '<div class="indentInline">{{row.entity.maxRecNum}}</div>',
         },
 
         {
           name: "completed",
           displayName: "Сформирован",
           width: "200",
-          cellTemplate: '<div class="indentInline">{{row.entity.completed}}</div>',
+          cellTemplate:
+            '<div class="indentInline">{{row.entity.completed}}</div>',
         },
         {
           name: "button",
@@ -264,13 +275,19 @@ app.controller("MainCtrl", [
           }).then(
             function(value) {
               $scope.showGrid = value.data;
-              var expandedRowStatusIndex = $scope.gridOptions.data.findIndex(x => x.$$hashKey === row.entity.$$hashKey);
+              var expandedRowStatusIndex = $scope.gridOptions.data.findIndex(
+                x => x.$$hashKey === row.entity.$$hashKey
+              );
 
               $scope.showGrid.forEach(function(element, index) {
                 // console.log(element);
                 // console.log(index);
                 //todo here need to equal two object for expandRow
-                $scope.gridOptions.data.splice(expandedRowStatusIndex + 1 + index, 0, element);
+                $scope.gridOptions.data.splice(
+                  expandedRowStatusIndex + 1 + index,
+                  0,
+                  element
+                );
               });
               row.isSlicesLoaded = true;
               $scope.preloaderByStatus = false;
@@ -292,7 +309,10 @@ app.controller("MainCtrl", [
         if (childNode.children.length > 0) {
           childNode.$$treeLevel = currentLevel;
         } else {
-          if (id !== childNode.parentCategoryId || childNode.categoryId === childNode.parentCategoryId) {
+          if (
+            id !== childNode.parentCategoryId ||
+            childNode.categoryId === childNode.parentCategoryId
+          ) {
             childNode.$$treeLevel = currentLevel;
           }
         }
@@ -385,7 +405,12 @@ app.controller("MainCtrl", [
             //todo передать в getSliceGroups(), там проверять на наличие этого rowEntity и по его index открывать групприровку
           });
           $scope.getSliceGroups();
-          alert("Срез успешно заказан! Номер среза - " + $scope.statsrez + ". Дата среза - " + dateFromString);
+          alert(
+            "Срез успешно заказан! Номер среза - " +
+              $scope.statsrez +
+              ". Дата среза - " +
+              dateFromString
+          );
         },
         function(reason) {
           if (reason.data) $rootScope.serverErr(reason.data.error);
@@ -414,7 +439,13 @@ app.controller("MainCtrl", [
   },
 ]);
 
-app.controller("ModalControlCtrl", function($scope, $uibModal, $rootScope, STATUS_CODES, CONFIGS) {
+app.controller("ModalControlCtrl", function(
+  $scope,
+  $uibModal,
+  $rootScope,
+  STATUS_CODES,
+  CONFIGS
+) {
   $rootScope.open = function(value) {
     if (
       value.statusCode == STATUS_CODES.IN_PROCESSING ||
@@ -446,7 +477,12 @@ app.controller("ModalControlCtrl", function($scope, $uibModal, $rootScope, STATU
   };
 });
 
-app.controller("modalOperBySrezCtrl", function($scope, $uibModal, $rootScope, CONFIGS) {
+app.controller("modalOperBySrezCtrl", function(
+  $scope,
+  $uibModal,
+  $rootScope,
+  CONFIGS
+) {
   $rootScope.openOperBySrez = function(rowEntity) {
     $scope.dataSendByModal = rowEntity;
 
@@ -500,15 +536,25 @@ app.controller("ModalContentCtrl", [
     if (value.groupCode == 100) $scope.isGroup100 = true;
 
     $scope.reportLangs = {
-      ru: { name: "Русский", langCode: "ru", isSelected: false, isInterfaceLang: false },
-      kz: { name: "Казахский", langCode: "kz", isSelected: false, isInterfaceLang: false },
+      ru: {
+        name: "Русский",
+        langCode: "ru",
+        isSelected: false,
+        isInterfaceLang: false,
+      },
+      kz: {
+        name: "Казахский",
+        langCode: "kz",
+        isSelected: false,
+        isInterfaceLang: false,
+      },
     };
 
-    if (CONFIGS.INTERFACE_LANG === 'ru') {
+    if (CONFIGS.INTERFACE_LANG === "ru") {
       $scope.reportLangs.ru.isInterfaceLang = true;
       $scope.reportLangs.ru.isSelected = true;
     } else {
-      $scope.reportLangs.kz.isInterfaceLang = true
+      $scope.reportLangs.kz.isInterfaceLang = true;
       $scope.reportLangs.kz.isSelected = true;
     }
 
@@ -548,7 +594,11 @@ app.controller("ModalContentCtrl", [
       $scope.reportCorpusDataLoaded = false;
 
       /*=====  Sets correct $$treeLevel ======*/
-      var writeoutNodeReportCorpus = function(childArray, currentLevel, dataArray) {
+      var writeoutNodeReportCorpus = function(
+        childArray,
+        currentLevel,
+        dataArray
+      ) {
         childArray.forEach(function(childNode) {
           if (childNode.children) {
             childNode.$$treeLevel = currentLevel;
@@ -556,7 +606,11 @@ app.controller("ModalContentCtrl", [
             childNode.$$treeLevel = "last";
           }
           dataArray.push(childNode);
-          writeoutNodeReportCorpus(childNode.children, currentLevel + 1, dataArray);
+          writeoutNodeReportCorpus(
+            childNode.children,
+            currentLevel + 1,
+            dataArray
+          );
         });
       };
       /*=====  Sets correct $$treeLevel END ======*/
@@ -604,32 +658,49 @@ app.controller("ModalContentCtrl", [
 
               $scope.gridApi.treeBase.on.rowExpanded($scope, function(row) {
                 if (
-                  (row.entity.$$treeLevel == 1 && !row.reportCorpusNodeLoaded) ||
-                  (row.entity.$$treeLevel == 0 && row.entity.children.length == 0 && !row.reportCorpusNodeLoaded)
+                  (row.entity.$$treeLevel == 1 &&
+                    !row.reportCorpusNodeLoaded) ||
+                  (row.entity.$$treeLevel == 0 &&
+                    row.entity.children.length == 0 &&
+                    !row.reportCorpusNodeLoaded)
                 ) {
                   $scope.reportCorpusDataLoaded = true;
                   $http({
                     method: "GET",
-                    url: CONFIGS.URL + "slices/governments/children?searchPattern=" + row.entity.searchPattern,
+                    url:
+                      CONFIGS.URL +
+                      "slices/governments/children?searchPattern=" +
+                      row.entity.searchPattern,
                     headers: {
                       sessionKey: "admin",
                     },
                   }).then(function(response) {
-                    var expandedRowIndex = $scope.reportCorpus.data.findIndex(x => x.$$hashKey === row.entity.$$hashKey);
+                    var expandedRowIndex = $scope.reportCorpus.data.findIndex(
+                      x => x.$$hashKey === row.entity.$$hashKey
+                    );
                     $scope.reportCorpusChildren = response.data;
 
                     $scope.reportCorpusChildren.forEach(function(item) {
                       item.$$treeLevel = row.entity.$$treeLevel + 1;
                     });
-                    $scope.reportCorpusChildren.forEach(function(element, index) {
-                      $scope.reportCorpus.data.splice(expandedRowIndex + 1 + index, 0, element);
+                    $scope.reportCorpusChildren.forEach(function(
+                      element,
+                      index
+                    ) {
+                      $scope.reportCorpus.data.splice(
+                        expandedRowIndex + 1 + index,
+                        0,
+                        element
+                      );
                     });
                     row.reportCorpusNodeLoaded = true;
                     $scope.reportCorpusDataLoaded = false;
                   });
                 }
               });
-              $scope.gridApi.selection.on.rowSelectionChanged($scope, function(row) {
+              $scope.gridApi.selection.on.rowSelectionChanged($scope, function(
+                row
+              ) {
                 $scope.selectedReportCorpuses = $scope.gridApi.selection.getSelectedRows();
               });
             },
@@ -663,7 +734,11 @@ app.controller("ModalContentCtrl", [
         /*=====  Deps grid - get data from backend ======*/
         $http({
           method: "GET",
-          url: CONFIGS.URL + "slices/reports?sliceId=" + $scope.statSliceNum + "&withOrgs=true",
+          url:
+            CONFIGS.URL +
+            "slices/reports?sliceId=" +
+            $scope.statSliceNum +
+            "&withOrgs=true",
           headers: {
             sessionKey: "admin",
           },
@@ -724,7 +799,11 @@ app.controller("ModalContentCtrl", [
               };
               // Запись отчетов и ведомств в правильную структуру для Grid
               item.gridRegionsDataset = $scope.gridOptionsRegion;
-              $scope.setGridApiOptions(index, item.gridRegionsDataset, item.gridDataset);
+              $scope.setGridApiOptions(
+                index,
+                item.gridRegionsDataset,
+                item.gridDataset
+              );
             });
             // END Each function for reports with orgs
             $scope.onRegisterApiInit();
@@ -749,7 +828,11 @@ app.controller("ModalContentCtrl", [
     /*=====  Set datasets and dynamically generate names for grid api ======*/
     $scope.regionsGridApiOptions = [];
     $scope.depsGridApiOptions = [];
-    $scope.setGridApiOptions = function(index, gridRegionsDataset, gridApiDepDataset) {
+    $scope.setGridApiOptions = function(
+      index,
+      gridRegionsDataset,
+      gridApiDepDataset
+    ) {
       var gridApiRegionsName, gridApiDepsName;
 
       gridApiDepsName = "gridApiDeps_" + index;
@@ -768,10 +851,14 @@ app.controller("ModalContentCtrl", [
         item.gridApiDepDataset.onRegisterApi = function(gridApi) {
           item.gridApiDepsName = gridApi;
           gridApi.selection.on.rowSelectionChanged($scope, function(row) {
-            $scope.selectedDeps[index] = item.gridApiDepsName.selection.getSelectedRows();
+            $scope.selectedDeps[
+              index
+            ] = item.gridApiDepsName.selection.getSelectedRows();
           });
           gridApi.selection.on.rowSelectionChangedBatch($scope, function(rows) {
-            $scope.selectedDeps[index] = item.gridApiDepsName.selection.getSelectedRows();
+            $scope.selectedDeps[
+              index
+            ] = item.gridApiDepsName.selection.getSelectedRows();
           });
         };
       });
@@ -780,7 +867,9 @@ app.controller("ModalContentCtrl", [
         item.gridRegionsDataset.onRegisterApi = function(gridApi) {
           item.gridApiRegionsName = gridApi;
           gridApi.selection.on.rowSelectionChanged($scope, function(row) {
-            $scope.selectedRegions[index] = item.gridApiRegionsName.selection.getSelectedRows();
+            $scope.selectedRegions[
+              index
+            ] = item.gridApiRegionsName.selection.getSelectedRows();
           });
         };
       });
@@ -821,9 +910,13 @@ app.controller("ModalContentCtrl", [
       var reportInfo,
         counter = 0;
 
-      if ($scope.selectedReportCorpuses != undefined && $scope.selectedReportCorpuses.length > 0) {
+      if (
+        $scope.selectedReportCorpuses != undefined &&
+        $scope.selectedReportCorpuses.length > 0
+      ) {
         $scope.selectedReportCorpuses.forEach(function(element, index) {
-          $scope.requestedReports[index] = $scope.reportCorpus.tabInfo.name + "-" + element.name;
+          $scope.requestedReports[index] =
+            $scope.reportCorpus.tabInfo.name + "-" + element.name;
           $scope.requestedReportsQuery[index] = {
             sliceId: $scope.statSliceNum,
             reportCode: $scope.reportCorpus.tabInfo.code,
@@ -843,8 +936,12 @@ app.controller("ModalContentCtrl", [
           reportInfo = $scope.getReportInfo(regionsTabIndex);
           element.forEach(function(region, index) {
             if ($scope.selectedDeps[regionsTabIndex] != undefined) {
-              $scope.selectedDeps[regionsTabIndex].forEach(function(department, index) {
-                $scope.requestedReports[counter] = reportInfo.name + "-" + region.name + "-" + department.name;
+              $scope.selectedDeps[regionsTabIndex].forEach(function(
+                department,
+                index
+              ) {
+                $scope.requestedReports[counter] =
+                  reportInfo.name + "-" + region.name + "-" + department.name;
                 $scope.requestedReportsQuery[counter] = {
                   sliceId: $scope.statSliceNum,
                   reportCode: reportInfo.code,
@@ -861,7 +958,12 @@ app.controller("ModalContentCtrl", [
     };
 
     $scope.removeSelectedReport = function(key) {
-      var removedDepIndex, removedDepValue, removedRegValue, removedRegIndex, removedTabValue, removedTabIndex;
+      var removedDepIndex,
+        removedDepValue,
+        removedRegValue,
+        removedRegIndex,
+        removedTabValue,
+        removedTabIndex;
 
       removedDepValue = $scope.requestedReportsQuery[key].orgCode;
       removedRegValue = $scope.requestedReportsQuery[key].regCode;
@@ -869,19 +971,41 @@ app.controller("ModalContentCtrl", [
 
       $scope.requestedReports.splice(key, 1);
       $scope.requestedReportsQuery.splice(key, 1);
-      removedTabIndex = $scope.reportTabs.findIndex(x => x.code === removedTabValue);
+      removedTabIndex = $scope.reportTabs.findIndex(
+        x => x.code === removedTabValue
+      );
 
-      if ($scope.requestedReportsQuery.findIndex(x => x.orgCode === removedDepValue) === -1) {
-        removedDepIndex = $scope.depsGridApiOptions[removedTabIndex].gridApiDepDataset.data.findIndex(x => x.code === removedDepValue);
-        $scope.depsGridApiOptions[removedTabIndex].gridApiDepsName.selection.toggleRowSelection(
-          $scope.depsGridApiOptions[removedTabIndex].gridApiDepDataset.data[removedDepIndex]
+      if (
+        $scope.requestedReportsQuery.findIndex(
+          x => x.orgCode === removedDepValue
+        ) === -1
+      ) {
+        removedDepIndex = $scope.depsGridApiOptions[
+          removedTabIndex
+        ].gridApiDepDataset.data.findIndex(x => x.code === removedDepValue);
+        $scope.depsGridApiOptions[
+          removedTabIndex
+        ].gridApiDepsName.selection.toggleRowSelection(
+          $scope.depsGridApiOptions[removedTabIndex].gridApiDepDataset.data[
+            removedDepIndex
+          ]
         );
       }
 
-      if ($scope.requestedReportsQuery.findIndex(x => x.regCode === removedRegValue) === -1) {
-        removedRegIndex = $scope.regionsGridApiOptions[removedTabIndex].gridRegionsDataset.data.findIndex(x => x.code === removedRegValue);
-        $scope.regionsGridApiOptions[removedTabIndex].gridApiRegionsName.selection.toggleRowSelection(
-          $scope.regionsGridApiOptions[removedTabIndex].gridRegionsDataset.data[removedRegIndex]
+      if (
+        $scope.requestedReportsQuery.findIndex(
+          x => x.regCode === removedRegValue
+        ) === -1
+      ) {
+        removedRegIndex = $scope.regionsGridApiOptions[
+          removedTabIndex
+        ].gridRegionsDataset.data.findIndex(x => x.code === removedRegValue);
+        $scope.regionsGridApiOptions[
+          removedTabIndex
+        ].gridApiRegionsName.selection.toggleRowSelection(
+          $scope.regionsGridApiOptions[removedTabIndex].gridRegionsDataset.data[
+            removedRegIndex
+          ]
         );
       }
     };
@@ -891,13 +1015,19 @@ app.controller("ModalContentCtrl", [
     $scope.getReports = function() {
       var selectedLang = "";
 
-      if ($scope.reportLangs.ru.isSelected === false && $scope.reportLangs.kz.isSelected === false) {
+      if (
+        $scope.reportLangs.ru.isSelected === false &&
+        $scope.reportLangs.kz.isSelected === false
+      ) {
         alert("Выберите язык отчета");
         return false;
       }
       $scope.isReadyReportsLoaded = false;
 
-      if ($scope.reportLangs.ru.isSelected === true && $scope.reportLangs.kz.isSelected === true) {
+      if (
+        $scope.reportLangs.ru.isSelected === true &&
+        $scope.reportLangs.kz.isSelected === true
+      ) {
         selectedLang = "all";
       } else if ($scope.reportLangs.kz.isSelected === true) {
         selectedLang = "kz";
@@ -905,11 +1035,17 @@ app.controller("ModalContentCtrl", [
         selectedLang = "ru";
       }
 
-      if ($scope.requestedReportsQuery != undefined && $scope.requestedReportsQuery.length > 0) {
+      if (
+        $scope.requestedReportsQuery != undefined &&
+        $scope.requestedReportsQuery.length > 0
+      ) {
         $scope.readyReports = [];
         $http({
           method: "POST",
-          url: CONFIGS.URL + "slices/reports/createReports?repLang=" + selectedLang,
+          url:
+            CONFIGS.URL +
+            "slices/reports/createReports?repLang=" +
+            selectedLang,
           headers: {
             sessionKey: "admin",
           },
@@ -924,20 +1060,32 @@ app.controller("ModalContentCtrl", [
               reportDownloadUrl = "",
               reportDownloadName = "",
               reportErrMsg = "Отсутствует шаблон отчета";
-              console.log('926 --- $scope.requestedReports', $scope.requestedReports);
+            console.log(
+              "926 --- $scope.requestedReports",
+              $scope.requestedReports
+            );
 
             reportValues.forEach(function(element) {
               if (element.value == -1) {
                 reportDownloadUrl = "#";
                 reportDownloadName = reportErrMsg;
               } else {
-                if (element.lang === 'RU') {
-                  reportDownloadUrl = CONFIGS.URL + "slices/reports/" + element.value + "/download";
+                if (element.lang === "RU") {
+                  reportDownloadUrl =
+                    CONFIGS.URL +
+                    "slices/reports/" +
+                    element.value +
+                    "/download";
                   reportDownloadName = $scope.requestedReports[counter];
                   counter++;
-                } else if (element.lang === 'KZ') {
-                  reportDownloadUrl = CONFIGS.URL + "slices/reports/" + element.value + "/download";
-                  reportDownloadName = $scope.requestedReports[counterKz] + " - [kaz]";
+                } else if (element.lang === "KZ") {
+                  reportDownloadUrl =
+                    CONFIGS.URL +
+                    "slices/reports/" +
+                    element.value +
+                    "/download";
+                  reportDownloadName =
+                    $scope.requestedReports[counterKz] + " - [kaz]";
                   counterKz++;
                 }
               }
@@ -1042,7 +1190,13 @@ app.controller("modalContentOperBySrezCtrl", function(
       $scope.updateApprovingTable = function() {
         $http({
           method: "GET",
-          url: CONFIGS.URL + "slices/" + selectedStatus.sliceId + "/history/" + selectedStatus.id + "/approving",
+          url:
+            CONFIGS.URL +
+            "slices/" +
+            selectedStatus.sliceId +
+            "/history/" +
+            selectedStatus.id +
+            "/approving",
           headers: {
             sessionKey: "admin",
           },

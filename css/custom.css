@@ -71,7 +71,9 @@ form.tab-form-demo .tab-pane {
 .nav-tabs > li > a {
   color: #000;
 }
-
+.langs-checkboxes .containerLabel {
+  display: inline-block;
+}
 .getReportModal .tab-content {
   margin-top: 30px;
 }

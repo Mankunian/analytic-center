@@ -44,7 +44,10 @@ app
 			console.log(data);
 			window.localStorage[data.key] = data.data;
 		}
-		localStorage.setItem('username', 'admin');
+
+		if (!localStorage.length) {
+			localStorage.setItem('username', 'admin');
+		}
 
 		function redirectToAuthPage() {
 			// $window.location.hrefss = CONFIGS.AUTH_PAGE_URL;

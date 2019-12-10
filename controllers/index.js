@@ -36,15 +36,45 @@ app
 		PRELIMINARY: "3", // Перевести в предварительный
 		SEND: "4", // На согласование
 	})
-	.run(function ($rootScope, STATUS_CODES, USER_ROLES, BUTTONS, CONFIGS) {
+	.run(function ($rootScope, STATUS_CODES, USER_ROLES, BUTTONS, CONFIGS, $window) {
+		// localStorage.clear();
+		window.onmessage = function (event) {
+			console.log('event', event);
+			// var data = JSON.parse(event.data);
+			// localstorage.setItem(data.key, data.data);
+		}
+		// localStorage.setItem('userName', '');
+
+		function redirectToAuthPage() {
+			$window.location.href = 'https://google.com';
+		}
+
+		if (localStorage.getItem('userName') !== null || localStorage.getItem('userName') != '') {
+			$rootScope.authUser = localStorage.getItem('userName');
+			// console.log($rootScope.authUser);
+		} else {
+			console.log('user not exist');
+			console.log(localStorage.getItem('userName'));
+			alert('Login incorrect');
+			redirectToAuthPage();
+		}
 		$rootScope.STATUS_CODES = STATUS_CODES;
 		$rootScope.USER_ROLES = USER_ROLES;
 		$rootScope.BUTTONS = BUTTONS;
 		$rootScope.CONFIGS = CONFIGS;
-		$rootScope.serverErr = function (errMsg) {
-			errMsg != undefined ? alert(errMsg) : alert("Произошла ошибка на сервере.");
+
+		$rootScope.serverErr = function (reason) {
+			if (reason.status === 401) {
+				redirectToAuthPage();
+				return false;
+			}
+			reason.data.errMsg != undefined ? alert(reason.data.errMsg) : alert("Произошла ошибка на сервере.");
 		};
+		$rootScope.isValidUser = function (userName) {
+
+		}
 	});
+
 
 app.config([
 	"$qProvider",
@@ -72,8 +102,9 @@ app.controller("userCtrl", function ($scope, $http, $rootScope, CONFIGS) {
 			$scope.roleList = response.data;
 		},
 		function (reason) {
+			console.log(reason);
 			$scope.loader = false;
-			if (reason.data) $rootScope.serverErr(reason.data.error);
+			if (reason.data) $rootScope.serverErr(reason);
 			console.log(reason);
 		}
 	);
@@ -107,7 +138,7 @@ app.controller("MainCtrl", [
 					$scope.status = value.data;
 				},
 				function (reason) {
-					if (reason.data) $rootScope.serverErr(reason.data.error);
+					if (reason.data) $rootScope.serverErr(reason);
 					console.log(reason);
 				}
 			);
@@ -133,7 +164,7 @@ app.controller("MainCtrl", [
 					});
 				},
 				function (reason) {
-					if (reason.data) $rootScope.serverErr(reason.data.error);
+					if (reason.data) $rootScope.serverErr(reason);
 					console.log(reason);
 				}
 			);
@@ -154,7 +185,7 @@ app.controller("MainCtrl", [
 					$scope.statsrez = value.data.value;
 				},
 				function (reason) {
-					if (reason.data) $rootScope.serverErr(reason.data.error);
+					if (reason.data) $rootScope.serverErr(reason);
 					console.log(reason);
 				}
 			);
@@ -290,7 +321,7 @@ app.controller("MainCtrl", [
 						function (reason) {
 							if (reason.data) {
 								$scope.preloaderByStatus = false;
-								$rootScope.serverErr(reason.data.error);
+								$rootScope.serverErr(reason);
 							}
 						}
 					);
@@ -355,7 +386,7 @@ app.controller("MainCtrl", [
 				function (reason) {
 					if (reason.data) {
 						$scope.loader = false;
-						$rootScope.serverErr(reason.data.error);
+						$rootScope.serverErr(reason);
 						console.log("dada");
 					}
 				}
@@ -410,7 +441,7 @@ app.controller("MainCtrl", [
 					);
 				},
 				function (reason) {
-					if (reason.data) $rootScope.serverErr(reason.data.error);
+					if (reason.data) $rootScope.serverErr(reason);
 					console.log(reason);
 				}
 			);
@@ -566,7 +597,7 @@ app.controller("ModalContentCtrl", [
 			function (reason) {
 				if (reason.data) {
 					$scope.isTabsLoaded = false;
-					$rootScope.serverErr(reason.data.error);
+					$rootScope.serverErr(reason);
 				}
 				console.log(reason);
 			}
@@ -680,7 +711,7 @@ app.controller("ModalContentCtrl", [
 					$scope.reportCorpus.tabInfo = { name: "1-П", code: "801" };
 				},
 				function (reason) {
-					if (reason.data) $rootScope.serverErr(reason.data.error);
+					if (reason.data) $rootScope.serverErr(reason);
 					console.log(reason);
 				}
 			);
@@ -778,14 +809,14 @@ app.controller("ModalContentCtrl", [
 						if (!$scope.isGroup100) $scope.isTabsLoaded = true;
 					},
 					function (reason) {
-						if (reason.data) $rootScope.serverErr(reason.data.error);
+						if (reason.data) $rootScope.serverErr(reason);
 						console.log(reason);
 					}
 				);
 				/*=====  Deps grid - get data from backend ======*/
 			},
 			function (reason) {
-				if (reason.data) $rootScope.serverErr(reason.data.error);
+				if (reason.data) $rootScope.serverErr(reason);
 				console.log(reason);
 			}
 		);
@@ -1029,7 +1060,7 @@ app.controller("ModalContentCtrl", [
 					function (reason) {
 						if (reason.data) {
 							$scope.isReadyReportsLoaded = true;
-							$rootScope.serverErr(reason.data.error);
+							$rootScope.serverErr(reason);
 						}
 						console.log(reason);
 					}
@@ -1099,7 +1130,7 @@ app.controller("modalContentOperBySrezCtrl", function (
 			function (reason) {
 				if (reason.data) {
 					$scope.isHistoryTreeLoaded = false;
-					$rootScope.serverErr(reason.data.error);
+					$rootScope.serverErr(reason);
 				}
 			}
 		);
@@ -1174,7 +1205,7 @@ app.controller("modalContentOperBySrezCtrl", function (
 						};
 					},
 					function (reason) {
-						if (reason.data) $rootScope.serverErr(reason.data.error);
+						if (reason.data) $rootScope.serverErr(reason);
 						console.log(reason);
 					}
 				);
@@ -1335,7 +1366,7 @@ app.controller("modalContentOperBySrezCtrl", function (
 					$scope.getStatusTree();
 				},
 				function (reason) {
-					if (reason.data) $rootScope.serverErr(reason.data.error);
+					if (reason.data) $rootScope.serverErr(reason);
 					console.log(reason);
 				}
 			);

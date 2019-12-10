@@ -185,14 +185,22 @@
             </div>-->
 
 
-            <div class="col-md-12" style="background: #E6E6E6; overflow-y: scroll; height: 450px">
-              <ul class="timeline" ng-if="isHistoryTreeLoaded">
+            <div class="preloader-block ready-reports statusTree-preloader" ng-if="!isHistoryTreeLoaded">
+              <div class="lds-ring-readyReports">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+            </div>
+            <div class="col-md-12" ng-class="{'col-md-6': showUiGridInAgreement}" style="background: #E6E6E6; overflow-y: scroll; height: 450px" ng-if="isHistoryTreeLoaded">
+              <ul class="timeline">
 
 
                 <li  ng-repeat="status in history">
                   <div ng-class="{'direction-r': $odd, 'direction-l': $even}">
-                    <div ng-click="getStatusInfo(status, $index)" class="flag-wrapper">
-                      <span class="flag">{{status.statusName}}</span>
+                    <div  ng-click="getStatusInfo(status, $index)" class="flag-wrapper">
+                      <span ng-style="is(status.id) && {'background-color': '#337ab7', 'color': '#fff'}" class="flag">{{status.statusName}}</span>
                       <span class="time-wrapper"><span class="time">статус</span></span>
                     </div>
                     <div class="desc" id="statusInfo" ng-show="is(status.id)">
@@ -223,6 +231,10 @@
                 </li>
 
               </ul>
+            </div>
+            <div class="col-md-6" ng-if="showUiGridInAgreement">
+              <div id="gridInAgreement" ui-grid="gridOptionsAgreement" ng-if="gridOptionsAgreement" ui-grid-cellnav
+                   class="grid"></div>
             </div>
           </div>
 

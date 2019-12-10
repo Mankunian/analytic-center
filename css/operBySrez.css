@@ -272,6 +272,7 @@ div#tabs.statusHistory ul li:last-child a{
     }
 }
 .flag-wrapper .flag {
+    cursor: pointer;
     position: relative;
     display: inline;
     background: #f8f8f8;

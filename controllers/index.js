@@ -1154,6 +1154,12 @@ app.controller("modalContentOperBySrezCtrl", function (
 		$scope.statusCode = selectedStatus.statusCode;
 
 		if (selectedStatus.statusCode === STATUS_CODES.IN_AGREEMENT) {
+		  //todo here need to show ui-grid
+
+      $scope.showUiGridInAgreement = true;
+
+
+
 			$scope.updateApprovingTable = function () {
 				$http({
 					method: "GET",

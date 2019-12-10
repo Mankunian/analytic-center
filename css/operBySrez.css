@@ -357,3 +357,14 @@ div#tabs.statusHistory ul li:last-child a{
 li{
     float: none;
 }
+
+.activeStatus{
+    position: relative;
+    display: inline;
+    padding: 6px 10px;
+    border-radius: 5px;
+    font-weight: 600;
+    text-align: left;
+    background-color: #214878;
+    color: #fff;
+}

@@ -40,17 +40,18 @@
                   </uib-tabset>
 
 
-                  <!--<div class="col-md-12" style="background: #E6E6E6">
+<!--
+                  <div class="col-md-12" style="background: #E6E6E6">
                     <ul class="timeline" ng-if="isHistoryTreeLoaded">
 
 
                       <li  ng-repeat="status in history">
                         <div ng-class="{'direction-r': $odd, 'direction-l': $even}">
                           <div ng-click="getStatusInfo(status, $index)" class="flag-wrapper">
-                            <span ng-class="{activeStatus: activeTabIndex}" class="flag">{{status.statusName}}</span>
+                            <span class="flag">{{status.statusName}}</span>
                             <span class="time-wrapper"><span class="time">статус</span></span>
                           </div>
-                          <div class="desc">
+                          <div class="desc" id="status.id" style="display: none">
                                 <h5>
                                   <b ng-if="status.statusCode == STATUS_CODES.FORMED_WITH_ERROR || status.statusCode == STATUS_CODES.PRELIMINARY">Срез заказал:</b>
                                   <b ng-if="status.statusCode == STATUS_CODES.DELETED">Срез удалил:</b>
@@ -78,7 +79,8 @@
                       </li>
 
                     </ul>
-                  </div>-->
+                  </div>
+-->
                 </div>
                 <br>
 
@@ -121,78 +123,69 @@
                 </div>
               </div>
             </div>
-          </div>
 
-          <!--Инфо по статусу Сформирован с ошибкой-->
-          <div ng-if="statusCode == STATUS_CODES.FORMED_WITH_ERROR" class="col-md-7 noPadding">
-            <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
-              <h5><b>Статус:</b> {{statusInfo.statusName}}</h5>
-              <h5><b>Срез заказал:</b> {{statusInfo.personName}}</h5>
-              <h5><b>Время заказа среза:</b> {{statusInfo.statusDate}}</h5>
-              <h5><b>Время начала формирования:</b> {{statusInfo.created}}</h5>
-              <h5><b>Время окончания формирования: </b> {{statusInfo.completed}}</h5>
+            <div ng-if="statusCode == STATUS_CODES.FORMED_WITH_ERROR" class="col-md-7 noPadding">
+              <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
+                <h5><b>Статус:</b> {{statusInfo.statusName}}</h5>
+                <h5><b>Срез заказал:</b> {{statusInfo.personName}}</h5>
+                <h5><b>Время заказа среза:</b> {{statusInfo.statusDate}}</h5>
+                <h5><b>Время начала формирования:</b> {{statusInfo.created}}</h5>
+                <h5><b>Время окончания формирования: </b> {{statusInfo.completed}}</h5>
 
-              <h5><b>Сообщение об ошибке:</b></h5>
+                <h5><b>Сообщение об ошибке:</b></h5>
 
-              <div style="border: 1px solid #a7a4a4; padding: 10px">
-                <h5 style="color: red">{{statusInfo.msg}}</h5>
-              </div>
+                <div style="border: 1px solid #a7a4a4; padding: 10px">
+                  <h5 style="color: red">{{statusInfo.msg}}</h5>
+                </div>
 
-            </div>
-          </div>
-          <!--Инфо по статусу Сформирован с ошибкой-->
-
-          <!--Инфо по статусу Окончательный / Утвержден-->
-          <div ng-if="statusCode == STATUS_CODES.APPROVED" class="col-md-7 noPadding">
-            <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
-              <h5><b>Статус:</b> {{statusInfo.statusName}}</h5>
-              <h5><b>Срез утвердил:</b> {{statusInfo.personName}}</h5>
-              <h5><b>Время утверждения:</b> {{statusInfo.statusDate}}</h5>
-            </div>
-          </div>
-          <!--Инфо по статусу Окончательный / Утвержден-->
-
-          <!--Инфо по статусу Предварительный-->
-          <div ng-if="statusCode == STATUS_CODES.PRELIMINARY" class="col-md-7 noPadding">
-            <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
-              <h5><b>Статус:</b> {{statusInfo.statusName}}</h5>
-              <h5><b>Срез перевел:</b> {{statusInfo.personName}}</h5>
-              <h5><b>Время перевода среза:</b> {{statusInfo.statusDate}}</h5>
-              <div>
-                <h5 ng-if="statusInfo.created"><b>Время начала формирования:</b>{{statusInfo.created}}</h5>
-                <h5 ng-if="statusInfo.completed"><b>Время окончания формирования: </b> {{statusInfo.completed}}</h5>
               </div>
             </div>
-          </div>
-          <!--Инфо по статусу Предварительный-->
 
-          <!--Инфо по статусу На согласовании-->
-          <div ng-if="statusCode == STATUS_CODES.IN_AGREEMENT" class="col-md-7 noPadding">
-            <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
-              <h5><b>Статус:</b> {{statusInfo.statusName}}</h5>
-              <h5><b>Срез отправил на согласование:</b> {{statusInfo.personName}}</h5>
-              <h5><b>Время перевода на согласование:</b> {{statusInfo.statusDate}}</h5>
+            <div ng-if="statusCode == STATUS_CODES.APPROVED" class="col-md-7 noPadding">
+              <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
+                <h5><b>Статус:</b> {{statusInfo.statusName}}</h5>
+                <h5><b>Срез утвердил:</b> {{statusInfo.personName}}</h5>
+                <h5><b>Время утверждения:</b> {{statusInfo.statusDate}}</h5>
+              </div>
+            </div>
+
+            <div ng-if="statusCode == STATUS_CODES.PRELIMINARY" class="col-md-7 noPadding">
+              <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
+                <h5><b>Статус:</b> {{statusInfo.statusName}}</h5>
+                <h5><b>Срез перевел:</b> {{statusInfo.personName}}</h5>
+                <h5><b>Время перевода среза:</b> {{statusInfo.statusDate}}</h5>
+                <div>
+                  <h5 ng-if="statusInfo.created"><b>Время начала формирования:</b>{{statusInfo.created}}</h5>
+                  <h5 ng-if="statusInfo.completed"><b>Время окончания формирования: </b> {{statusInfo.completed}}</h5>
+                </div>
+              </div>
+            </div>
+
+            <div ng-if="statusCode == STATUS_CODES.IN_AGREEMENT" class="col-md-7 noPadding">
+              <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
+                <h5><b>Статус:</b> {{statusInfo.statusName}}</h5>
+                <h5><b>Срез отправил на согласование:</b> {{statusInfo.personName}}</h5>
+                <h5><b>Время перевода на согласование:</b> {{statusInfo.statusDate}}</h5>
 
 
                 <button ng-if="gridOptionsAgreement" style="min-width: 0" title="Обновить таблицу" ng-click="updateApprovingTable()"
                         class="btn btn-primary"><i class="fas fa-sync"></i></button>
 
-              <div id="gridInAgreement" ui-grid="gridOptionsAgreement" ng-if="gridOptionsAgreement" ui-grid-cellnav
-                   class="grid"></div>
+                <div id="gridInAgreement" ui-grid="gridOptionsAgreement" ng-if="gridOptionsAgreement" ui-grid-cellnav
+                     class="grid"></div>
+              </div>
+            </div>
+
+            <div ng-if="statusCode == STATUS_CODES.DELETED" class="col-md-7 noPadding">
+              <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
+                <h5><b>Статус:</b> {{statusInfo.statusName}}</h5>
+                <h5><b>Срез удалил:</b> {{statusInfo.personName}}</h5>
+                <h5><b>Время удаления среза:</b> {{statusInfo.statusDate}}</h5>
+              </div>
             </div>
           </div>
-          <!--Инфо по статусу На согласовании-->
 
 
-          <!--Инфо по статусу Удален-->
-          <div ng-if="statusCode == STATUS_CODES.DELETED" class="col-md-7 noPadding">
-            <div style="border: 1px solid #94948c; min-height: 70vh; height: 100%;  padding: 10px">
-              <h5><b>Статус:</b> {{statusInfo.statusName}}</h5>
-              <h5><b>Срез удалил:</b> {{statusInfo.personName}}</h5>
-              <h5><b>Время удаления среза:</b> {{statusInfo.statusDate}}</h5>
-            </div>
-          </div>
-          <!--Инфо по статусу Удален-->
 
         </div>
       </div>

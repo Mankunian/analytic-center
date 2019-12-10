@@ -14,7 +14,7 @@ var app = angular.module('app', [
 
 app
   .constant("CONFIGS", {
-    // URL: 'http://192.168.210.10:8081/api/v1/RU/'
+    // URL: 'http://192.168.210.10:8081/api/v1/RU/',
     URL: "https://analytic-centre.tk:8081/api/v1/RU/", // DEV URL
     INTERFACE_LANG: "ru",
   })
@@ -918,10 +918,8 @@ app.controller('modalContentOperBySrezCtrl', function ($scope, $http, $uibModalI
   в дереве статусов и перезаписываем полученный из row.entity ======*/
   $scope.getStatusInfo = function (selectedStatus) {
 
+
     console.log(selectedStatus);
-
-
-
 
     $rootScope.historyId = selectedStatus.id;
     $scope.statusCode    = selectedStatus.statusCode;

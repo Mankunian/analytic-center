@@ -50,6 +50,7 @@ app
 		}
 
 		function redirectToAuthPage() {
+			console.log('redirect to auth page');
 			// $window.location.hrefss = CONFIGS.AUTH_PAGE_URL;
 		}
 

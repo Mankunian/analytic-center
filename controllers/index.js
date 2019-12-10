@@ -17,6 +17,7 @@ app
 		// URL: 'http://192.168.210.10:8081/api/v1/RU/',
 		URL: "https://analytic-centre.tk:8081/api/v1/RU/", // DEV URL
 		INTERFACE_LANG: "ru",
+		AUTH_PAGE_URL: "https://google.com",
 	})
 	.constant("STATUS_CODES", {
 		IN_PROCESSING: "0", // В обработке
@@ -37,29 +38,21 @@ app
 		SEND: "4", // На согласование
 	})
 	.run(function ($rootScope, STATUS_CODES, USER_ROLES, BUTTONS, CONFIGS, $window) {
-		// // localStorage.clear();
-		// window.onmessage = function (event) {
-		// 	console.log('event', event);
-		// 	// var data = JSON.parse(event.data);
-		// 	// localstorage.setItem(data.key, data.data);
-		// }
+		// localStorage.clear();
 		window.onmessage = function (event) {
 			var data = JSON.parse(event.data);
-			localstorage.setItem(data.key, data.data);
+			window.localStorage[data.key] = data.data;
+			// localStorage.setItem('username', 'admin');
 		}
-		// localStorage.setItem('userName', '');
 
 		function redirectToAuthPage() {
-			$window.location.href = 'https://google.com';
+			$window.location.href = CONFIGS.AUTH_PAGE_URL;
 		}
 
-		if (localStorage.getItem('userName') !== null || localStorage.getItem('userName') != '') {
-			$rootScope.authUser = localStorage.getItem('userName');
-			// console.log($rootScope.authUser);
+		if (localStorage.getItem('username') !== null || localStorage.getItem('username') != '') {
+			console.log(localStorage.getItem('username'));
+			$rootScope.authUser = localStorage.getItem('username');
 		} else {
-			console.log('user not exist');
-			console.log(localStorage.getItem('userName'));
-			alert('Login incorrect');
 			redirectToAuthPage();
 		}
 		$rootScope.STATUS_CODES = STATUS_CODES;
@@ -74,8 +67,8 @@ app
 			}
 			reason.data.errMsg != undefined ? alert(reason.data.errMsg) : alert("Произошла ошибка на сервере.");
 		};
-		$rootScope.isValidUser = function (userName) {
-
+		$rootScope.isValidUser = function (username) {
+			// If not valid 
 		}
 	});
 
@@ -99,7 +92,7 @@ app.controller("userCtrl", function ($scope, $http, $rootScope, CONFIGS) {
 		method: "GET",
 		url: CONFIGS.URL + "slices/territories",
 		headers: {
-			sessionKey: "admin",
+			sessionKey: $rootScope.authUser,
 		},
 	}).then(
 		function (response) {
@@ -135,7 +128,7 @@ app.controller("MainCtrl", [
 				method: "GET",
 				url: CONFIGS.URL + "slices/statuses",
 				headers: {
-					sessionKey: "admin",
+					sessionKey: $rootScope.authUser,
 				},
 			}).then(
 				function (value) {
@@ -156,7 +149,7 @@ app.controller("MainCtrl", [
 				method: "GET",
 				url: CONFIGS.URL + "slices/groups",
 				headers: {
-					sessionKey: "admin",
+					sessionKey: $rootScope.authUser,
 				},
 			}).then(
 				function (value) {
@@ -182,7 +175,7 @@ app.controller("MainCtrl", [
 				method: "GET",
 				url: CONFIGS.URL + "slices/max",
 				headers: {
-					sessionKey: "admin",
+					sessionKey: $rootScope.authUser,
 				},
 			}).then(
 				function (value) {
@@ -300,7 +293,7 @@ app.controller("MainCtrl", [
 							year +
 							"",
 						headers: {
-							sessionKey: "admin",
+							sessionKey: $rootScope.authUser,
 						},
 					}).then(
 						function (value) {
@@ -371,7 +364,7 @@ app.controller("MainCtrl", [
 				method: "GET",
 				url: url,
 				headers: {
-					sessionKey: "admin",
+					sessionKey: $rootScope.authUser,
 				},
 			}).then(
 				function (response) {
@@ -421,7 +414,7 @@ app.controller("MainCtrl", [
 				method: "POST",
 				url: CONFIGS.URL + "slices",
 				headers: {
-					sessionKey: "admin",
+					sessionKey: $rootScope.authUser,
 				},
 				data: dataObj,
 			}).then(
@@ -592,7 +585,7 @@ app.controller("ModalContentCtrl", [
 			method: "GET",
 			url: CONFIGS.URL + "slices/reports?sliceId=" + $scope.statSliceNum,
 			headers: {
-				sessionKey: "admin",
+				sessionKey: $rootScope.authUser,
 			},
 		}).then(
 			function (response) {
@@ -632,7 +625,7 @@ app.controller("ModalContentCtrl", [
 				method: "GET",
 				url: CONFIGS.URL + "slices/governments/parents",
 				headers: {
-					sessionKey: "admin",
+					sessionKey: $rootScope.authUser,
 				},
 			}).then(
 				function (response) {
@@ -686,7 +679,7 @@ app.controller("ModalContentCtrl", [
 											"slices/governments/children?searchPattern=" +
 											row.entity.searchPattern,
 										headers: {
-											sessionKey: "admin",
+											sessionKey: $rootScope.authUser,
 										},
 									}).then(function (response) {
 										var expandedRowIndex = $scope.reportCorpus.data.findIndex(
@@ -726,7 +719,7 @@ app.controller("ModalContentCtrl", [
 			method: "GET",
 			url: CONFIGS.URL + "slices/regsTree",
 			headers: {
-				sessionKey: "admin",
+				sessionKey: $rootScope.authUser,
 			},
 		}).then(
 			function (response) {
@@ -745,7 +738,7 @@ app.controller("ModalContentCtrl", [
 						$scope.statSliceNum +
 						"&withOrgs=true",
 					headers: {
-						sessionKey: "admin",
+						sessionKey: $rootScope.authUser,
 					},
 				}).then(
 					function (response) {
@@ -1016,7 +1009,7 @@ app.controller("ModalContentCtrl", [
 						"slices/reports/createReports?repLang=" +
 						selectedLang,
 					headers: {
-						sessionKey: "admin",
+						sessionKey: $rootScope.authUser,
 					},
 					data: $scope.requestedReportsQuery,
 				}).then(
@@ -1118,7 +1111,7 @@ app.controller("modalContentOperBySrezCtrl", function (
 			method: "GET",
 			url: CONFIGS.URL + "slices/" + $scope.srezNo + "/history",
 			headers: {
-				sessionKey: "admin",
+				sessionKey: $rootScope.authUser,
 			},
 		}).then(
 			function (response) {
@@ -1162,7 +1155,7 @@ app.controller("modalContentOperBySrezCtrl", function (
 						selectedStatus.id +
 						"/approving",
 					headers: {
-						sessionKey: "admin",
+						sessionKey: $rootScope.authUser,
 					},
 				}).then(
 					function (response) {
@@ -1281,7 +1274,7 @@ app.controller("modalContentOperBySrezCtrl", function (
 						url: CONFIGS.URL + "slices/" + $scope.srezNo + "/" + btnActionUrl,
 						data: approveObj,
 						headers: {
-							sessionKey: "admin",
+							sessionKey: $rootScope.authUser,
 						},
 					}).then(
 						function (response) {
@@ -1317,7 +1310,7 @@ app.controller("modalContentOperBySrezCtrl", function (
 							url: CONFIGS.URL + "slices/" + $scope.srezNo + "/" + btnActionUrl,
 							data: rejectObj,
 							headers: {
-								sessionKey: "admin",
+								sessionKey: $rootScope.authUser,
 							},
 						}).then(
 							function (response) {
@@ -1360,7 +1353,7 @@ app.controller("modalContentOperBySrezCtrl", function (
 				method: "PUT",
 				url: CONFIGS.URL + "slices/" + $scope.srezNo + "/" + btnActionUrl,
 				headers: {
-					sessionKey: "admin",
+					sessionKey: $rootScope.authUser,
 				},
 			}).then(
 				function (response) {

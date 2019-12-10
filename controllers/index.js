@@ -17,7 +17,7 @@ app
 		// URL: 'http://192.168.210.10:8081/api/v1/RU/',
 		URL: "https://analytic-centre.tk:8081/api/v1/RU/", // DEV URL
 		INTERFACE_LANG: "ru",
-		AUTH_PAGE_URL: "https://google.com",
+		AUTH_PAGE_URL: "404.html",
 	})
 	.constant("STATUS_CODES", {
 		IN_PROCESSING: "0", // В обработке
@@ -41,12 +41,13 @@ app
 		// localStorage.clear();
 		window.onmessage = function (event) {
 			var data = JSON.parse(event.data);
+			console.log(data);
 			window.localStorage[data.key] = data.data;
 			// localStorage.setItem('username', 'admin');
 		}
 
 		function redirectToAuthPage() {
-			$window.location.href = CONFIGS.AUTH_PAGE_URL;
+			// $window.location.href = CONFIGS.AUTH_PAGE_URL;
 		}
 
 		if (localStorage.getItem('username') !== null || localStorage.getItem('username') != '') {

@@ -17,7 +17,7 @@ app
 		// URL: 'http://192.168.210.10:8081/api/v1/RU/',
 		URL: "https://analytic-centre.tk:8081/api/v1/RU/", // DEV URL
 		INTERFACE_LANG: "ru",
-		AUTH_PAGE_URL: "404.html",
+		AUTH_PAGE_URL: "/",
 	})
 	.constant("STATUS_CODES", {
 		IN_PROCESSING: "0", // В обработке
@@ -51,7 +51,7 @@ app
 
 		function redirectToAuthPage() {
 			console.log('redirect to auth page');
-			// $window.location.hrefss = CONFIGS.AUTH_PAGE_URL;
+			// $window.location.hssrefss = CONFIGS.AUTH_PAGE_URL;
 		}
 
 		if (localStorage.getItem('username') != null) {
@@ -73,9 +73,6 @@ app
 			}
 			reason.data.errMsg != undefined ? alert(reason.data.errMsg) : alert("Произошла ошибка на сервере.");
 		};
-		$rootScope.isValidUser = function (username) {
-			// If not valid 
-		}
 	});
 
 
@@ -1026,10 +1023,15 @@ app.controller("ModalContentCtrl", [
 							counterKz = 0,
 							reportDownloadUrl = "",
 							reportDownloadName = "",
-							reportErrMsg = "Отсутствует шаблон отчета";
+							reportErrMsgMissing = "Отсутствует шаблон отчета",
+							reportErrMsg = "Ошибка при формировании данного отчета";
 
 						reportValues.forEach(function (element) {
 							if (element.value == -1) {
+								reportDownloadUrl = "#";
+								reportDownloadName = reportErrMsgMissing;
+							} else if (element.value == -2) {
+								console.error(element.errMsg);
 								reportDownloadUrl = "#";
 								reportDownloadName = reportErrMsg;
 							} else {

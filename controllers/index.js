@@ -37,11 +37,15 @@ app
 		SEND: "4", // На согласование
 	})
 	.run(function ($rootScope, STATUS_CODES, USER_ROLES, BUTTONS, CONFIGS, $window) {
-		// localStorage.clear();
+		// // localStorage.clear();
+		// window.onmessage = function (event) {
+		// 	console.log('event', event);
+		// 	// var data = JSON.parse(event.data);
+		// 	// localstorage.setItem(data.key, data.data);
+		// }
 		window.onmessage = function (event) {
-			console.log('event', event);
-			// var data = JSON.parse(event.data);
-			// localstorage.setItem(data.key, data.data);
+			var data = JSON.parse(event.data);
+			localstorage.setItem(data.key, data.data);
 		}
 		// localStorage.setItem('userName', '');
 

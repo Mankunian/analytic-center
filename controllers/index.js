@@ -38,16 +38,16 @@ app
 		SEND: "4", // На согласование
 	})
 	.run(function ($rootScope, STATUS_CODES, USER_ROLES, BUTTONS, CONFIGS, $window) {
-		localStorage.clear();
-		// window.onmessage = function (event) {
-		// 	var data = JSON.parse(event.data);
-		// 	console.log(data);
-		// 	window.localStorage[data.key] = data.data;
-		// }
+		// localStorage.clear();
+		window.onmessage = function (event) {
+			var data = JSON.parse(event.data);
+			console.log(data);
+			window.localStorage[data.key] = data.data;
+		}
 		localStorage.setItem('username', 'admin');
 
 		function redirectToAuthPage() {
-			// $window.location.href = CONFIGS.AUTH_PAGE_URL;
+			// $window.location.hrefss = CONFIGS.AUTH_PAGE_URL;
 		}
 
 		if (localStorage.getItem('username') != null) {

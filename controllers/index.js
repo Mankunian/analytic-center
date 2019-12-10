@@ -36,15 +36,45 @@ app
 		PRELIMINARY: "3", // Перевести в предварительный
 		SEND: "4", // На согласование
 	})
-	.run(function ($rootScope, STATUS_CODES, USER_ROLES, BUTTONS, CONFIGS) {
+	.run(function ($rootScope, STATUS_CODES, USER_ROLES, BUTTONS, CONFIGS, $window) {
+		// localStorage.clear();
+		window.onmessage = function (event) {
+			console.log('event', event);
+			// var data = JSON.parse(event.data);
+			// localstorage.setItem(data.key, data.data);
+		}
+		// localStorage.setItem('userName', '');
+
+		function redirectToAuthPage() {
+			$window.location.href = 'https://google.com';
+		}
+
+		if (localStorage.getItem('userName') !== null || localStorage.getItem('userName') != '') {
+			$rootScope.authUser = localStorage.getItem('userName');
+			// console.log($rootScope.authUser);
+		} else {
+			console.log('user not exist');
+			console.log(localStorage.getItem('userName'));
+			alert('Login incorrect');
+			redirectToAuthPage();
+		}
 		$rootScope.STATUS_CODES = STATUS_CODES;
 		$rootScope.USER_ROLES = USER_ROLES;
 		$rootScope.BUTTONS = BUTTONS;
 		$rootScope.CONFIGS = CONFIGS;
-		$rootScope.serverErr = function (errMsg) {
-			errMsg != undefined ? alert(errMsg) : alert("Произошла ошибка на сервере.");
+
+		$rootScope.serverErr = function (reason) {
+			if (reason.status === 401) {
+				redirectToAuthPage();
+				return false;
+			}
+			reason.data.errMsg != undefined ? alert(reason.data.errMsg) : alert("Произошла ошибка на сервере.");
 		};
+		$rootScope.isValidUser = function (userName) {
+
+		}
 	});
+
 
 app.config([
 	"$qProvider",
@@ -72,8 +102,9 @@ app.controller("userCtrl", function ($scope, $http, $rootScope, CONFIGS) {
 			$scope.roleList = response.data;
 		},
 		function (reason) {
+			console.log(reason);
 			$scope.loader = false;
-			if (reason.data) $rootScope.serverErr(reason.data.error);
+			if (reason.data) $rootScope.serverErr(reason);
 			console.log(reason);
 		}
 	);
@@ -107,7 +138,7 @@ app.controller("MainCtrl", [
 					$scope.status = value.data;
 				},
 				function (reason) {
-					if (reason.data) $rootScope.serverErr(reason.data.error);
+					if (reason.data) $rootScope.serverErr(reason);
 					console.log(reason);
 				}
 			);
@@ -133,7 +164,7 @@ app.controller("MainCtrl", [
 					});
 				},
 				function (reason) {
-					if (reason.data) $rootScope.serverErr(reason.data.error);
+					if (reason.data) $rootScope.serverErr(reason);
 					console.log(reason);
 				}
 			);
@@ -154,7 +185,7 @@ app.controller("MainCtrl", [
 					$scope.statsrez = value.data.value;
 				},
 				function (reason) {
-					if (reason.data) $rootScope.serverErr(reason.data.error);
+					if (reason.data) $rootScope.serverErr(reason);
 					console.log(reason);
 				}
 			);
@@ -290,7 +321,7 @@ app.controller("MainCtrl", [
 						function (reason) {
 							if (reason.data) {
 								$scope.preloaderByStatus = false;
-								$rootScope.serverErr(reason.data.error);
+								$rootScope.serverErr(reason);
 							}
 						}
 					);
@@ -355,7 +386,7 @@ app.controller("MainCtrl", [
 				function (reason) {
 					if (reason.data) {
 						$scope.loader = false;
-						$rootScope.serverErr(reason.data.error);
+						$rootScope.serverErr(reason);
 						console.log("dada");
 					}
 				}
@@ -410,7 +441,7 @@ app.controller("MainCtrl", [
 					);
 				},
 				function (reason) {
-					if (reason.data) $rootScope.serverErr(reason.data.error);
+					if (reason.data) $rootScope.serverErr(reason);
 					console.log(reason);
 				}
 			);
@@ -512,13 +543,7 @@ app.controller("ModalContentCtrl", [
 	"$uibModalInstance",
 	"value",
 	"$rootScope",
-	"$sce",
 	"$timeout",
-	"$log",
-	"$interval",
-	"uiGridTreeViewConstants",
-	"uiGridGroupingConstants",
-	"uiGridConstants",
 	"CONFIGS",
 	function (
 		$scope,
@@ -526,13 +551,7 @@ app.controller("ModalContentCtrl", [
 		$uibModalInstance,
 		value,
 		$rootScope,
-		$sce,
 		$timeout,
-		$log,
-		$interval,
-		uiGridTreeViewConstants,
-		uiGridGroupingConstants,
-		uiGridConstants,
 		CONFIGS
 	) {
 		$scope.statSliceNum = value.id;
@@ -545,18 +564,8 @@ app.controller("ModalContentCtrl", [
 		if (value.groupCode == 100) $scope.isGroup100 = true;
 
 		$scope.reportLangs = {
-			ru: {
-				name: "Русский",
-				langCode: "ru",
-				isSelected: false,
-				isInterfaceLang: false,
-			},
-			kz: {
-				name: "Казахский",
-				langCode: "kz",
-				isSelected: false,
-				isInterfaceLang: false,
-			},
+			ru: { name: "Русский", langCode: "ru", isSelected: false, isInterfaceLang: false, },
+			kz: { name: "Казахский", langCode: "kz", isSelected: false, isInterfaceLang: false, },
 		};
 
 		if (CONFIGS.INTERFACE_LANG === "ru") {
@@ -588,7 +597,7 @@ app.controller("ModalContentCtrl", [
 			function (reason) {
 				if (reason.data) {
 					$scope.isTabsLoaded = false;
-					$rootScope.serverErr(reason.data.error);
+					$rootScope.serverErr(reason);
 				}
 				console.log(reason);
 			}
@@ -603,11 +612,7 @@ app.controller("ModalContentCtrl", [
 			$scope.reportCorpusDataLoaded = false;
 
 			/*=====  Sets correct $$treeLevel ======*/
-			var writeoutNodeReportCorpus = function (
-				childArray,
-				currentLevel,
-				dataArray
-			) {
+			var writeoutNodeReportCorpus = function (childArray, currentLevel, dataArray) {
 				childArray.forEach(function (childNode) {
 					if (childNode.children) {
 						childNode.$$treeLevel = currentLevel;
@@ -615,11 +620,7 @@ app.controller("ModalContentCtrl", [
 						childNode.$$treeLevel = "last";
 					}
 					dataArray.push(childNode);
-					writeoutNodeReportCorpus(
-						childNode.children,
-						currentLevel + 1,
-						dataArray
-					);
+					writeoutNodeReportCorpus(childNode.children, currentLevel + 1, dataArray);
 				});
 			};
 			/*=====  Sets correct $$treeLevel END ======*/
@@ -692,24 +693,15 @@ app.controller("ModalContentCtrl", [
 										$scope.reportCorpusChildren.forEach(function (item) {
 											item.$$treeLevel = row.entity.$$treeLevel + 1;
 										});
-										$scope.reportCorpusChildren.forEach(function (
-											element,
-											index
-										) {
-											$scope.reportCorpus.data.splice(
-												expandedRowIndex + 1 + index,
-												0,
-												element
-											);
+										$scope.reportCorpusChildren.forEach(function (element, index) {
+											$scope.reportCorpus.data.splice(expandedRowIndex + 1 + index, 0, element);
 										});
 										row.reportCorpusNodeLoaded = true;
 										$scope.reportCorpusDataLoaded = false;
 									});
 								}
 							});
-							$scope.gridApi.selection.on.rowSelectionChanged($scope, function (
-								row
-							) {
+							$scope.gridApi.selection.on.rowSelectionChanged($scope, function (row) {
 								$scope.selectedReportCorpuses = $scope.gridApi.selection.getSelectedRows();
 							});
 						},
@@ -719,7 +711,7 @@ app.controller("ModalContentCtrl", [
 					$scope.reportCorpus.tabInfo = { name: "1-П", code: "801" };
 				},
 				function (reason) {
-					if (reason.data) $rootScope.serverErr(reason.data.error);
+					if (reason.data) $rootScope.serverErr(reason);
 					console.log(reason);
 				}
 			);
@@ -808,11 +800,7 @@ app.controller("ModalContentCtrl", [
 							};
 							// Запись отчетов и ведомств в правильную структуру для Grid
 							item.gridRegionsDataset = $scope.gridOptionsRegion;
-							$scope.setGridApiOptions(
-								index,
-								item.gridRegionsDataset,
-								item.gridDataset
-							);
+							$scope.setGridApiOptions(index, item.gridRegionsDataset, item.gridDataset);
 						});
 						// END Each function for reports with orgs
 						$scope.onRegisterApiInit();
@@ -821,14 +809,14 @@ app.controller("ModalContentCtrl", [
 						if (!$scope.isGroup100) $scope.isTabsLoaded = true;
 					},
 					function (reason) {
-						if (reason.data) $rootScope.serverErr(reason.data.error);
+						if (reason.data) $rootScope.serverErr(reason);
 						console.log(reason);
 					}
 				);
 				/*=====  Deps grid - get data from backend ======*/
 			},
 			function (reason) {
-				if (reason.data) $rootScope.serverErr(reason.data.error);
+				if (reason.data) $rootScope.serverErr(reason);
 				console.log(reason);
 			}
 		);
@@ -837,20 +825,13 @@ app.controller("ModalContentCtrl", [
 		/*=====  Set datasets and dynamically generate names for grid api ======*/
 		$scope.regionsGridApiOptions = [];
 		$scope.depsGridApiOptions = [];
-		$scope.setGridApiOptions = function (
-			index,
-			gridRegionsDataset,
-			gridApiDepDataset
-		) {
+		$scope.setGridApiOptions = function (index, gridRegionsDataset, gridApiDepDataset) {
 			var gridApiRegionsName, gridApiDepsName;
 
 			gridApiDepsName = "gridApiDeps_" + index;
 			gridApiRegionsName = "gridApiRegions_" + index;
 			$scope.depsGridApiOptions[index] = { gridApiDepDataset, gridApiDepsName };
-			$scope.regionsGridApiOptions[index] = {
-				gridRegionsDataset,
-				gridApiRegionsName,
-			};
+			$scope.regionsGridApiOptions[index] = { gridRegionsDataset, gridApiRegionsName, };
 		};
 		/*=====  Set datasets and dynamically generate names for grid api end ======*/
 		/*=====  Initialize onRegisterApi event handler function with dynamic data ======*/
@@ -872,9 +853,7 @@ app.controller("ModalContentCtrl", [
 				item.gridRegionsDataset.onRegisterApi = function (gridApi) {
 					item.gridApiRegionsName = gridApi;
 					gridApi.selection.on.rowSelectionChanged($scope, function (row) {
-						$scope.selectedRegions[
-							index
-						] = item.gridApiRegionsName.selection.getSelectedRows();
+						$scope.selectedRegions[index] = item.gridApiRegionsName.selection.getSelectedRows();
 					});
 				};
 			});
@@ -915,10 +894,7 @@ app.controller("ModalContentCtrl", [
 			var reportInfo,
 				counter = 0;
 
-			if (
-				$scope.selectedReportCorpuses != undefined &&
-				$scope.selectedReportCorpuses.length > 0
-			) {
+			if ($scope.selectedReportCorpuses != undefined && $scope.selectedReportCorpuses.length > 0) {
 				$scope.selectedReportCorpuses.forEach(function (element, index) {
 					$scope.requestedReports[index] =
 						$scope.reportCorpus.tabInfo.name + "-" + element.name;
@@ -939,14 +915,10 @@ app.controller("ModalContentCtrl", [
 				$scope.selectedRegions.forEach(function (element, index) {
 					var regionsTabIndex = index;
 					reportInfo = $scope.getReportInfo(regionsTabIndex);
-					element.forEach(function (region, index) {
+					element.forEach(function (region) {
 						if ($scope.selectedDeps[regionsTabIndex] != undefined) {
-							$scope.selectedDeps[regionsTabIndex].forEach(function (
-								department,
-								index
-							) {
-								$scope.requestedReports[counter] =
-									reportInfo.name + "-" + region.name + "-" + department.name;
+							$scope.selectedDeps[regionsTabIndex].forEach(function (department) {
+								$scope.requestedReports[counter] = reportInfo.name + "-" + region.name + "-" + department.name;
 								$scope.requestedReportsQuery[counter] = {
 									sliceId: $scope.statSliceNum,
 									reportCode: reportInfo.code,
@@ -985,15 +957,9 @@ app.controller("ModalContentCtrl", [
 					x => x.orgCode === removedDepValue
 				) === -1
 			) {
-				removedDepIndex = $scope.depsGridApiOptions[
-					removedTabIndex
-				].gridApiDepDataset.data.findIndex(x => x.code === removedDepValue);
-				$scope.depsGridApiOptions[
-					removedTabIndex
-				].gridApiDepsName.selection.toggleRowSelection(
-					$scope.depsGridApiOptions[removedTabIndex].gridApiDepDataset.data[
-					removedDepIndex
-					]
+				removedDepIndex = $scope.depsGridApiOptions[removedTabIndex].gridApiDepDataset.data.findIndex(x => x.code === removedDepValue);
+				$scope.depsGridApiOptions[removedTabIndex].gridApiDepsName.selection.toggleRowSelection(
+					$scope.depsGridApiOptions[removedTabIndex].gridApiDepDataset.data[removedDepIndex]
 				);
 			}
 
@@ -1002,15 +968,9 @@ app.controller("ModalContentCtrl", [
 					x => x.regCode === removedRegValue
 				) === -1
 			) {
-				removedRegIndex = $scope.regionsGridApiOptions[
-					removedTabIndex
-				].gridRegionsDataset.data.findIndex(x => x.code === removedRegValue);
-				$scope.regionsGridApiOptions[
-					removedTabIndex
-				].gridApiRegionsName.selection.toggleRowSelection(
-					$scope.regionsGridApiOptions[removedTabIndex].gridRegionsDataset.data[
-					removedRegIndex
-					]
+				removedRegIndex = $scope.regionsGridApiOptions[removedTabIndex].gridRegionsDataset.data.findIndex(x => x.code === removedRegValue);
+				$scope.regionsGridApiOptions[removedTabIndex].gridApiRegionsName.selection.toggleRowSelection(
+					$scope.regionsGridApiOptions[removedTabIndex].gridRegionsDataset.data[removedRegIndex]
 				);
 			}
 		};
@@ -1100,7 +1060,7 @@ app.controller("ModalContentCtrl", [
 					function (reason) {
 						if (reason.data) {
 							$scope.isReadyReportsLoaded = true;
-							$rootScope.serverErr(reason.data.error);
+							$rootScope.serverErr(reason);
 						}
 						console.log(reason);
 					}
@@ -1128,12 +1088,10 @@ app.controller("modalContentOperBySrezCtrl", function (
 	$uibModal,
 	$timeout,
 	$rootScope,
-	$interval,
 	CONFIGS
 ) {
 	/*=====  Получение данных ======*/
 	$scope.statusInfoData = [];
-	var url = "";
 	$scope.srezNo = value.id;
 	$scope.period = value.period;
 	$scope.srezToNum = value.maxRecNum;
@@ -1172,7 +1130,7 @@ app.controller("modalContentOperBySrezCtrl", function (
 			function (reason) {
 				if (reason.data) {
 					$scope.isHistoryTreeLoaded = false;
-					$rootScope.serverErr(reason.data.error);
+					$rootScope.serverErr(reason);
 				}
 			}
 		);
@@ -1247,7 +1205,7 @@ app.controller("modalContentOperBySrezCtrl", function (
 						};
 					},
 					function (reason) {
-						if (reason.data) $rootScope.serverErr(reason.data.error);
+						if (reason.data) $rootScope.serverErr(reason);
 						console.log(reason);
 					}
 				);
@@ -1408,7 +1366,7 @@ app.controller("modalContentOperBySrezCtrl", function (
 					$scope.getStatusTree();
 				},
 				function (reason) {
-					if (reason.data) $rootScope.serverErr(reason.data.error);
+					if (reason.data) $rootScope.serverErr(reason);
 					console.log(reason);
 				}
 			);

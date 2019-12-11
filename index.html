@@ -110,9 +110,12 @@
 							<a data-toggle="tab" href="#menu1">Сформировать</a>
 						</li>
 					</ul>
-					<div ng-if="loader" class="loader">
-						<div class="bar"></div>
+					<div style="height: 5px; width: 100%; background: transparent">
+						<div ng-if="loader" class="loader">
+							<div class="bar"></div>
+						</div>
 					</div>
+
 					<div class="tab-content">
 						<div id="home" class="tab-pane fade in active">
 							<div class="row" ng-if="showGrid">
@@ -138,8 +141,10 @@
 
 							<div class="row">
 								<div class="col-md-12" style="padding-bottom: 25px; padding-top: 10px">
-									<div ng-if="preloaderByStatus" class="loader">
-										<div class="bar"></div>
+									<div style="height: 5px; width: 100%; background: transparent">
+										<div ng-if="preloaderByStatus" class="loader">
+											<div class="bar"></div>
+										</div>
 									</div>
 									<div ng-if="showGrid" style="width: 100%" id="grid1" ui-grid="gridOptions" ui-grid-grouping
 										ui-grid-resize-columns ui-grid-expandable class="grid"></div>

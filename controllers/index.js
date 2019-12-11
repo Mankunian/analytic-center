@@ -285,25 +285,14 @@ app.controller("MainCtrl", [
 					$http({
 						method: "GET",
 						url:
-							CONFIGS.URL +
-							"slices?deleted=" +
-							checkDeleted +
-							"&groupCode=" +
-							groupCode +
-							"&statusCode=" +
-							statusCode +
-							"&year=" +
-							year +
-							"",
+							CONFIGS.URL + "slices?deleted=" + checkDeleted + "&groupCode=" + groupCode + "&statusCode=" + statusCode + "&year=" + year + "",
 						headers: {
 							sessionKey: $rootScope.authUser,
 						},
 					}).then(
 						function (value) {
 							$scope.showGrid = value.data;
-							var expandedRowStatusIndex = $scope.gridOptions.data.findIndex(
-								x => x.$$hashKey === row.entity.$$hashKey
-							);
+							var expandedRowStatusIndex = $scope.gridOptions.data.findIndex(x => x.$$hashKey === row.entity.$$hashKey);
 
 							$scope.showGrid.forEach(function (element, index) {
 								element.id_period =
@@ -431,14 +420,7 @@ app.controller("MainCtrl", [
 						//todo передать в getSliceGroups(), там проверять на наличие этого rowEntity и по его index открывать групприровку
 					});
 					$scope.getSliceGroups();
-					alert(
-						"Будет сформирован срез №" +
-						$scope.sliceNumber +
-						" период " +
-						dateFromString +
-						" по " +
-						dateToString
-					);
+					alert("Будет сформирован срез №" + $scope.sliceNumber + " период " + dateFromString + " по " + dateToString);
 				},
 				function (reason) {
 					if (reason.data) $rootScope.serverErr(reason);
@@ -467,13 +449,7 @@ app.controller("MainCtrl", [
 	},
 ]);
 
-app.controller("ModalControlCtrl", function (
-	$scope,
-	$uibModal,
-	$rootScope,
-	STATUS_CODES,
-	CONFIGS
-) {
+app.controller("ModalControlCtrl", function ($scope, $uibModal, $rootScope, STATUS_CODES, CONFIGS) {
 	$rootScope.open = function (value) {
 		if (
 			value.statusCode == STATUS_CODES.IN_PROCESSING ||
@@ -505,12 +481,7 @@ app.controller("ModalControlCtrl", function (
 	};
 });
 
-app.controller("modalOperBySrezCtrl", function (
-	$scope,
-	$uibModal,
-	$rootScope,
-	CONFIGS
-) {
+app.controller("modalOperBySrezCtrl", function ($scope, $uibModal, $rootScope, CONFIGS) {
 	$rootScope.openOperBySrez = function (rowEntity) {
 		$scope.dataSendByModal = rowEntity;
 
@@ -1082,19 +1053,7 @@ app.controller("ModalContentCtrl", [
 	},
 ]);
 
-app.controller("modalContentOperBySrezCtrl", function (
-	$scope,
-	$http,
-	$uibModalInstance,
-	value,
-	STATUS_CODES,
-	USER_ROLES,
-	BUTTONS,
-	$uibModal,
-	$timeout,
-	$rootScope,
-	CONFIGS
-) {
+app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalInstance, value, STATUS_CODES, USER_ROLES, BUTTONS, $uibModal, $timeout, $rootScope, CONFIGS) {
 	/*=====  Получение данных ======*/
 	$scope.statusInfoData = [];
 	$scope.srezNo = value.id;
@@ -1145,23 +1104,26 @@ app.controller("modalContentOperBySrezCtrl", function (
 
   /*=====  Получаем код статуса после клика на статус
   в дереве статусов и перезаписываем полученный из row.entity ======*/
+  var section = '';
 	$scope.getStatusInfo = function (selectedStatus) {
-		console.log(selectedStatus);
+
+		section = selectedStatus.id;
 
 		$rootScope.historyId = selectedStatus.id;
 		$scope.statusCode = selectedStatus.statusCode;
 
+
+		$scope.showUiGridInAgreement = false;
 		if (selectedStatus.statusCode === STATUS_CODES.IN_AGREEMENT) {
+		  //todo here need to show ui-grid
+      $scope.showUiGridInAgreement = true;
+
+
+
 			$scope.updateApprovingTable = function () {
 				$http({
 					method: "GET",
-					url:
-						CONFIGS.URL +
-						"slices/" +
-						selectedStatus.sliceId +
-						"/history/" +
-						selectedStatus.id +
-						"/approving",
+					url: CONFIGS.URL + "slices/" + selectedStatus.sliceId + "/history/" + selectedStatus.id + "/approving",
 					headers: {
 						sessionKey: $rootScope.authUser,
 					},
@@ -1190,22 +1152,22 @@ app.controller("modalContentOperBySrezCtrl", function (
 							columnDefs: [
 								{
 									name: "territoryName",
-									width: "250",
+									width: "*",
 									displayName: "Терр.управление",
 								},
 								{
 									name: "approveDate",
-									width: "170",
+									width: "*",
 									displayName: "Дата-время",
 								},
 								{
 									name: "approveName",
-									width: "150",
+									width: "*",
 									displayName: "Статус",
 									cellTemplate:
 										"<div style=\"margin: 5px 0; text-align: center\"><a ng-click=\"grid.appScope.modalRejectionReason(row.entity)\" ng-style= \"{ color: row.entity.approveCode == '2' ? 'red' : '' }\">{{COL_FIELD CUSTOM_FILTERS}}</a></div>",
 								},
-								{ name: "personName", width: "170", displayName: "ФИО" },
+								{ name: "personName", width: "*", displayName: "ФИО" },
 							],
 						};
 					},
@@ -1218,6 +1180,8 @@ app.controller("modalContentOperBySrezCtrl", function (
 			$scope.updateApprovingTable();
 
 			// $interval( function(){$scope.updateApprovingTable(); }, 10000);
+		} else {
+			$scope.showUiGridInAgreement = false;
 		}
 
 		/*=====  Сравниваем полученный код статуса и меняем URL HTTP запроса ======*/
@@ -1253,6 +1217,10 @@ app.controller("modalContentOperBySrezCtrl", function (
 				break;
 		}
 		/*=====  Сравниваем полученный код статуса и меняем URL HTTP запроса end ======*/
+	};
+
+	$scope.is = function(id){
+		return section === id;
 	};
 
 	$scope.statusAction = function (btnNum, approveCode) {
@@ -1298,12 +1266,6 @@ app.controller("modalContentOperBySrezCtrl", function (
 					);
 				} else {
 					$scope.isApproveFormVisible = true;
-
-          /*$(document).ready(function(){
-            $("#rejectionReasonBtn").click(function(){
-              $("#rejectionReasonModal").modal();
-            });
-          });*/
 					// $scope.openRejectionReasonModal = true;
 					$scope.sendReason = function (msg) {
 						var rejectObj = {
@@ -1325,10 +1287,6 @@ app.controller("modalContentOperBySrezCtrl", function (
 								console.log(response);
 								$scope.approveBtnDisabled = true;
 								$timeout(alert("Операция успешно совершена"), 2000);
-                /*$("#rejectionReasonModal").modal("hide");
-              $("#rejectionReasonModal").on('hidden.bs.modal', function (e) {
-                $('body').addClass('modal-open');
-              });*/
 								$scope.isApproveFormVisible = false;
 
 								$scope.getStatusTree();
@@ -1343,10 +1301,6 @@ app.controller("modalContentOperBySrezCtrl", function (
 					};
 
 					$scope.cancelReasonModal = function () {
-            /*$("#rejectionReasonModal").modal("hide");
-            $("#rejectionReasonModal").on('hidden.bs.modal', function (e) {
-              $('body').addClass('modal-open');
-            });*/
 						$scope.isApproveFormVisible = false;
 					};
 				}
@@ -1394,6 +1348,13 @@ app.controller("modalContentOperBySrezCtrl", function (
 				},
 			});
 		}
+	};
+
+
+	$scope.backToHistoryStatus = function(){
+		console.log('back to history');
+		$scope.historyStatus = true;
+		$scope.showUiGridInAgreement = false;
 	};
 
 	$scope.cancel = function () {

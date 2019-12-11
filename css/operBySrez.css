@@ -272,6 +272,7 @@ div#tabs.statusHistory ul li:last-child a{
     }
 }
 .flag-wrapper .flag {
+    cursor: pointer;
     position: relative;
     display: inline;
     background: #f8f8f8;
@@ -356,4 +357,70 @@ div#tabs.statusHistory ul li:last-child a{
 
 li{
     float: none;
+}
+
+.activeStatus{
+    position: relative;
+    display: inline;
+    padding: 6px 10px;
+    border-radius: 5px;
+    font-weight: 600;
+    text-align: left;
+    background-color: #214878;
+    color: #fff;
+}
+
+.showTimeline{
+    display: block;
+}
+
+.hideGridInAgreement{
+    display: none;
+}
+
+.hideTimeline{
+    display: none;
+}
+
+.showGridInAgreement{
+    display: block;
+}
+
+
+
+.fade-in{
+    -webkit-animation: fadein 2s; /* Safari, Chrome and Opera > 12.1 */
+    -moz-animation: fadein 2s; /* Firefox < 16 */
+    -ms-animation: fadein 2s; /* Internet Explorer */
+    -o-animation: fadein 2s; /* Opera < 12.1 */
+    animation: fadein 2s;
+}
+
+@keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Firefox < 16 */
+@-moz-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Safari, Chrome and Opera > 12.1 */
+@-webkit-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Internet Explorer */
+@-ms-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Opera < 12.1 */
+@-o-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }

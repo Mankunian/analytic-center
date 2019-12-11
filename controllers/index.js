@@ -113,14 +113,18 @@ app.controller("userCtrl", function ($scope, $http, $rootScope, CONFIGS) {
 app.controller("MainCtrl", [
 	"$scope",
 	"$http",
+	'$rootScope',
 	"uiGridGroupingConstants",
 	"uiGridTreeViewConstants",
+	'uiGridTreeBaseService',
 	"$interval",
 	"CONFIGS",
 	function (
 		$scope,
 		$http,
 		$rootScope,
+		uiGridGroupingConstants,
+		uiGridTreeViewConstants,
 		uiGridTreeBaseService,
 		$interval,
 		CONFIGS
@@ -412,7 +416,7 @@ app.controller("MainCtrl", [
 				maxRecNum: $scope.statsrez,
 				groups: $scope.group,
 			};
-
+			console.log($rootScope.authUser);
 			$http({
 				method: "POST",
 				url: CONFIGS.URL + "slices",
@@ -472,7 +476,8 @@ app.controller("ModalControlCtrl", function (
 	$uibModal,
 	$rootScope,
 	STATUS_CODES,
-	CONFIGS
+	CONFIGS,
+	$rootScope,
 ) {
 	$rootScope.open = function (value) {
 		if (

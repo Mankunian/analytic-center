@@ -426,13 +426,6 @@ app.controller("MainCtrl", [
 								//expand definite grouping by index after order slice
 								$scope.expandedRowGroup  = 	$scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
 							}
-
-							angular.forEach(groupList.children, function (statusList, index) {
-								if (value.statusCode === statusList.code){
-									console.log(value.statusCode);
-									console.log(statusList.code)
-								}
-							})
 						})*/
 					});
 
@@ -1127,8 +1120,7 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 		if (selectedStatus.statusCode === STATUS_CODES.IN_AGREEMENT) {
 		  //todo here need to show ui-grid
       $scope.showUiGridInAgreement = true;
-
-
+      $scope.isHistoryTreeLoaded = true;
 
 			$scope.updateApprovingTable = function () {
 				$http({
@@ -1207,9 +1199,12 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 				break;
 
 			case STATUS_CODES.PRELIMINARY:
+        $scope.hideStatusDate = false;
 				if (selectedStatus === $scope.lastElementOfHistory) {
 					selectedStatus.created = value.created;
 					selectedStatus.completed = value.completed;
+
+					$scope.hideStatusDate = true;
 				}
 				$scope.statusInfo = selectedStatus;
 				break;

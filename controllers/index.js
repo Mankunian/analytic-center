@@ -295,14 +295,11 @@ app.controller("MainCtrl", [
 							var expandedRowStatusIndex = $scope.gridOptions.data.findIndex(x => x.$$hashKey === row.entity.$$hashKey);
 
 							$scope.showGrid.forEach(function (element, index) {
-								element.id_period =
-									"№" + element.id + " период " + element.period;
+								element.id_period = "№" + element.id + " период " + element.period;
 								//todo here need to equal two object for expandRow
-								$scope.gridOptions.data.splice(
-									expandedRowStatusIndex + 1 + index,
-									0,
-									element
-								);
+								console.log(element)
+
+								$scope.gridOptions.data.splice(expandedRowStatusIndex + 1 + index, 0, element);
 							});
 							row.isSlicesLoaded = true;
 							$scope.preloaderByStatus = false;

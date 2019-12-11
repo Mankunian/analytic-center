@@ -1106,7 +1106,7 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
   в дереве статусов и перезаписываем полученный из row.entity ======*/
   var section = '';
 	$scope.getStatusInfo = function (selectedStatus) {
-		console.log(selectedStatus);
+
 		section = selectedStatus.id;
 
 		$rootScope.historyId = selectedStatus.id;
@@ -1116,7 +1116,6 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 		$scope.showUiGridInAgreement = false;
 		if (selectedStatus.statusCode === STATUS_CODES.IN_AGREEMENT) {
 		  //todo here need to show ui-grid
-			console.log('asdasdasd')
       $scope.showUiGridInAgreement = true;
 
 

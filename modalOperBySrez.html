@@ -10,7 +10,7 @@
       <div class="row">
         <div class="col-md-12">
           <div class="col-md-12">
-            <button ng-if="showUiGridInAgreement" class="btn" ng-click="backToHistoryStatus()">Назад к истории статусов</button>
+            <a ng-if="showUiGridInAgreement" ng-click="backToHistoryStatus()"><span class="glyphicon glyphicon-menu-left"></span>  Назад к истории</a>
           </div>
 
           <div class="col-md-12">
@@ -156,7 +156,7 @@
           </div>
 
           <div ng-class="{'showTimeline': historyStatus, 'hideGridInAgreement': showUiGridInAgreement }"
-            class="col-md-12"
+            class="col-md-12 fade-in"
             style="background: #E6E6E6; overflow-y: scroll; height: 450px" ng-if="isHistoryTreeLoaded">
             <ul class="timeline">
               <li ng-repeat="status in history">
@@ -200,7 +200,18 @@
             </ul>
           </div>
 
-          <div ng-class="{'hideTimeline': historyStatus, 'showGridInAgreement': showUiGridInAgreement}" class="col-md-12">
+          <div ng-class="{'hideTimeline': historyStatus, 'showGridInAgreement': showUiGridInAgreement}" class="col-md-12 fade-in">
+            <div style="background: #C1C1C1; width: 100%; height: auto; padding: 10px">
+              <span style="margin: 0 50px">
+                <b>Срез отправил на согласование:</b>
+                {{statusInfo.personName}}
+              </span>
+              <span style="margin: 0 50px">
+                <b>Время отправки на согласование
+                  среза:</b>
+                {{statusInfo.statusDate}}
+              </span>
+            </div>
             <div id="gridInAgreement" ui-grid="gridOptionsAgreement" ng-if="gridOptionsAgreement" ui-grid-cellnav
                  class="grid"></div>
           </div>

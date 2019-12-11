@@ -168,8 +168,7 @@
                   <div class="desc" id="statusInfo" ng-show="is(status.id)">
                     <h5>
                       <b
-                        ng-if="status.statusCode == STATUS_CODES.FORMED_WITH_ERROR || status.statusCode == STATUS_CODES.PRELIMINARY">Срез
-                        заказал:</b>
+                        ng-if="status.statusCode == STATUS_CODES.FORMED_WITH_ERROR || status.statusCode == STATUS_CODES.PRELIMINARY">Задачу выставил:</b>
                       <b ng-if="status.statusCode == STATUS_CODES.DELETED">Срез удалил:</b>
                       <b ng-if="status.statusCode == STATUS_CODES.IN_AGREEMENT">Срез отправил на согласование:</b>
                       <b ng-if="status.statusCode == STATUS_CODES.APPROVED">Срез утвердил:</b>
@@ -177,8 +176,7 @@
                     </h5>
                     <h5>
                       <b
-                        ng-if="status.statusCode == STATUS_CODES.FORMED_WITH_ERROR || status.statusCode == STATUS_CODES.PRELIMINARY">Время
-                        заказа среза:</b>
+                        ng-if="status.statusCode == STATUS_CODES.FORMED_WITH_ERROR || status.statusCode == STATUS_CODES.PRELIMINARY">Время выставления задачи:</b>
                       <b ng-if="status.statusCode == STATUS_CODES.DELETED">Время удаления среза:</b>
                       <b ng-if="status.statusCode == STATUS_CODES.IN_AGREEMENT">Время отправки на согласование
                         среза:</b>
@@ -200,7 +198,7 @@
             </ul>
           </div>
 
-          <div ng-class="{'hideTimeline': historyStatus, 'showGridInAgreement': showUiGridInAgreement}" class="col-md-12 fade-in">
+          <div ng-if="gridOptionsAgreement" ng-class="{'hideTimeline': historyStatus, 'showGridInAgreement': showUiGridInAgreement}" class="col-md-12 fade-in">
             <div style="background: #C1C1C1; width: 100%; height: auto; padding: 10px">
               <span style="margin: 0 50px">
                 <b>Срез отправил на согласование:</b>
@@ -212,7 +210,7 @@
                 {{statusInfo.statusDate}}
               </span>
             </div>
-            <div id="gridInAgreement" ui-grid="gridOptionsAgreement" ng-if="gridOptionsAgreement" ui-grid-cellnav
+            <div id="gridInAgreement" ui-grid="gridOptionsAgreement"  ui-grid-cellnav
                  class="grid"></div>
           </div>
 

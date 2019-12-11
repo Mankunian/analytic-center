@@ -297,16 +297,15 @@ app.controller("MainCtrl", [
 						function (value) {
 							$scope.showGrid = value.data;
 							var expandedRowStatusIndex = $scope.gridOptions.data.findIndex(x => x.$$hashKey === row.entity.$$hashKey);
+							console.log(expandedRowStatusIndex)
 
 							$scope.showGrid.forEach(function (element, index) {
-								element.id_period =
-									"№" + element.id + " период " + element.period;
+								element.id_period = "№" + element.id + " период " + element.period;
 								//todo here need to equal two object for expandRow
-								$scope.gridOptions.data.splice(
-									expandedRowStatusIndex + 1 + index,
-									0,
-									element
-								);
+								console.log(element);
+								console.error($scope.sliceByOrderForRowExpand);
+
+								$scope.gridOptions.data.splice(expandedRowStatusIndex + 1 + index, 0, element);
 							});
 							row.isSlicesLoaded = true;
 							$scope.preloaderByStatus = false;
@@ -421,6 +420,9 @@ app.controller("MainCtrl", [
 					$scope.objectByOrderSrez = response.data;
 					angular.forEach($scope.objectByOrderSrez, function (value) {
 						$scope.sliceNumber = value.id;
+						$scope.sliceByOrderForRowExpand = value;
+
+
 						//todo передать в getSliceGroups(), там проверять на наличие этого rowEntity и по его index открывать групприровку
 					});
 					$scope.getSliceGroups();

@@ -369,3 +369,19 @@ li{
     background-color: #214878;
     color: #fff;
 }
+
+.showTimeline{
+    display: block;
+}
+
+.hideGridInAgreement{
+    display: none;
+}
+
+.hideTimeline{
+    display: none;
+}
+
+.showGridInAgreement{
+    display: block;
+}

@@ -198,7 +198,7 @@
             </ul>
           </div>
 
-          <div ng-if="gridOptionsAgreement" ng-class="{'hideTimeline': historyStatus, 'showGridInAgreement': showUiGridInAgreement}" class="col-md-12 fade-in">
+          <div ng-if="gridOptionsAgreement" ng-class="{'showTimeline': !historyStatus, 'hideGridInAgreement': !showUiGridInAgreement}" class="col-md-12 fade-in">
             <div style="background: #C1C1C1; width: 100%; height: auto; padding: 10px">
               <span style="margin: 0 50px">
                 <b>Срез отправил на согласование:</b>

@@ -146,7 +146,7 @@
           </div>-->
 
 
-          <div class="preloader-block ready-reports statusTree-preloader" ng-if="!isHistoryTreeLoaded">
+          <div class="preloader-block ready-reports statusTree-preloader col-md-12" ng-if="!isHistoryTreeLoaded">
             <div class="lds-ring-readyReports">
               <div></div>
               <div></div>
@@ -168,13 +168,13 @@
                   <div class="desc" id="statusInfo" ng-show="is(status.id)">
                     <h5>
                       <b
-                        ng-if="status.statusCode == STATUS_CODES.FORMED_WITH_ERROR || status.statusCode == STATUS_CODES.PRELIMINARY">Задачу выставил:</b>
+                        ng-if="status.statusCode == STATUS_CODES.FORMED_WITH_ERROR || status.statusCode == STATUS_CODES.PRELIMINARY">Задачу выставил: </b>
                       <b ng-if="status.statusCode == STATUS_CODES.DELETED">Срез удалил:</b>
                       <b ng-if="status.statusCode == STATUS_CODES.IN_AGREEMENT">Срез отправил на согласование:</b>
                       <b ng-if="status.statusCode == STATUS_CODES.APPROVED">Срез утвердил:</b>
                       {{status.personName}}
                     </h5>
-                    <h5>
+                    <h5 ng-class="{'hideStatusDateOnFirstPreliminary': hideStatusDate}">
                       <b
                         ng-if="status.statusCode == STATUS_CODES.FORMED_WITH_ERROR || status.statusCode == STATUS_CODES.PRELIMINARY">Время выставления задачи:</b>
                       <b ng-if="status.statusCode == STATUS_CODES.DELETED">Время удаления среза:</b>
@@ -186,10 +186,8 @@
 
 
                     <div>
-                      <h5 ng-if="statusInfo.created"><b>Время начала формирования:</b>{{statusInfo.created}}
-                      </h5>
-                      <h5 ng-if="statusInfo.completed"><b>Время окончания формирования: </b>
-                        {{statusInfo.completed}}</h5>
+                      <h5 ng-if="statusInfo.created"><b>Время начала формирования: </b>{{statusInfo.created}}</h5>
+                      <h5 ng-if="statusInfo.completed"><b>Время окончания формирования: </b>{{statusInfo.completed}}</h5>
                     </div>
                   </div>
                 </div>

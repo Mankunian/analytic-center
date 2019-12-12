@@ -182,17 +182,15 @@ app.controller("MainCtrl", [
 				method: "GET",
 				url: CONFIGS.URL + "slices/max",
 				headers: {
-					sessionKey: $rootScope.authUser,
-				},
-			}).then(
-				function (value) {
-					$scope.statsrez = value.data.value;
+					sessionKey: $rootScope.authUser
+				}
+			}).then(function (value) {
+				$scope.sliceMax = value.data.value;
 				},
 				function (reason) {
 					if (reason.data) $rootScope.serverErr(reason);
 					console.log(reason);
-				}
-			);
+				});
 		};
 
 		$scope.getStatSrez();
@@ -386,49 +384,36 @@ app.controller("MainCtrl", [
 
 		$scope.getSliceGroups();
 
-
-    //Дата начала отчета по умолчанию 1 января 2019
-
-    /*var fromTimestamp = 1546322400;
-    $scope.dateFrom = new Date(fromTimestamp * 1000);
-
+		//date by default
+    var timestampDefault = 1546322400;
+    $scope.dateFrom = new Date(timestampDefault * 1000);
     $scope.dateTo = new Date();
-
-    var dd = ("0" + $scope.dateFrom.getDate()).slice(-2);
-    var mm = ("0" + ($scope.dateFrom.getMonth() + 1)).slice(-2);
-    var yy = $scope.dateFrom.getFullYear();
-
-    var dateFromString = dd + "." + mm + "." + yy;
-
-    var ddTo = ("0" + $scope.dateTo.getDate()).slice(-2);
-    var mmTo = ("0" + ($scope.dateTo.getMonth() + 1)).slice(-2);
-    var yyTo = $scope.dateTo.getFullYear();
-
-    var dateToString = ddTo + "." + mmTo + "." + yyTo;*/
 
 		$scope.user = [];
 		$scope.orderSrez = function (user, dateFrom, dateTo) {
-      console.log(dateFrom)
-      console.log(dateTo)
 
-      var dFrom = dateFrom;
-      var dd = ("0" + dFrom.getDate()).slice(-2);
-      var mm = ("0" + (dFrom.getMonth() + 1)).slice(-2);
-      var yy = dFrom.getFullYear();
+        var dFrom = dateFrom;
+        var dd = ("0" + dFrom.getDate()).slice(-2);
+        var mm = ("0" + (dFrom.getMonth() + 1)).slice(-2);
+        var yy = dFrom.getFullYear();
 
-      var dateFromInput = dd + '.' + mm + '.' + yy;
+        var dateFromInput = dd + '.' + mm + '.' + yy;
 
-      console.log(dateFromInput)
+        console.log(dateFromInput)
 
 
 
-      var dTo = dateTo;
-      var dd = ("0" + dTo.getDate()).slice(-2);
-      var mm = ("0" + (dTo.getMonth() + 1)).slice(-2);
-      var yy = dTo.getFullYear();
-      var dateToInput = dd + '.' + mm + '.' + yy;
+        var dTo = dateTo;
+        var dd = ("0" + dTo.getDate()).slice(-2);
+        var mm = ("0" + (dTo.getMonth() + 1)).slice(-2);
+        var yy = dTo.getFullYear();
+        var dateToInput = dd + '.' + mm + '.' + yy;
 
-      console.log(dateToInput)
+        console.log(dateToInput)
+
+
+
+
 
 			var changeTab = function () {
 				$('.nav-tabs a[href="#home"]').tab("show");
@@ -442,7 +427,7 @@ app.controller("MainCtrl", [
 			var dataObj = {
 				startDate: dateFromInput,
 				endDate: dateToInput,
-				maxRecNum: $scope.statsrez,
+				maxRecNum: $scope.sliceMax,
 				groups: $scope.group,
 			};
 
@@ -462,7 +447,7 @@ app.controller("MainCtrl", [
 					angular.forEach($scope.objectByOrderSrez, function (value) {
 						console.log(value);
 						$scope.sliceNumber = value.id;
-            alert("Будет сформирован срез №" + $scope.sliceNumber);
+						alert("Будет сформирован срез №" + $scope.sliceNumber + " период " + dateFromInput + " по " + dateToInput);
 						/*angular.forEach($scope.groupList, function (groupList, index) {
 							if (value.groupCode === groupList.code) {
 								//expand definite grouping by index after order slice
@@ -471,7 +456,13 @@ app.controller("MainCtrl", [
 						})*/
 					});
 
+					var timestampDefault = 1546322400;
+					$scope.dateFrom = new Date(timestampDefault * 1000);
+					$scope.dateTo = new Date();
+
 					$scope.getSliceGroups();
+
+
 
 
 				},
@@ -1212,6 +1203,7 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 			$scope.showUiGridInAgreement = false;
 		}
 
+		$scope.hideStatusDate = false;
 		/*=====  Сравниваем полученный код статуса и меняем URL HTTP запроса ======*/
 		switch ($scope.statusCode) {
 			case STATUS_CODES.FORMED_WITH_ERROR: // Сформирован с ошибкой
@@ -1225,7 +1217,7 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 				break;
 
 			case STATUS_CODES.PRELIMINARY:
-        $scope.hideStatusDate = false;
+
 				if (selectedStatus === $scope.lastElementOfHistory) {
 					selectedStatus.created = value.created;
 					selectedStatus.completed = value.completed;

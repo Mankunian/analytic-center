@@ -152,7 +152,7 @@
 							</div>
 						</div>
 						<div id="menu1" class="tab-pane fade">
-							<div class="container" ng-if="!errCode ">
+							<div class="container">
 								<div class="row">
 									<div class="col-md-12">
 										<div class="col-md-12" style="padding: 15px; text-align: center">
@@ -193,7 +193,7 @@
 												<div class="col-lg-10 col-xs-10">
 													<label>Статсрез на №
 														<span class="required">*</span></label>
-													<input ng-model="statsrez" type="number" class="form-control" />
+													<input ng-model="sliceMax" type="number" class="form-control" />
 													<br />
 												</div>
 												<div class="col-lg-2">
@@ -216,28 +216,6 @@
 									</div>
 								</form>
 							</div>
-
-							<div class="container" ng-if="errCode">
-								<div class="row">
-										<div class="text-center">
-												<div ng-if="errCode = 500">
-													<h1 style="color: #99A7AE; font-size: 150px">{{errCode}}</h1>
-													<h4 style="font-size: 100px">Ошибка на сервере</h4>
-												</div>
-
-
-												<div ng-if="errCode = 401">
-													<h1 style="color: #99A7AE; font-size: 150px">{{errCode}}</h1>
-													<h4 style="font-size: 100px">Не авторизован</h4>
-												</div>
-
-
-										</div>
-
-
-								</div>
-							</div>
-
 						</div>
 					</div>
 				</div>

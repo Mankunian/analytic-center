@@ -379,7 +379,6 @@ app.controller("MainCtrl", [
 					if (reason.data) {
 						$scope.loader = false;
 						$rootScope.serverErr(reason);
-						console.log("dada");
 					}
 				}
 			);

@@ -49,6 +49,9 @@
 	<script src="Scripts/ui-bootstrap.js"></script>
 
 	<script src="Scripts/ui-select/select.min.js"></script>
+	
+	<script src="/bower_components/angular-growl-notifications/dist/angular-growl-notifications.min.js"></script>
+	<script src="Scripts/angular-websocket.js"></script>
 
 	<!-- UI Grid -->
 	<script src="js/ui-grid/ui-grid.core.min.js"></script>
@@ -69,12 +72,15 @@
 </head>
 
 <body>
+	<growl-notifications></growl-notifications>
+	<growl-notification>
+  Срез согласован сотрудником Жакупов А.С.
+	</growl-notification>
 	<header>
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-md-4">
 					<a href="#" class="logo"><img src="img/logo.jpg" alt="" class="img-responsive" /></a>
-					<!-- <img src="img/0003.jpg" alt=""> -->
 					<span class="logo-text">КОМИТЕТ ПРАВОВОЙ СТАТИСТИКИ И СПЕЦИАЛЬНЫМ УЧЕТАМ<br />
 						ГЕНЕРАЛЬНОЙ ПРОКУРАТАРУ РЕСПУБЛИКИ КАЗАХСТАН</span>
 				</div>

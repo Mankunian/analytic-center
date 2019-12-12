@@ -353,9 +353,6 @@ content:'\f07c';
   width: 55px;
 }
 
-#grid1 .ui-grid-render-container{
-  /*margin-left: 0 !important;*/
-}
 .ui-grid-row .ui-grid-cell.ui-grid-row-header-cell{
   background: none;
 }
@@ -545,4 +542,26 @@ input.form-control {
     width: auto;
     bottom: 0;
     right: 50px;
+}
+growl-notifications{
+  position: fixed;
+  top: 150px;
+  right: 10px;
+}
+growl-notifications {
+	position: fixed;
+	top: auto;
+	bottom: 100px;
+	right: 10px;
+	z-index: 1000;
+}
+growl-notifications growl-notification {
+	/* background: rgba(25, 117, 192,1); */
+	background-color: #134179;
+	color: white;
+	padding: 10px 20px;
+	width: 300px;
+	display: block;
+	border-radius: 0;
+	margin-top: 15px;
 }

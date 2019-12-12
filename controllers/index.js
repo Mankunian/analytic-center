@@ -10,16 +10,16 @@ var app = angular.module("app", [
 	"ui.grid.selection",
 	"ui.grid.resizeColumns",
 	"ui.grid.treeView",
+	'ngWebSocket',
+	'growlNotifications',
 ]);
 
-app
-	.constant("CONFIGS", {
+app.constant("CONFIGS", {
 		// URL: 'http://192.168.210.10:8081/api/v1/RU/',
 		URL: "https://analytic-centre.tk:8081/api/v1/RU/", // DEV URL
 		INTERFACE_LANG: "ru",
 		AUTH_PAGE_URL: "/",
-	})
-	.constant("STATUS_CODES", {
+	}).constant("STATUS_CODES", {
 		IN_PROCESSING: "0", // В обработке
 		APPROVED: "1", // Утвержден
 		PRELIMINARY: "2", // Предварительный
@@ -28,8 +28,7 @@ app
 		FORMED_WITH_ERROR: "5", // Сформирован с ошибкой
 		WAITING_FOR_PROCESSING: "6", // В ожидании обработки
 		IN_AGREEMENT: "7", // На согласовании
-	})
-	.constant("USER_ROLES", { ONE: "19000090", ZERO: "0" })
+	}).constant("USER_ROLES", { ONE: "19000090", ZERO: "0" })
 	.constant("BUTTONS", {
 		APPROVE: "0", // Согласовать
 		CONFIRM: "1", // Утвердить/ Окончательный
@@ -75,6 +74,25 @@ app
 		};
 	});
 
+app.factory('PushService', function($websocket) {
+	// Open a WebSocket connection
+	var dataStream = $websocket('ws://website.com/data');
+
+	var collection = [];
+
+	dataStream.onMessage(function(message) {
+		collection.push(JSON.parse(message.data));
+	});
+
+	var methods = {
+		collection: collection,
+		get: function() {
+			dataStream.send(JSON.stringify({ action: 'get' }));
+		}
+	};
+
+	return methods;
+})
 
 app.config([
 	"$qProvider",
@@ -127,7 +145,7 @@ app.controller("MainCtrl", [
 		uiGridTreeViewConstants,
 		uiGridTreeBaseService,
 		$interval,
-		CONFIGS
+		CONFIGS,
 	) {
 		//Получение списка статусов
 		$scope.getStatus = function () {
@@ -1059,7 +1077,11 @@ app.controller("ModalContentCtrl", [
 	},
 ]);
 
-app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalInstance, value, STATUS_CODES, USER_ROLES, BUTTONS, $uibModal, $timeout, $rootScope, CONFIGS) {
+app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalInstance, value, STATUS_CODES, USER_ROLES, BUTTONS, $uibModal, $timeout, $rootScope, CONFIGS, PushService) {
+	
+	$scope.pushServiceData = PushService;
+	
+	console.log($scope.pushServiceData);
 	/*=====  Получение данных ======*/
 	$scope.statusInfoData = [];
 	$scope.srezNo = value.id;

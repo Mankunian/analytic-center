@@ -847,6 +847,7 @@ app.controller("ModalContentCtrl", [
 					});
 				};
 			});
+
 			$scope.selectedRegions = [];
 			$scope.regionsGridApiOptions.forEach(function (item, index) {
 				item.gridRegionsDataset.onRegisterApi = function (gridApi) {
@@ -854,13 +855,30 @@ app.controller("ModalContentCtrl", [
 					gridApi.selection.on.rowSelectionChanged($scope, function (row) {
 						$scope.selectedRegions[index] = item.gridApiRegionsName.selection.getSelectedRows();
 					});
+					
+					$scope.toggleRegionsGridRow = function( rowNum ){
+						console.log(item.gridApiRegionsName.grid);
+						item.gridApiRegionsName.treeBase.toggleRowTreeState(item.gridApiRegionsName.grid.renderContainers.body.visibleRowCache[rowNum]);
+					};
+				};
+
+				$scope.toggleRow = function( rowNum ){
+					console.log(index);
+					console.log(item);
+					console.log(item.gridApiRegionsName);
+					if (index == 0) {
+						item.gridApiRegionsName.treeBase.toggleRowTreeState(item.gridApiRegionsName.grid.renderContainers.body.visibleRowCache[rowNum]);
+					}
 				};
 			});
+
 		};
 		/*=====  Initialize onRegisterApi event handler function with dynamic data end ======*/
 
 		/*=====  Get and save current reports's name, code ======*/
 		$scope.getCurrentReportTab = function (name, code) {
+			console.log('asd');
+			// $scope.toggleRegionsGridRow(1);
 			$scope.isCatalogTab = false;
 			$scope.isReportsSelected = false;
 			$scope.currentReportTab = {

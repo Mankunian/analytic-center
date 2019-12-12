@@ -425,7 +425,7 @@ app.controller("MainCtrl", [
 						//todo передать в getSliceGroups(), там проверять на наличие этого rowEntity и по его index открывать групприровку
 					});
 					$scope.getSliceGroups();
-					alert("Будет сформирован срез №" + $scope.sliceNumber + " период " + dateFromString + " по " + dateToString);
+					alert("Будет сформирован срез №" + $scope.sliceNumber);
 				},
 				function (reason) {
 					if (reason.data) $rootScope.serverErr(reason);
@@ -437,9 +437,9 @@ app.controller("MainCtrl", [
 		//Дата начала отчета по умолчанию 1 января 2019
 		var fromTimestamp = 1546322400;
 		$scope.dateFrom = new Date(fromTimestamp * 1000);
-
+		console.log($scope.dateTo);
 		$scope.dateTo = new Date();
-
+	
 		var dd = ("0" + $scope.dateFrom.getDate()).slice(-2);
 		var mm = ("0" + ($scope.dateFrom.getMonth() + 1)).slice(-2);
 		var yy = $scope.dateFrom.getFullYear();

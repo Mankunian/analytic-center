@@ -384,6 +384,7 @@ app.controller("MainCtrl", [
 
 		$scope.getSliceGroups();
 
+		//date by default
     var timestampDefault = 1546322400;
     $scope.dateFrom = new Date(timestampDefault * 1000);
     $scope.dateTo = new Date();

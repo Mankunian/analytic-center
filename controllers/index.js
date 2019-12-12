@@ -420,7 +420,7 @@ app.controller("MainCtrl", [
 					angular.forEach($scope.objectByOrderSrez, function (value) {
 						console.log(value);
 						$scope.sliceNumber = value.id;
-						alert("Будет сформирован срез №" + $scope.sliceNumber + " период " + dateFromString + " по " + dateToString);
+						alert("Будет сформирован срез №" + $scope.sliceNumber);
 						/*angular.forEach($scope.groupList, function (groupList, index) {
 							if (value.groupCode === groupList.code) {
 								//expand definite grouping by index after order slice

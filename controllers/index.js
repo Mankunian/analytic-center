@@ -386,8 +386,50 @@ app.controller("MainCtrl", [
 
 		$scope.getSliceGroups();
 
+
+    //Дата начала отчета по умолчанию 1 января 2019
+
+    /*var fromTimestamp = 1546322400;
+    $scope.dateFrom = new Date(fromTimestamp * 1000);
+
+    $scope.dateTo = new Date();
+
+    var dd = ("0" + $scope.dateFrom.getDate()).slice(-2);
+    var mm = ("0" + ($scope.dateFrom.getMonth() + 1)).slice(-2);
+    var yy = $scope.dateFrom.getFullYear();
+
+    var dateFromString = dd + "." + mm + "." + yy;
+
+    var ddTo = ("0" + $scope.dateTo.getDate()).slice(-2);
+    var mmTo = ("0" + ($scope.dateTo.getMonth() + 1)).slice(-2);
+    var yyTo = $scope.dateTo.getFullYear();
+
+    var dateToString = ddTo + "." + mmTo + "." + yyTo;*/
+
 		$scope.user = [];
-		$scope.orderSrez = function (user) {
+		$scope.orderSrez = function (user, dateFrom, dateTo) {
+      console.log(dateFrom)
+      console.log(dateTo)
+
+      var dFrom = dateFrom;
+      var dd = ("0" + dFrom.getDate()).slice(-2);
+      var mm = ("0" + (dFrom.getMonth() + 1)).slice(-2);
+      var yy = dFrom.getFullYear();
+
+      var dateFromInput = dd + '.' + mm + '.' + yy;
+
+      console.log(dateFromInput)
+
+
+
+      var dTo = dateTo;
+      var dd = ("0" + dTo.getDate()).slice(-2);
+      var mm = ("0" + (dTo.getMonth() + 1)).slice(-2);
+      var yy = dTo.getFullYear();
+      var dateToInput = dd + '.' + mm + '.' + yy;
+
+      console.log(dateToInput)
+
 			var changeTab = function () {
 				$('.nav-tabs a[href="#home"]').tab("show");
 				$scope.vChecked = false;
@@ -398,8 +440,8 @@ app.controller("MainCtrl", [
 			$scope.group = user;
 
 			var dataObj = {
-				startDate: dateFromString,
-				endDate: dateToString,
+				startDate: dateFromInput,
+				endDate: dateToInput,
 				maxRecNum: $scope.statsrez,
 				groups: $scope.group,
 			};
@@ -420,7 +462,7 @@ app.controller("MainCtrl", [
 					angular.forEach($scope.objectByOrderSrez, function (value) {
 						console.log(value);
 						$scope.sliceNumber = value.id;
-						alert("Будет сформирован срез №" + $scope.sliceNumber);
+            alert("Будет сформирован срез №" + $scope.sliceNumber);
 						/*angular.forEach($scope.groupList, function (groupList, index) {
 							if (value.groupCode === groupList.code) {
 								//expand definite grouping by index after order slice
@@ -440,23 +482,7 @@ app.controller("MainCtrl", [
 			);
 		};
 
-		//Дата начала отчета по умолчанию 1 января 2019
-		var fromTimestamp = 1546322400;
-		$scope.dateFrom = new Date(fromTimestamp * 1000);
 
-		$scope.dateTo = new Date();
-
-		var dd = ("0" + $scope.dateFrom.getDate()).slice(-2);
-		var mm = ("0" + ($scope.dateFrom.getMonth() + 1)).slice(-2);
-		var yy = $scope.dateFrom.getFullYear();
-
-		var dateFromString = dd + "." + mm + "." + yy;
-
-		var ddTo = ("0" + $scope.dateTo.getDate()).slice(-2);
-		var mmTo = ("0" + ($scope.dateTo.getMonth() + 1)).slice(-2);
-		var yyTo = $scope.dateTo.getFullYear();
-
-		var dateToString = ddTo + "." + mmTo + "." + yyTo;
 	},
 ]);
 

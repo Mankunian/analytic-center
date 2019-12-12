@@ -297,14 +297,10 @@ app.controller("MainCtrl", [
 						function (value) {
 							$scope.showGrid = value.data;
 							var expandedRowStatusIndex = $scope.gridOptions.data.findIndex(x => x.$$hashKey === row.entity.$$hashKey);
-							console.log(expandedRowStatusIndex)
 
 							$scope.showGrid.forEach(function (element, index) {
 								element.id_period = "№" + element.id + " период " + element.period;
 								//todo here need to equal two object for expandRow
-								console.log(element);
-								console.error($scope.sliceByOrderForRowExpand);
-
 								$scope.gridOptions.data.splice(expandedRowStatusIndex + 1 + index, 0, element);
 							});
 							row.isSlicesLoaded = true;
@@ -373,6 +369,9 @@ app.controller("MainCtrl", [
 
 						$scope.gridOptions.data = [];
 						writeoutNode(dataSet, 0, $scope.gridOptions.data);
+
+
+						$scope.groupList = dataSet;
 					});
 				},
 				function (reason) {
@@ -415,17 +414,23 @@ app.controller("MainCtrl", [
 				function (response) {
 					$scope.user.length = 0;
 					$scope.showGrid = response.data;
-
 					$scope.objectByOrderSrez = response.data;
+
 					angular.forEach($scope.objectByOrderSrez, function (value) {
+						console.log(value);
 						$scope.sliceNumber = value.id;
-						$scope.sliceByOrderForRowExpand = value;
-
-
-						//todo передать в getSliceGroups(), там проверять на наличие этого rowEntity и по его index открывать групприровку
+						alert("Будет сформирован срез №" + $scope.sliceNumber + " период " + dateFromString + " по " + dateToString);
+						/*angular.forEach($scope.groupList, function (groupList, index) {
+							if (value.groupCode === groupList.code) {
+								//expand definite grouping by index after order slice
+								$scope.expandedRowGroup  = 	$scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
+							}
+						})*/
 					});
+
 					$scope.getSliceGroups();
-					alert("Будет сформирован срез №" + $scope.sliceNumber);
+
+
 				},
 				function (reason) {
 					if (reason.data) $rootScope.serverErr(reason);
@@ -437,9 +442,9 @@ app.controller("MainCtrl", [
 		//Дата начала отчета по умолчанию 1 января 2019
 		var fromTimestamp = 1546322400;
 		$scope.dateFrom = new Date(fromTimestamp * 1000);
-		console.log($scope.dateTo);
+
 		$scope.dateTo = new Date();
-	
+
 		var dd = ("0" + $scope.dateFrom.getDate()).slice(-2);
 		var mm = ("0" + ($scope.dateFrom.getMonth() + 1)).slice(-2);
 		var yy = $scope.dateFrom.getFullYear();
@@ -643,13 +648,7 @@ app.controller("ModalContentCtrl", [
 							$scope.gridApi = gridApi;
 
 							$scope.gridApi.treeBase.on.rowExpanded($scope, function (row) {
-								if (
-									(row.entity.$$treeLevel == 1 &&
-										!row.reportCorpusNodeLoaded) ||
-									(row.entity.$$treeLevel == 0 &&
-										row.entity.children.length == 0 &&
-										!row.reportCorpusNodeLoaded)
-								) {
+								if ((row.entity.$$treeLevel == 1 && !row.reportCorpusNodeLoaded) || (row.entity.$$treeLevel == 0 && row.entity.children.length == 0 && !row.reportCorpusNodeLoaded)) {
 									$scope.reportCorpusDataLoaded = true;
 									$http({
 										method: "GET",
@@ -661,9 +660,7 @@ app.controller("ModalContentCtrl", [
 											sessionKey: $rootScope.authUser,
 										},
 									}).then(function (response) {
-										var expandedRowIndex = $scope.reportCorpus.data.findIndex(
-											x => x.$$hashKey === row.entity.$$hashKey
-										);
+										var expandedRowIndex = $scope.reportCorpus.data.findIndex(x => x.$$hashKey === row.entity.$$hashKey);
 										$scope.reportCorpusChildren = response.data;
 
 										$scope.reportCorpusChildren.forEach(function (item) {
@@ -1122,8 +1119,7 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 		if (selectedStatus.statusCode === STATUS_CODES.IN_AGREEMENT) {
 		  //todo here need to show ui-grid
       $scope.showUiGridInAgreement = true;
-
-
+      $scope.isHistoryTreeLoaded = true;
 
 			$scope.updateApprovingTable = function () {
 				$http({
@@ -1202,9 +1198,12 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 				break;
 
 			case STATUS_CODES.PRELIMINARY:
+        $scope.hideStatusDate = false;
 				if (selectedStatus === $scope.lastElementOfHistory) {
 					selectedStatus.created = value.created;
 					selectedStatus.completed = value.completed;
+
+					$scope.hideStatusDate = true;
 				}
 				$scope.statusInfo = selectedStatus;
 				break;
@@ -1327,6 +1326,8 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 					console.log(response);
 					$scope.approveBtnDisabled = true;
 					$timeout(alert("Операция успешно совершена"), 2000);
+					$scope.historyStatus = true;
+					$scope.showUiGridInAgreement = false;
 					$scope.getStatusTree();
 				},
 				function (reason) {

@@ -4,3 +4,4 @@ img/0008.jpg
 .vscode/
 launch.json
 node_modules/
+bower_components/

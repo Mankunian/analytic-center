@@ -152,16 +152,6 @@ app.controller("MainCtrl", [
 			*/
 			let socket = new SockJS('https://18.140.232.52:8081/notifications');
 			stompClient = Stomp.over(socket);
-			////////////////////////////////////
-			let indexx = 0;
-			$scope.notifications = {};
-			function addPush(notification) {
-				let ix;
-	
-				ix = indexx++;
-				$scope.notifications[ix] = notification.body;				
-			}
-			////////////////////////////////////
 
 			//Пытаемся установить соединение
 			// let name = document.getElementById('name').value;

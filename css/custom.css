@@ -353,9 +353,9 @@ content:'\f07c';
   width: 55px;
 }
 
-#grid1 .ui-grid-render-container{
-  /*margin-left: 0 !important;*/
-}
+/* #grid1 .ui-grid-render-container{
+  margin-left: 0 !important;
+} */
 .ui-grid-row .ui-grid-cell.ui-grid-row-header-cell{
   background: none;
 }
@@ -532,17 +532,49 @@ input.form-control {
 .collapsed-row-1>span {
   background-image: url(../img/folder-cl.png);
 }
-
-
 .form-control.userRoleCombobox{
-    border-radius: 0;
-    border: 1px solid #1975C0;
-    color: #fff;
-    background: #1975C0;
-    height: 50px;
-    position: absolute;
-    display: block;
-    width: auto;
-    bottom: 0;
-    right: 50px;
+	border-radius: 0;
+	border: 1px solid #1975C0;
+	color: #fff;
+	background: #1975C0;
+	height: 50px;
+	position: absolute;
+	display: block;
+	width: auto;
+	bottom: 0;
+	right: 50px;
+}
+/* growl-notifications{
+  position: fixed;
+  top: 150px;
+	right: 10px;
+	z-index: 999;
+}
+growl-notification{
+	background-color: #134179;
+  padding: 15px 30px;
+	margin-bottom: 15px;
+	color: #fff;
+	min-height: 350px;
+} */
+growl-notifications {
+	position: fixed;
+	top: 150px;
+	right: 20px;
+	z-index: 1000;
+}
+
+growl-notifications growl-notification {
+	background: #134179;
+	color: white;
+	width: 200px;
+	display: block;
+	border-radius: 0px;
+	margin-top: 15px;
+}
+.ui-notification {
+	width: 350px;
+	padding: 10px 20px;
+	min-height: 50px;
+	margin: 0;
 }

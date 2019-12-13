@@ -10,6 +10,7 @@ var app = angular.module("app", [
 	"ui.grid.selection",
 	"ui.grid.resizeColumns",
 	"ui.grid.treeView",
+	"ui-notification",
 ]);
 
 app
@@ -37,7 +38,7 @@ app
 		PRELIMINARY: "3", // Перевести в предварительный
 		SEND: "4", // На согласование
 	})
-	.run(function ($rootScope, STATUS_CODES, USER_ROLES, BUTTONS, CONFIGS, $window) {
+	.run(function ($rootScope, STATUS_CODES, USER_ROLES, BUTTONS, CONFIGS,) {
 		// localStorage.clear();
 		window.onmessage = function (event) {
 			var data = JSON.parse(event.data);
@@ -51,7 +52,7 @@ app
 
 		function redirectToAuthPage() {
 			console.log('redirect to auth page');
-			// $window.location.hssrefss = CONFIGS.AUTH_PAGE_URL;
+			// $window.location.href = CONFIGS.AUTH_PAGE_URL;
 		}
 
 		if (localStorage.getItem('username') != null) {
@@ -73,8 +74,18 @@ app
 			}
 			reason.data.errMsg != undefined ? alert(reason.data.errMsg) : alert("Произошла ошибка на сервере.");
 		};
+	})
+	.config(function(NotificationProvider) {
+		NotificationProvider.setOptions({
+			delay: 5000,
+			startTop: 20,
+			startRight: 10,
+			verticalSpacing: 20,
+			horizontalSpacing: 20,
+			positionX: 'right',
+			positionY: 'bottom'
+		});
 	});
-
 
 app.config([
 	"$qProvider",
@@ -119,6 +130,7 @@ app.controller("MainCtrl", [
 	'uiGridTreeBaseService',
 	"$interval",
 	"CONFIGS",
+	'Notification',
 	function (
 		$scope,
 		$http,
@@ -127,8 +139,68 @@ app.controller("MainCtrl", [
 		uiGridTreeViewConstants,
 		uiGridTreeBaseService,
 		$interval,
-		CONFIGS
+		CONFIGS,
+		Notification,
 	) {
+
+		let stompClient = null;
+
+		function connect() {
+			/*
+			Создаем websocket-соединение, используем библиотеку stompjs для работы по протоколу STOMP,
+			также используем библиотеку sockjs для обеспечения для поддержки функционала в браузерах
+			неподдерживающих websocket и для пользователец работающих через прокси
+			*/
+			let socket = new SockJS('https://18.140.232.52:8081/notifications');
+			stompClient = Stomp.over(socket);
+			////////////////////////////////////
+			let indexx = 0;
+			$scope.notifications = {};
+			function addPush(notification) {
+				let ix;
+	
+				ix = indexx++;
+				$scope.notifications[ix] = notification.body;				
+			}
+			////////////////////////////////////
+
+			//Пытаемся установить соединение
+			// let name = document.getElementById('name').value;
+			let name = $rootScope.authUser;
+			stompClient.connect({sessionKey : name}, function(frame) {
+
+				//Функция обратного вызова,которая запускается после успешного соединения
+				//Для продуктива необходимо обрабатывать также и неуспешное соединение, чтобы
+				//уведомить пользователя о том, что он не получит уведомлений
+
+				//Подписка на уведомления для всех пользователей, по этому каналу будут приходить
+				//рассылки общего характера предназначенный для всех пользователей
+				stompClient.subscribe('/topic/notifications', function(message) {
+					console.log("received public: "  + message);
+				});
+				
+				//Подписака на индивидуальные уведомления, по этому каналу будут приходить уведомдения,
+				//пероснально для пользователя, зависящие от того какие у пользователя права
+				stompClient.subscribe('/user/queue/notifications', function(message) {
+					console.log("received private: "  + message);
+					// $rootScope.arr = message.body;
+					// addPush(message)
+					Notification.primary(message.body);
+				});
+
+				//Если хотим получить приветственное уведомление вызываем сервис sayHello, которому передаем sessionKey
+				// stompClient.send('/app/sayHello', {}, name);
+			});
+		}
+
+		//При выходе из системы, обязательно вызываем disconnect,чтобы бэкенд знал, что пользователь ушел
+		//и ему не нужно слать уведомления
+		function disconnect() {
+			stompClient.disconnect();
+		}
+
+		connect();
+
 		//Получение списка статусов
 		$scope.getStatus = function () {
 			$http({
@@ -384,31 +456,31 @@ app.controller("MainCtrl", [
 		$scope.getSliceGroups();
 
 		//date by default
-    var timestampDefault = 1546322400;
-    $scope.dateFrom = new Date(timestampDefault * 1000);
-    $scope.dateTo = new Date();
+		var timestampDefault = 1546322400;
+		$scope.dateFrom = new Date(timestampDefault * 1000);
+		$scope.dateTo = new Date();
 
 		$scope.user = [];
 		$scope.orderSrez = function (user, dateFrom, dateTo) {
 
-        var dFrom = dateFrom;
-        var dd = ("0" + dFrom.getDate()).slice(-2);
-        var mm = ("0" + (dFrom.getMonth() + 1)).slice(-2);
-        var yy = dFrom.getFullYear();
+				var dFrom = dateFrom;
+				var dd = ("0" + dFrom.getDate()).slice(-2);
+				var mm = ("0" + (dFrom.getMonth() + 1)).slice(-2);
+				var yy = dFrom.getFullYear();
 
-        var dateFromInput = dd + '.' + mm + '.' + yy;
+				var dateFromInput = dd + '.' + mm + '.' + yy;
 
-        console.log(dateFromInput)
+				console.log(dateFromInput)
 
 
 
-        var dTo = dateTo;
-        var dd = ("0" + dTo.getDate()).slice(-2);
-        var mm = ("0" + (dTo.getMonth() + 1)).slice(-2);
-        var yy = dTo.getFullYear();
-        var dateToInput = dd + '.' + mm + '.' + yy;
+				var dTo = dateTo;
+				var dd = ("0" + dTo.getDate()).slice(-2);
+				var mm = ("0" + (dTo.getMonth() + 1)).slice(-2);
+				var yy = dTo.getFullYear();
+				var dateToInput = dd + '.' + mm + '.' + yy;
 
-        console.log(dateToInput)
+				console.log(dateToInput)
 
 
 
@@ -446,7 +518,7 @@ app.controller("MainCtrl", [
 					angular.forEach($scope.objectByOrderSrez, function (value) {
 						console.log(value);
 						$scope.sliceNumber = value.id;
-						alert("Будет сформирован срез №" + $scope.sliceNumber + " период " + dateFromInput + " по " + dateToInput);
+						// alert("Будет сформирован срез №" + $scope.sliceNumber + " период " + dateFromInput + " по " + dateToInput);
 						/*angular.forEach($scope.groupList, function (groupList, index) {
 							if (value.groupCode === groupList.code) {
 								//expand definite grouping by index after order slice
@@ -1139,9 +1211,9 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 	$scope.getStatusTree();
 	/*Получаем дерево статусов в зависимости от Номера среза END*/
 
-  /*=====  Получаем код статуса после клика на статус
-  в дереве статусов и перезаписываем полученный из row.entity ======*/
-  var section = '';
+	/*=====  Получаем код статуса после клика на статус
+	в дереве статусов и перезаписываем полученный из row.entity ======*/
+	var section = '';
 	$scope.getStatusInfo = function (selectedStatus) {
 
 		section = selectedStatus.id;
@@ -1152,9 +1224,9 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 
 		$scope.showUiGridInAgreement = false;
 		if (selectedStatus.statusCode === STATUS_CODES.IN_AGREEMENT) {
-		  //todo here need to show ui-grid
-      $scope.showUiGridInAgreement = true;
-      $scope.isHistoryTreeLoaded = true;
+			//todo here need to show ui-grid
+			$scope.showUiGridInAgreement = true;
+			$scope.isHistoryTreeLoaded = true;
 
 			$scope.updateApprovingTable = function () {
 				$http({

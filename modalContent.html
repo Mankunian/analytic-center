@@ -73,7 +73,6 @@
     </uib-tab>
     <!-- Group code 100 -->
     <uib-tab ng-if="!isGroup100" ng-repeat="item in reports_n_deps track by $index" heading="{{ item.name }}" select="getCurrentReportTab(item.name, item.code)">
-			<button id="toggleFirstRow" type="button" class="btn btn-success" ng-click="toggleRow(0)">Toggle First Row</button>
       <div class="row">
         <div class="col-md-6">
           <div id="gridRegions" ui-grid="item.gridRegionsDataset" ui-grid-selection ui-grid-grouping ui-grid-auto-resize class="grid request-report-grid-modal"></div>

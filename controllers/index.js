@@ -21,22 +21,22 @@ app
 		AUTH_PAGE_URL: "/",
 	})
 	.constant("STATUS_CODES", {
-		IN_PROCESSING: "0", // В обработке
-		APPROVED: "1", // Утвержден
-		PRELIMINARY: "2", // Предварительный
-		DELETED: "3", // Удален
-		CANCELED_BY_USER: "4", // Отменен пользователем
-		FORMED_WITH_ERROR: "5", // Сформирован с ошибкой
-		WAITING_FOR_PROCESSING: "6", // В ожидании обработки
-		IN_AGREEMENT: "7", // На согласовании
+		IN_PROCESSING          : "0", // В обработке
+		APPROVED               : "1", // Утвержден
+		PRELIMINARY            : "2", // Предварительный
+		DELETED                : "3", // Удален
+		CANCELED_BY_USER       : "4", // Отменен пользователем
+		FORMED_WITH_ERROR      : "5", // Сформирован с ошибкой
+		WAITING_FOR_PROCESSING : "6", // В ожидании обработки
+		IN_AGREEMENT           : "7", // На согласовании
 	})
 	.constant("USER_ROLES", { ONE: "19000090", ZERO: "0" })
 	.constant("BUTTONS", {
-		APPROVE: "0", // Согласовать
-		CONFIRM: "1", // Утвердить/ Окончательный
-		DELETE: "2", // Удалить
-		PRELIMINARY: "3", // Перевести в предварительный
-		SEND: "4", // На согласование
+		APPROVE     : "0", // Соглаlсовать
+		CONFIRM     : "1", // Утвердить/ Окончательный
+		DELETE      : "2", // Удалить
+		PRELIMINARY : "3", // Перевести в предварительный
+		SEND        : "4", // На согласование
 	})
 	.run(function ($rootScope, STATUS_CODES, USER_ROLES, BUTTONS, CONFIGS,) {
 		// localStorage.clear();

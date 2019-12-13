@@ -56,7 +56,6 @@ app
 		}
 
 		if (localStorage.getItem('username') != null) {
-			console.log(localStorage.getItem('username'));
 			$rootScope.authUser = localStorage.getItem('username');
 		} else {
 			console.log('null value');

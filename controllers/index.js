@@ -38,7 +38,20 @@ app
 		PRELIMINARY : "3", // Перевести в предварительный
 		SEND        : "4", // На согласование
 	})
-	.run(function ($rootScope, STATUS_CODES, USER_ROLES, BUTTONS, CONFIGS,) {
+	.run(function ($rootScope, STATUS_CODES, USER_ROLES, BUTTONS, CONFIGS, $http) {
+
+		$http({
+			method: "GET",
+			url: './json/users.json',
+		}).then(
+		function (response) {
+			$rootScope.customUsers = response.data;
+		},
+		function (reason) {
+
+		});
+
+
 		// localStorage.clear();
 		window.onmessage = function (event) {
 			var data = JSON.parse(event.data);
@@ -47,7 +60,7 @@ app
 		}
 
 		if (!localStorage.length) {
-			localStorage.setItem('username', 'admin');
+			localStorage.setItem('username', 'user0');
 		}
 
 		function redirectToAuthPage() {
@@ -99,6 +112,12 @@ app.controller("userCtrl", function ($scope, $http, $rootScope, CONFIGS) {
 
 	$scope.roleSelected = function (role) {
 		$rootScope.userRole = role;
+		$rootScope.customUsers.forEach(element => {
+			if (element[$rootScope.userRole] != undefined) {
+				$rootScope.authUser = element[$rootScope.userRole];
+			}
+		});
+		console.log($rootScope.authUser);
 	};
 
 	$http({

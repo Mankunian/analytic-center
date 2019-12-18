@@ -38,7 +38,20 @@ app
 		PRELIMINARY : "3", // Перевести в предварительный
 		SEND        : "4", // На согласование
 	})
-	.run(function ($rootScope, STATUS_CODES, USER_ROLES, BUTTONS, CONFIGS,) {
+	.run(function ($rootScope, STATUS_CODES, USER_ROLES, BUTTONS, CONFIGS, $http) {
+
+		$http({
+			method: "GET",
+			url: './json/users.json',
+		}).then(
+		function (response) {
+			$rootScope.customUsers = response.data;
+		},
+		function (reason) {
+
+		});
+
+
 		// localStorage.clear();
 		window.onmessage = function (event) {
 			var data = JSON.parse(event.data);
@@ -47,7 +60,7 @@ app
 		}
 
 		if (!localStorage.length) {
-			localStorage.setItem('username', 'admin');
+			localStorage.setItem('username', 'user0');
 		}
 
 		function redirectToAuthPage() {
@@ -62,9 +75,9 @@ app
 			redirectToAuthPage();
 		}
 		$rootScope.STATUS_CODES = STATUS_CODES;
-		$rootScope.USER_ROLES = USER_ROLES;
-		$rootScope.BUTTONS = BUTTONS;
-		$rootScope.CONFIGS = CONFIGS;
+		$rootScope.USER_ROLES   = USER_ROLES;
+		$rootScope.BUTTONS      = BUTTONS;
+		$rootScope.CONFIGS      = CONFIGS;
 
 		$rootScope.serverErr = function (reason) {
 			if (reason.status === 401) {
@@ -76,13 +89,13 @@ app
 	})
 	.config(function(NotificationProvider) {
 		NotificationProvider.setOptions({
-			delay: 5000,
-			startTop: 20,
-			startRight: 10,
-			verticalSpacing: 20,
-			horizontalSpacing: 20,
-			positionX: 'right',
-			positionY: 'bottom'
+			delay             : 5000,
+			startTop          : 20,
+			startRight        : 10,
+			verticalSpacing   : 20,
+			horizontalSpacing : 20,
+			positionX         : 'right',
+			positionY         : 'bottom'
 		});
 	});
 
@@ -99,6 +112,12 @@ app.controller("userCtrl", function ($scope, $http, $rootScope, CONFIGS) {
 
 	$scope.roleSelected = function (role) {
 		$rootScope.userRole = role;
+		$rootScope.customUsers.forEach(element => {
+			if (element[$rootScope.userRole] != undefined) {
+				$rootScope.authUser = element[$rootScope.userRole];
+			}
+		});
+		console.log($rootScope.authUser);
 	};
 
 	$http({
@@ -268,20 +287,18 @@ app.controller("MainCtrl", [
 			'type="button" class="btn btn-primary"> Операция со срезами ' +
 			"</button> </div>";
 
-		$scope.gridOptions = {
-			enableColumnMenus: false,
-			showTreeExpandNoChildren: true,
-			enableHiding: false,
-
-			enableSorting: false,
-			enableFiltering: false,
-
-			enableRowSelection: true,
-			enableSelectAll: false,
-			selectionRowHeaderWidth: 35,
-			rowHeight: 45,
-			treeIndent: 15,
-			multiSelect: true,
+			$scope.gridOptions = {
+			enableColumnMenus        : false,
+			showTreeExpandNoChildren : true,
+			enableHiding             : false,
+			enableSorting            : false,
+			enableFiltering          : false,
+			enableRowSelection       : true,
+			enableSelectAll          : false,
+			selectionRowHeaderWidth  : 35,
+			rowHeight                : 45,
+			treeIndent               : 15,
+			multiSelect              : true,
 
 			columnDefs: [
 				{
@@ -485,10 +502,10 @@ app.controller("MainCtrl", [
 			$scope.group = user;
 
 			var dataObj = {
-				startDate: dateFromInput,
-				endDate: dateToInput,
-				maxRecNum: $scope.sliceMax,
-				groups: $scope.group,
+				startDate : dateFromInput,
+				endDate   : dateToInput,
+				maxRecNum : $scope.sliceMax,
+				groups    : $scope.group,
 			};
 
 			$http({
@@ -574,12 +591,12 @@ app.controller("modalOperBySrezCtrl", function ($scope, $uibModal, $rootScope, C
 		$scope.dataSendByModal = rowEntity;
 
 		var modalInstance = $uibModal.open({
-			templateUrl: "modalOperBySrez.html",
-			controller: "modalContentOperBySrezCtrl",
-			size: "xlg",
-			keyboard: false,
-			backdrop: "static",
-			windowTopClass: "getReportModal",
+			templateUrl    : "modalOperBySrez.html",
+			controller     : "modalContentOperBySrezCtrl",
+			size           : "xlg",
+			keyboard       : false,
+			backdrop       : "static",
+			windowTopClass : "getReportModal",
 			resolve: {
 				value: function () {
 					return $scope.dataSendByModal;
@@ -613,12 +630,12 @@ app.controller("ModalContentCtrl", [
 		$timeout,
 		CONFIGS
 	) {
-		$scope.statSliceNum = value.id;
-		$scope.statSlicePeriod = value.period;
-		$scope.isTabsLoaded = false;
-		$scope.isReportsSelected = false;
+		$scope.statSliceNum         = value.id;
+		$scope.statSlicePeriod      = value.period;
+		$scope.isTabsLoaded         = false;
+		$scope.isReportsSelected    = false;
 		$scope.isReadyReportsLoaded = true;
-		$scope.isGroup100 = false;
+		$scope.isGroup100           = false;
 
 		if (value.groupCode == 100) $scope.isGroup100 = true;
 
@@ -696,16 +713,16 @@ app.controller("ModalContentCtrl", [
 					writeoutNodeReportCorpus(responseDataset, 0, $scope.reportCorpusData);
 
 					$scope.reportCorpus = {
-						data: $scope.reportCorpusData,
-						showGridFooter: false,
-						enableColumnMenus: false,
-						showTreeExpandNoChildren: true,
-						enableHiding: false,
-						enableSorting: false,
-						enableFiltering: true,
-						enableRowSelection: true,
-						enableSelectAll: true,
-						multiSelect: true,
+						data                     : $scope.reportCorpusData,
+						showGridFooter           : false,
+						enableColumnMenus        : false,
+						showTreeExpandNoChildren : true,
+						enableHiding             : false,
+						enableSorting            : false,
+						enableFiltering          : true,
+						enableRowSelection       : true,
+						enableSelectAll          : true,
+						multiSelect              : true,
 						columnDefs: [
 							{
 								name: "searchPattern",
@@ -801,16 +818,16 @@ app.controller("ModalContentCtrl", [
 						// Each function through reports with orgs
 						$scope.reports_n_deps.forEach(function (item, index) {
 							$scope.gridOptionsDep = {
-								data: item.orgs,
-								showGridFooter: false,
-								enableColumnMenus: false,
-								showTreeExpandNoChildren: false,
-								enableHiding: false,
-								enableSorting: false,
-								enableFiltering: false,
-								enableRowSelection: true,
-								enableSelectAll: true,
-								multiSelect: true,
+								data                     : item.orgs,
+								showGridFooter           : false,
+								enableColumnMenus        : false,
+								showTreeExpandNoChildren : false,
+								enableHiding             : false,
+								enableSorting            : false,
+								enableFiltering          : false,
+								enableRowSelection       : true,
+								enableSelectAll          : true,
+								multiSelect              : true,
 								columnDefs: [
 									{ name: "code", width: "20%", displayName: "и/н" },
 									{ name: "name", width: "70%", displayName: "Ведомство" },
@@ -820,18 +837,18 @@ app.controller("ModalContentCtrl", [
 							item.gridDataset = $scope.gridOptionsDep;
 							// Инициализация onRegisterApi для обработки событий grid Departments
 							$scope.gridOptionsRegion = {
-								data: $scope.regionsDataset,
-								enableColumnMenus: false,
-								showTreeExpandNoChildren: false,
-								enableHiding: false,
-								enableSorting: false,
-								enableFiltering: false,
-								enableRowSelection: true,
-								enableSelectAll: false,
-								selectionRowHeaderWidth: 35,
-								rowHeight: 35,
-								treeIndent: 7,
-								multiSelect: true,
+								data                     : $scope.regionsDataset,
+								enableColumnMenus        : false,
+								showTreeExpandNoChildren : false,
+								enableHiding             : false,
+								enableSorting            : false,
+								enableFiltering          : false,
+								enableRowSelection       : true,
+								enableSelectAll          : false,
+								selectionRowHeaderWidth  : 35,
+								rowHeight                : 35,
+								treeIndent               : 7,
+								multiSelect              : true,
 								columnDefs: [
 									{
 										name: "code",
@@ -931,9 +948,9 @@ app.controller("ModalContentCtrl", [
 		$scope.getCurrentReportTab = function (name, code) {
 			console.log('asd');
 			// $scope.toggleRegionsGridRow(1);
-			$scope.isCatalogTab = false;
+			$scope.isCatalogTab      = false;
 			$scope.isReportsSelected = false;
-			$scope.currentReportTab = {
+			$scope.currentReportTab  = {
 				name: name,
 				code: code,
 			};
@@ -957,8 +974,8 @@ app.controller("ModalContentCtrl", [
 
 		/*=====  Generate and get requested reports ======*/
 		$scope.getRequestedReports = function () {
-			$scope.isCatalogTab = true;
-			$scope.requestedReports = [];
+			$scope.isCatalogTab          = true;
+			$scope.requestedReports      = [];
 			$scope.requestedReportsQuery = [];
 			var reportInfo,
 				counter = 0;
@@ -1088,12 +1105,12 @@ app.controller("ModalContentCtrl", [
 					function (response) {
 						$scope.isReadyReportsLoaded = true;
 						var reportValues = response.data,
-							counter = 0,
-							counterKz = 0,
-							reportDownloadUrl = "",
-							reportDownloadName = "",
+							counter             = 0,
+							counterKz           = 0,
+							reportDownloadUrl   = "",
+							reportDownloadName  = "",
 							reportErrMsgMissing = "Отсутствует шаблон отчета",
-							reportErrMsg = "Ошибка при формировании данного отчета";
+							reportErrMsg        = "Ошибка при формировании данного отчета";
 
 						reportValues.forEach(function (element) {
 							if (element.value == -1) {
@@ -1153,13 +1170,13 @@ app.controller("ModalContentCtrl", [
 
 app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalInstance, value, STATUS_CODES, USER_ROLES, BUTTONS, $uibModal, $timeout, $rootScope, CONFIGS) {
 	/*=====  Получение данных ======*/
-	$scope.statusInfoData = [];
-	$scope.srezNo = value.id;
-	$scope.period = value.period;
-	$scope.srezToNum = value.maxRecNum;
+	$scope.statusInfoData      = [];
+	$scope.srezNo              = value.id;
+	$scope.period              = value.period;
+	$scope.srezToNum           = value.maxRecNum;
 	$scope.isHistoryTreeLoaded = false;
 	$scope.rowEntityStatusCode = value.statusCode; // Получаем код статуса со строки - row.entity
-	$scope.statusCode = value.statusCode;
+	$scope.statusCode          = value.statusCode;
 
 	if ($rootScope.userRole === "19000090") {
 		$scope.userRole = USER_ROLES.ONE;
@@ -1180,12 +1197,12 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 			},
 		}).then(
 			function (response) {
-				$scope.history = response.data;
-				$scope.activeTabIndex = $scope.history.length - 1; //get last index of array history
+				$scope.history              = response.data;
+				$scope.activeTabIndex       = $scope.history.length - 1; //get last index of array history
 				$scope.lastElementOfHistory = $scope.history[0]; // try to get first element of array history
-				$scope.isHistoryTreeLoaded = true;
-				$scope.historyObj = $scope.history[$scope.activeTabIndex];
-				$scope.rowEntityStatusCode = $scope.historyObj.statusCode;
+				$scope.isHistoryTreeLoaded  = true;
+				$scope.historyObj           = $scope.history[$scope.activeTabIndex];
+				$scope.rowEntityStatusCode  = $scope.historyObj.statusCode;
 
 				$scope.getStatusInfo($scope.historyObj);
 			},
@@ -1208,7 +1225,7 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 		section = selectedStatus.id;
 
 		$rootScope.historyId = selectedStatus.id;
-		$scope.statusCode = selectedStatus.statusCode;
+		$scope.statusCode    = selectedStatus.statusCode;
 
 
 		$scope.showUiGridInAgreement = false;
@@ -1236,16 +1253,16 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 						// }
 
 						$scope.gridOptionsAgreement = {
-							data: response.data,
-							showGridFooter: false,
-							enableColumnMenus: false,
-							showTreeExpandNoChildren: false,
-							enableHiding: false,
-							enableSorting: false,
-							enableFiltering: false,
-							enableRowSelection: true,
-							enableSelectAll: false,
-							rowHeight: 35,
+							data                     : response.data,
+							showGridFooter           : false,
+							enableColumnMenus        : false,
+							showTreeExpandNoChildren : false,
+							enableHiding             : false,
+							enableSorting            : false,
+							enableFiltering          : false,
+							enableRowSelection       : true,
+							enableSelectAll          : false,
+							rowHeight                : 35,
 							columnDefs: [
 								{
 									name: "territoryName",
@@ -1285,9 +1302,9 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 		/*=====  Сравниваем полученный код статуса и меняем URL HTTP запроса ======*/
 		switch ($scope.statusCode) {
 			case STATUS_CODES.FORMED_WITH_ERROR: // Сформирован с ошибкой
-				selectedStatus.created = value.created;
+				selectedStatus.created   = value.created;
 				selectedStatus.completed = value.completed;
-				$scope.statusInfo = selectedStatus;
+				$scope.statusInfo        = selectedStatus;
 				break;
 
 			case STATUS_CODES.APPROVED: // Окончательный
@@ -1297,7 +1314,7 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 			case STATUS_CODES.PRELIMINARY:
 
 				if (selectedStatus === $scope.lastElementOfHistory) {
-					selectedStatus.created = value.created;
+					selectedStatus.created   = value.created;
 					selectedStatus.completed = value.completed;
 
 					$scope.hideStatusDate = true;

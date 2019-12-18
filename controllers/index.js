@@ -40,6 +40,8 @@ app
 	})
 	.run(function ($rootScope, STATUS_CODES, USER_ROLES, BUTTONS, CONFIGS, $http) {
 
+		$rootScope.customUserIsChanged = false;
+
 		$http({
 			method: "GET",
 			url: './json/users.json',
@@ -115,9 +117,9 @@ app.controller("userCtrl", function ($scope, $http, $rootScope, CONFIGS) {
 		$rootScope.customUsers.forEach(element => {
 			if (element[$rootScope.userRole] != undefined) {
 				$rootScope.authUser = element[$rootScope.userRole];
+				$rootScope.reConnect();
 			}
 		});
-		console.log($rootScope.authUser);
 	};
 
 	$http({
@@ -175,6 +177,7 @@ app.controller("MainCtrl", [
 			//Пытаемся установить соединение
 			// let name = document.getElementById('name').value;
 			let name = $rootScope.authUser;
+			console.log('name', name);
 			stompClient.connect({sessionKey : name}, function(frame) {
 
 				//Функция обратного вызова,которая запускается после успешного соединения
@@ -203,11 +206,23 @@ app.controller("MainCtrl", [
 
 		//При выходе из системы, обязательно вызываем disconnect,чтобы бэкенд знал, что пользователь ушел
 		//и ему не нужно слать уведомления
+		$rootScope.reConnect = function () {
+			stompClient.disconnect();
+			stompClient.connect();
+			console.log('reconnect');
+		}
 		function disconnect() {
 			stompClient.disconnect();
 		}
-
-		connect();
+		console.log('asdasd');
+		if ($rootScope.customUserIsChanged === true) {
+			console.log('disconnect');
+			disconnect();
+			connect();
+		} else {
+			console.log('connect');
+			connect();
+		}
 
 		//Получение списка статусов
 		$scope.getStatus = function () {

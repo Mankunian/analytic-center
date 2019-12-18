@@ -207,22 +207,23 @@ app.controller("MainCtrl", [
 		//При выходе из системы, обязательно вызываем disconnect,чтобы бэкенд знал, что пользователь ушел
 		//и ему не нужно слать уведомления
 		$rootScope.reConnect = function () {
-			stompClient.disconnect();
-			stompClient.connect();
+			disconnect();
+			connect();
 			console.log('reconnect');
 		}
 		function disconnect() {
+			console.log('disconnect function called');
 			stompClient.disconnect();
 		}
-		console.log('asdasd');
-		if ($rootScope.customUserIsChanged === true) {
-			console.log('disconnect');
-			disconnect();
-			connect();
-		} else {
-			console.log('connect');
-			connect();
-		}
+
+		// if ($rootScope.customUserIsChanged === true) {
+		// 	console.log('disconnect');
+		// 	disconnect();
+		// 	connect();
+		// } else {
+		// 	console.log('connect');
+		// }
+		connect();
 
 		//Получение списка статусов
 		$scope.getStatus = function () {

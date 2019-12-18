@@ -90,7 +90,6 @@ app.controller("userCtrl", ['$scope', '$http', '$rootScope', 'CONFIGS', function
 	$rootScope.userRole = $scope.userRole;
 
 	$scope.roleSelected = function (role) {
-		console.log(role)
 		$rootScope.userRole = role;
 	};
 

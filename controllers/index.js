@@ -10,6 +10,7 @@ var app = angular.module("app", [
 	"ui.grid.selection",
 	"ui.grid.resizeColumns",
 	"ui.grid.treeView",
+	'ngResource'
 ]);
 
 app
@@ -83,11 +84,13 @@ app.config([
 	},
 ]);
 
-app.controller("userCtrl", function ($scope, $http, $rootScope, CONFIGS) {
+app.controller("userCtrl", ['$scope', '$http', '$rootScope', 'CONFIGS', function ($scope, $http, $rootScope, CONFIGS) {
+
 	$scope.userRole = "19000090";
 	$rootScope.userRole = $scope.userRole;
 
 	$scope.roleSelected = function (role) {
+		console.log(role)
 		$rootScope.userRole = role;
 	};
 
@@ -108,27 +111,24 @@ app.controller("userCtrl", function ($scope, $http, $rootScope, CONFIGS) {
 			console.log(reason);
 		}
 	);
-});
+}]);
 
-app.controller("MainCtrl", [
-	"$scope",
-	"$http",
-	'$rootScope',
-	"uiGridGroupingConstants",
-	"uiGridTreeViewConstants",
-	'uiGridTreeBaseService',
-	"$interval",
-	"CONFIGS",
-	function (
-		$scope,
-		$http,
-		$rootScope,
-		uiGridGroupingConstants,
-		uiGridTreeViewConstants,
-		uiGridTreeBaseService,
-		$interval,
-		CONFIGS
-	) {
+app.controller('translationCtrl',['$scope', 'translationService',
+	function ($scope, translationService){
+
+		//Выполняем перевод, если произошло событие смены языка
+		$scope.translate = function(){
+			translationService.getTranslation($scope, $scope.selectedLanguage);
+		};
+		// Инициализация
+		$scope.selectedLanguage = 'ru';
+		$scope.translate();
+
+	}]);
+
+app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingConstants", "uiGridTreeViewConstants", 'uiGridTreeBaseService', "$interval", "CONFIGS",
+	function ($scope, $http, $rootScope, uiGridGroupingConstants, uiGridTreeViewConstants, uiGridTreeBaseService, $interval, CONFIGS) {
+
 		//Получение списка статусов
 		$scope.getStatus = function () {
 			$http({

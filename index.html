@@ -37,6 +37,7 @@
 	<meta name="theme-color" content="#ffffff" />
 
 	<script src="js/angular.js"></script>
+	<script src="js/angular-resource.min.js"></script>
 	<script src="js/angular-touch.js"></script>
 	<script src="js/angular-animate.js"></script>
 	<script src="js/angular-aria.js"></script>
@@ -68,7 +69,7 @@
 	<script data-require="ui-bootstrap@*" data-semver="2.5.0" src="js/ui-bootstrap-tpls-2.5.0.js"></script>
 </head>
 
-<body>
+<body ng-controller="translationCtrl">
 	<header>
 		<div class="container-fluid">
 			<div class="row">
@@ -76,19 +77,25 @@
 					<a href="#" class="logo"><img src="img/logo.jpg" alt="" class="img-responsive" /></a>
 					<!-- <img src="img/0003.jpg" alt=""> -->
 					<span class="logo-text">КОМИТЕТ ПРАВОВОЙ СТАТИСТИКИ И СПЕЦИАЛЬНЫМ УЧЕТАМ<br />
-						ГЕНЕРАЛЬНОЙ ПРОКУРАТАРУ РЕСПУБЛИКИ КАЗАХСТАН</span>
+						ГЕНЕРАЛЬНОЙ ПРОКУРАТУРЫ РЕСПУБЛИКИ КАЗАХСТАН</span>
 				</div>
 				<div class="col-md-4">
-					<h1 class="h-title">Статистические срезы</h1>
+					<h1 class="h-title">{{translation.STAT_SREZ}}</h1>
 				</div>
 				<div class="col-md-4">
-					<div class="lang-switcher"></div>
+					<div class="lang-switcher" style="float: right; display: none">
+						<h5 style="margin: 5px 0">{{translation.CHOOSE_LANG}}:</h5>
+						<select style="float: right; width: 105px; padding: 5px" ng-change="translate()" ng-model="selectedLanguage">
+							<option value="kz">Қазақша</option>
+							<option value="ru">Русский</option>
+						</select>
+					</div>
 				</div>
 			</div>
 		</div>
 	</header>
 	<nav class="main-navigation" ng-controller="userCtrl">
-		<span>Статистические срезы</span>
+		<span>{{translation.STAT_SREZ}}</span>
 
 		<div style="float: right; margin: 3px">
 			<select ng-if="roleList" class="form-control userRoleCombobox" ng-change="roleSelected(userRole)"
@@ -104,10 +111,10 @@
 				<div class="col-sm-12" style="margin: 20px 0">
 					<ul class="nav nav-tabs main-tabs">
 						<li class="active changeClass">
-							<a data-toggle="tab" href="#home">Срезы</a>
+							<a data-toggle="tab" href="#home">{{translation.SLICES}}</a>
 						</li>
 						<li class="changeClass">
-							<a data-toggle="tab" href="#menu1">Сформировать</a>
+							<a data-toggle="tab" href="#menu1">{{translation.TO_FORM}}</a>
 						</li>
 					</ul>
 					<div style="height: 5px; width: 100%; background: transparent">
@@ -132,7 +139,7 @@
 									<div class="pull-right">
 										<label class="containerLabel">
 											<input ng-model="checkboxModel.value" ng-change="getSliceGroups(checkboxModel.value)"
-												type="checkbox" />Показать удаленные
+												type="checkbox" />{{translation.SHOW_DELETED}}
 											<span class="checkmark"></span>
 										</label>
 									</div>
@@ -224,6 +231,7 @@
 	</div>
 
 	<script src="controllers/index.js"></script>
+	<script src="controllers/angularTranslationService.js"></script>
 	<script src="Scripts/bootstrap.min.js"></script>
 </body>
 

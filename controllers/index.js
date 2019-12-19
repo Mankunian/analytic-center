@@ -128,7 +128,7 @@ app.controller('translationCtrl',['$scope', 'translationService',
 app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingConstants", "uiGridTreeViewConstants", 'uiGridTreeBaseService', "$interval", "CONFIGS",
 	function ($scope, $http, $rootScope, uiGridGroupingConstants, uiGridTreeViewConstants, uiGridTreeBaseService, $interval, CONFIGS) {
 
-		//Получение списка статусов
+		//Получение списка статусов.
 		$scope.getStatus = function () {
 			$http({
 				method: "GET",

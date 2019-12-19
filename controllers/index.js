@@ -172,7 +172,7 @@ app.controller("MainCtrl", [
 			также используем библиотеку sockjs для обеспечения для поддержки функционала в браузерах
 			неподдерживающих websocket и для пользователец работающих через прокси
 			*/
-			let socket = new SockJS('https://192.168.210.10:8081/notifications');
+			let socket = new SockJS('https://18.140.232.52:8081/notifications');
 			stompClient = Stomp.over(socket);
 
 			//Пытаемся установить соединение

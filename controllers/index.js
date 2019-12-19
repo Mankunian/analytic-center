@@ -15,8 +15,8 @@ var app = angular.module("app", [
 
 app
 	.constant("CONFIGS", {
-		 URL: 'http://192.168.210.10:8081/api/v1/RU/',
-		//URL: "https://analytic-centre.tk:8081/api/v1/RU/", // DEV URL
+		//  URL: 'http://192.168.210.10:8081/api/v1/RU/',
+		URL: "https://analytic-centre.tk:8081/api/v1/RU/", // DEV URL
 		INTERFACE_LANG: "ru",
 		AUTH_PAGE_URL: "/",
 	})

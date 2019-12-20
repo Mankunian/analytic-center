@@ -176,10 +176,10 @@ app.controller("MainCtrl", [
 			stompClient = Stomp.over(socket);
 
 			//Пытаемся установить соединение
-			// let name = document.getElementById('name').value;
-			let name = $rootScope.authUser;
-			console.log('name', name);
-			stompClient.connect({sessionKey : name}, function(frame) {
+			// let userName = document.getElementById('userName').value;
+			let userName = $rootScope.authUser;
+			console.log('userName', userName);
+			stompClient.connect({sessionKey : userName}, function(frame) {
 
 				//Функция обратного вызова,которая запускается после успешного соединения
 				//Для продуктива необходимо обрабатывать также и неуспешное соединение, чтобы
@@ -201,7 +201,7 @@ app.controller("MainCtrl", [
 				});
 
 				//Если хотим получить приветственное уведомление вызываем сервис sayHello, которому передаем sessionKey
-				// stompClient.send('/app/sayHello', {}, name);
+				// stompClient.send('/app/sayHello', {}, userName);
 			});
 		}
 
@@ -953,7 +953,6 @@ app.controller("ModalContentCtrl", [
 
 		/*=====  Get and save current reports's name, code ======*/
 		$scope.getCurrentReportTab = function (name, code) {
-			console.log('asd');
 			// $scope.toggleRegionsGridRow(1);
 			$scope.isCatalogTab      = false;
 			$scope.isReportsSelected = false;

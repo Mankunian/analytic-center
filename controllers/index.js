@@ -486,28 +486,18 @@ app.controller("MainCtrl", [
 		$scope.user = [];
 		$scope.orderSrez = function (user, dateFrom, dateTo) {
 
-				var dFrom = dateFrom;
-				var dd = ("0" + dFrom.getDate()).slice(-2);
-				var mm = ("0" + (dFrom.getMonth() + 1)).slice(-2);
-				var yy = dFrom.getFullYear();
+			var dFrom = dateFrom;
+			var dd = ("0" + dFrom.getDate()).slice(-2);
+			var mm = ("0" + (dFrom.getMonth() + 1)).slice(-2);
+			var yy = dFrom.getFullYear();
 
-				var dateFromInput = dd + '.' + mm + '.' + yy;
+			var dateFromInput = dd + '.' + mm + '.' + yy;
 
-				console.log(dateFromInput)
-
-
-
-				var dTo = dateTo;
-				var dd = ("0" + dTo.getDate()).slice(-2);
-				var mm = ("0" + (dTo.getMonth() + 1)).slice(-2);
-				var yy = dTo.getFullYear();
-				var dateToInput = dd + '.' + mm + '.' + yy;
-
-				console.log(dateToInput)
-
-
-
-
+			var dTo = dateTo;
+			var dd = ("0" + dTo.getDate()).slice(-2);
+			var mm = ("0" + (dTo.getMonth() + 1)).slice(-2);
+			var yy = dTo.getFullYear();
+			var dateToInput = dd + '.' + mm + '.' + yy;
 
 			var changeTab = function () {
 				$('.nav-tabs a[href="#home"]').tab("show");

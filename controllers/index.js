@@ -10,7 +10,8 @@ var app = angular.module("app", [
 	"ui.grid.selection",
 	"ui.grid.resizeColumns",
 	"ui.grid.treeView",
-	'ngResource'
+	"ui-notification",
+  'ngResource'
 ]);
 
 app
@@ -21,24 +22,39 @@ app
 		AUTH_PAGE_URL: "/",
 	})
 	.constant("STATUS_CODES", {
-		IN_PROCESSING: "0", // В обработке
-		APPROVED: "1", // Утвержден
-		PRELIMINARY: "2", // Предварительный
-		DELETED: "3", // Удален
-		CANCELED_BY_USER: "4", // Отменен пользователем
-		FORMED_WITH_ERROR: "5", // Сформирован с ошибкой
-		WAITING_FOR_PROCESSING: "6", // В ожидании обработки
-		IN_AGREEMENT: "7", // На согласовании
+		IN_PROCESSING          : "0", // В обработке
+		APPROVED               : "1", // Утвержден
+		PRELIMINARY            : "2", // Предварительный
+		DELETED                : "3", // Удален
+		CANCELED_BY_USER       : "4", // Отменен пользователем
+		FORMED_WITH_ERROR      : "5", // Сформирован с ошибкой
+		WAITING_FOR_PROCESSING : "6", // В ожидании обработки
+		IN_AGREEMENT           : "7", // На согласовании
 	})
 	.constant("USER_ROLES", { ONE: "19000090", ZERO: "0" })
 	.constant("BUTTONS", {
-		APPROVE: "0", // Согласовать
-		CONFIRM: "1", // Утвердить/ Окончательный
-		DELETE: "2", // Удалить
-		PRELIMINARY: "3", // Перевести в предварительный
-		SEND: "4", // На согласование
+		APPROVE     : "0", // Соглаlсовать
+		CONFIRM     : "1", // Утвердить/ Окончательный
+		DELETE      : "2", // Удалить
+		PRELIMINARY : "3", // Перевести в предварительный
+		SEND        : "4", // На согласование
 	})
-	.run(function ($rootScope, STATUS_CODES, USER_ROLES, BUTTONS, CONFIGS, $window) {
+	.run(function ($rootScope, STATUS_CODES, USER_ROLES, BUTTONS, CONFIGS, $http) {
+
+		$rootScope.customUserIsChanged = false;
+
+		$http({
+			method: "GET",
+			url: './json/users.json',
+		}).then(
+		function (response) {
+			$rootScope.customUsers = response.data;
+		},
+		function (reason) {
+
+		});
+
+
 		// localStorage.clear();
 		window.onmessage = function (event) {
 			var data = JSON.parse(event.data);
@@ -47,25 +63,24 @@ app
 		}
 
 		if (!localStorage.length) {
-			localStorage.setItem('username', 'admin');
+			localStorage.setItem('username', 'user0');
 		}
 
 		function redirectToAuthPage() {
 			console.log('redirect to auth page');
-			// $window.location.hssrefss = CONFIGS.AUTH_PAGE_URL;
+			// $window.location.href = CONFIGS.AUTH_PAGE_URL;
 		}
 
 		if (localStorage.getItem('username') != null) {
-			console.log(localStorage.getItem('username'));
 			$rootScope.authUser = localStorage.getItem('username');
 		} else {
 			console.log('null value');
 			redirectToAuthPage();
 		}
 		$rootScope.STATUS_CODES = STATUS_CODES;
-		$rootScope.USER_ROLES = USER_ROLES;
-		$rootScope.BUTTONS = BUTTONS;
-		$rootScope.CONFIGS = CONFIGS;
+		$rootScope.USER_ROLES   = USER_ROLES;
+		$rootScope.BUTTONS      = BUTTONS;
+		$rootScope.CONFIGS      = CONFIGS;
 
 		$rootScope.serverErr = function (reason) {
 			if (reason.status === 401) {
@@ -74,8 +89,19 @@ app
 			}
 			reason.data.errMsg != undefined ? alert(reason.data.errMsg) : alert("Произошла ошибка на сервере.");
 		};
+	})
+	.config(function(NotificationProvider) {
+		NotificationProvider.setOptions({
+			delay             : 90000,
+			startTop          : 20,
+			startRight        : 10,
+			verticalSpacing   : 20,
+			horizontalSpacing : 20,
+			closeOnClick 			: true,
+			positionX         : 'right',
+			positionY         : 'bottom'
+		});
 	});
-
 
 app.config([
 	"$qProvider",
@@ -84,14 +110,20 @@ app.config([
 	},
 ]);
 
-app.controller("userCtrl", ['$scope', '$http', '$rootScope', 'CONFIGS', function ($scope, $http, $rootScope, CONFIGS) {
-
+app.controller("userCtrl", function ($scope, $http, $rootScope, CONFIGS) {
 	$scope.userRole = "19000090";
 	$rootScope.userRole = $scope.userRole;
 
 	$scope.roleSelected = function (role) {
 		$rootScope.userRole = role;
+		$rootScope.customUsers.forEach(element => {
+			if (element[$rootScope.userRole] != undefined) {
+			$rootScope.authUser = element[$rootScope.userRole];
+			$rootScope.reConnect();
+		}
+	})
 	};
+
 
 	$http({
 		method: "GET",
@@ -110,7 +142,7 @@ app.controller("userCtrl", ['$scope', '$http', '$rootScope', 'CONFIGS', function
 			console.log(reason);
 		}
 	);
-}]);
+});
 
 app.controller('translationCtrl',['$scope', 'translationService',
 	function ($scope, translationService){
@@ -125,10 +157,72 @@ app.controller('translationCtrl',['$scope', 'translationService',
 
 	}]);
 
-app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingConstants", "uiGridTreeViewConstants", 'uiGridTreeBaseService', "$interval", "CONFIGS",
-	function ($scope, $http, $rootScope, uiGridGroupingConstants, uiGridTreeViewConstants, uiGridTreeBaseService, $interval, CONFIGS) {
+app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingConstants", "uiGridTreeViewConstants", 'uiGridTreeBaseService', "$interval", "CONFIGS", 'Notification',
+	function ($scope, $http, $rootScope, uiGridGroupingConstants, uiGridTreeViewConstants, uiGridTreeBaseService, $interval, CONFIGS, Notification) {
 
-		//Получение списка статусов.
+		let stompClient = null;
+
+		function connect() {
+			/*
+			Создаем websocket-соединение, используем библиотеку stompjs для работы по протоколу STOMP,
+			также используем библиотеку sockjs для обеспечения для поддержки функционала в браузерах
+			неподдерживающих websocket и для пользователец работающих через прокси
+			*/
+			let socket = new SockJS('https://192.168.210.10:8081/notifications');
+			stompClient = Stomp.over(socket);
+
+			//Пытаемся установить соединение
+			// let name = document.getElementById('name').value;
+			let name = $rootScope.authUser;
+			console.log('name', name);
+			stompClient.connect({sessionKey : name}, function(frame) {
+
+				//Функция обратного вызова,которая запускается после успешного соединения
+				//Для продуктива необходимо обрабатывать также и неуспешное соединение, чтобы
+				//уведомить пользователя о том, что он не получит уведомлений
+
+				//Подписка на уведомления для всех пользователей, по этому каналу будут приходить
+				//рассылки общего характера предназначенный для всех пользователей
+				stompClient.subscribe('/topic/notifications', function(message) {
+					console.log("received public: "  + message);
+				});
+
+				//Подписака на индивидуальные уведомления, по этому каналу будут приходить уведомдения,
+				//пероснально для пользователя, зависящие от того какие у пользователя права
+				stompClient.subscribe('/user/queue/notifications', function(message) {
+					console.log("received private: "  + message);
+					// $rootScope.arr = message.body;
+					// addPush(message)
+					Notification.primary(message.body);
+				});
+
+				//Если хотим получить приветственное уведомление вызываем сервис sayHello, которому передаем sessionKey
+				// stompClient.send('/app/sayHello', {}, name);
+			});
+		}
+
+		//При выходе из системы, обязательно вызываем disconnect,чтобы бэкенд знал, что пользователь ушел
+		//и ему не нужно слать уведомления
+		$rootScope.reConnect = function () {
+			disconnect();
+			connect();
+			console.log('reconnect');
+		}
+		function disconnect() {
+			console.log('disconnect function called');
+			stompClient.disconnect();
+		}
+
+		// if ($rootScope.customUserIsChanged === true) {
+		// 	console.log('disconnect');
+		// 	disconnect();
+		// 	connect();
+		// } else {
+		// 	console.log('connect');
+		// }
+		connect();
+
+		//Получение списка статусов
 		$scope.getStatus = function () {
 			$http({
 				method: "GET",
@@ -206,20 +300,18 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 			'type="button" class="btn btn-primary"> Операция со срезами ' +
 			"</button> </div>";
 
-		$scope.gridOptions = {
-			enableColumnMenus: false,
-			showTreeExpandNoChildren: true,
-			enableHiding: false,
-
-			enableSorting: false,
-			enableFiltering: false,
-
-			enableRowSelection: true,
-			enableSelectAll: false,
-			selectionRowHeaderWidth: 35,
-			rowHeight: 45,
-			treeIndent: 15,
-			multiSelect: true,
+			$scope.gridOptions = {
+			enableColumnMenus        : false,
+			showTreeExpandNoChildren : true,
+			enableHiding             : false,
+			enableSorting            : false,
+			enableFiltering          : false,
+			enableRowSelection       : true,
+			enableSelectAll          : false,
+			selectionRowHeaderWidth  : 35,
+			rowHeight                : 45,
+			treeIndent               : 15,
+			multiSelect              : true,
 
 			columnDefs: [
 				{
@@ -375,7 +467,6 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 					if (reason.data) {
 						$scope.loader = false;
 						$rootScope.serverErr(reason);
-						console.log("dada");
 					}
 				}
 			);
@@ -384,31 +475,31 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 		$scope.getSliceGroups();
 
 		//date by default
-    var timestampDefault = 1546322400;
-    $scope.dateFrom = new Date(timestampDefault * 1000);
-    $scope.dateTo = new Date();
+		var timestampDefault = 1546322400;
+		$scope.dateFrom = new Date(timestampDefault * 1000);
+		$scope.dateTo = new Date();
 
 		$scope.user = [];
 		$scope.orderSrez = function (user, dateFrom, dateTo) {
 
-        var dFrom = dateFrom;
-        var dd = ("0" + dFrom.getDate()).slice(-2);
-        var mm = ("0" + (dFrom.getMonth() + 1)).slice(-2);
-        var yy = dFrom.getFullYear();
+				var dFrom = dateFrom;
+				var dd = ("0" + dFrom.getDate()).slice(-2);
+				var mm = ("0" + (dFrom.getMonth() + 1)).slice(-2);
+				var yy = dFrom.getFullYear();
 
-        var dateFromInput = dd + '.' + mm + '.' + yy;
+				var dateFromInput = dd + '.' + mm + '.' + yy;
 
-        console.log(dateFromInput)
+				console.log(dateFromInput)
 
 
 
-        var dTo = dateTo;
-        var dd = ("0" + dTo.getDate()).slice(-2);
-        var mm = ("0" + (dTo.getMonth() + 1)).slice(-2);
-        var yy = dTo.getFullYear();
-        var dateToInput = dd + '.' + mm + '.' + yy;
+				var dTo = dateTo;
+				var dd = ("0" + dTo.getDate()).slice(-2);
+				var mm = ("0" + (dTo.getMonth() + 1)).slice(-2);
+				var yy = dTo.getFullYear();
+				var dateToInput = dd + '.' + mm + '.' + yy;
 
-        console.log(dateToInput)
+				console.log(dateToInput)
 
 
 
@@ -446,7 +537,7 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 					angular.forEach($scope.objectByOrderSrez, function (value) {
 						console.log(value);
 						$scope.sliceNumber = value.id;
-						alert("Будет сформирован срез №" + $scope.sliceNumber + " период " + dateFromInput + " по " + dateToInput);
+						// alert("Будет сформирован срез №" + $scope.sliceNumber + " период " + dateFromInput + " по " + dateToInput);
 						/*angular.forEach($scope.groupList, function (groupList, index) {
 							if (value.groupCode === groupList.code) {
 								//expand definite grouping by index after order slice
@@ -838,6 +929,7 @@ app.controller("ModalContentCtrl", [
 					});
 				};
 			});
+
 			$scope.selectedRegions = [];
 			$scope.regionsGridApiOptions.forEach(function (item, index) {
 				item.gridRegionsDataset.onRegisterApi = function (gridApi) {
@@ -845,13 +937,30 @@ app.controller("ModalContentCtrl", [
 					gridApi.selection.on.rowSelectionChanged($scope, function (row) {
 						$scope.selectedRegions[index] = item.gridApiRegionsName.selection.getSelectedRows();
 					});
+					
+					$scope.toggleRegionsGridRow = function( rowNum ){
+						console.log(item.gridApiRegionsName.grid);
+						item.gridApiRegionsName.treeBase.toggleRowTreeState(item.gridApiRegionsName.grid.renderContainers.body.visibleRowCache[rowNum]);
+					};
+				};
+
+				$scope.toggleRow = function( rowNum ){
+					console.log(index);
+					console.log(item);
+					console.log(item.gridApiRegionsName);
+					if (index == 0) {
+						item.gridApiRegionsName.treeBase.toggleRowTreeState(item.gridApiRegionsName.grid.renderContainers.body.visibleRowCache[rowNum]);
+					}
 				};
 			});
+
 		};
 		/*=====  Initialize onRegisterApi event handler function with dynamic data end ======*/
 
 		/*=====  Get and save current reports's name, code ======*/
 		$scope.getCurrentReportTab = function (name, code) {
+			console.log('asd');
+			// $scope.toggleRegionsGridRow(1);
 			$scope.isCatalogTab = false;
 			$scope.isReportsSelected = false;
 			$scope.currentReportTab = {
@@ -1121,9 +1230,9 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 	$scope.getStatusTree();
 	/*Получаем дерево статусов в зависимости от Номера среза END*/
 
-  /*=====  Получаем код статуса после клика на статус
-  в дереве статусов и перезаписываем полученный из row.entity ======*/
-  var section = '';
+	/*=====  Получаем код статуса после клика на статус
+	в дереве статусов и перезаписываем полученный из row.entity ======*/
+	var section = '';
 	$scope.getStatusInfo = function (selectedStatus) {
 
 		section = selectedStatus.id;
@@ -1134,9 +1243,9 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 
 		$scope.showUiGridInAgreement = false;
 		if (selectedStatus.statusCode === STATUS_CODES.IN_AGREEMENT) {
-		  //todo here need to show ui-grid
-      $scope.showUiGridInAgreement = true;
-      $scope.isHistoryTreeLoaded = true;
+			//todo here need to show ui-grid
+			$scope.showUiGridInAgreement = true;
+			$scope.isHistoryTreeLoaded = true;
 
 			$scope.updateApprovingTable = function () {
 				$http({

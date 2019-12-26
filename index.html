@@ -17,7 +17,7 @@
 	<link rel="stylesheet" href="css/ui-grid-blue.css" type="text/css" />
 
 	<link rel="stylesheet" href="Scripts/angular-ui-notification.min.css" type="text/css" />
-	
+
 	<link rel="stylesheet" href="css/index.css" type="text/css" />
 	<link rel="stylesheet" href="css/custom.css" type="text/css" />
 
@@ -133,7 +133,7 @@
 							<div class="row" ng-if="showGrid">
 								<div class="col-md-6">
 									<div class="pull-left">
-										<button title="Обновить таблицу" ng-click="getSliceGroups(checkboxModel.value)"
+										<button title="Обновить таблицу" ng-click="getSliceGroups(checkboxModel.value); toggleRowGroup()"
 											class="btn btn-primary">
 											<i class="fas fa-sync"></i>
 										</button>

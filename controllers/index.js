@@ -18,6 +18,8 @@ app
 	.constant("CONFIGS", {
 		// URL: 'http://192.168.210.10:8081/api/v1/RU/',
 		URL: "https://analytic-centre.tk:8081/api/v1/RU/", // DEV URL
+		// SOCKET_URL: "http://192.168.210.10:8081", // IP PROD
+		SOCKET_URL: "https://18.140.232.52:8081", // IP TEST
 		INTERFACE_LANG: "ru",
 		AUTH_PAGE_URL: "/",
 	})
@@ -168,14 +170,14 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 			также используем библиотеку sockjs для обеспечения для поддержки функционала в браузерах
 			неподдерживающих websocket и для пользователец работающих через прокси
 			*/
-			let socket = new SockJS('https://192.168.210.10:8081/notifications');
+			let socket = new SockJS(CONFIGS.SOCKET_URL+ '/notifications');
 			stompClient = Stomp.over(socket);
 
 			//Пытаемся установить соединение
-			// let name = document.getElementById('name').value;
-			let name = $rootScope.authUser;
-			console.log('name', name);
-			stompClient.connect({sessionKey : name}, function(frame) {
+			// let userName = document.getElementById('userName').value;
+			let userName = $rootScope.authUser;
+			console.log('userName', userName);
+			stompClient.connect({sessionKey : userName}, function(frame) {
 
 				//Функция обратного вызова,которая запускается после успешного соединения
 				//Для продуктива необходимо обрабатывать также и неуспешное соединение, чтобы
@@ -196,8 +198,38 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 					Notification.primary(message.body);
 				});
 
+
+				stompClient.subscribe('/topic/sliceCompletion', function(message) {
+					$scope.progressBarPercentList = JSON.parse(message.body);
+					console.log($scope.progressBarPercentList);
+
+					if ($scope.sliceList){
+						$scope.sliceList.forEach(function (element, index) {
+							console.log(element)
+
+
+							$scope.progressBarPercentList.forEach(function (item, i) {
+
+								if (item.sliceId === element.id){
+									console.log(true)
+									element.percentComplete = item.percent;
+									$scope.getSliceGroups()
+									//todo need to refresh progressbar after get socket to update % value
+									// $scope.toggleRow();
+
+								} else {
+									console.log(false)
+								}
+							})
+						})
+					}
+
+
+
+				});
+
 				//Если хотим получить приветственное уведомление вызываем сервис sayHello, которому передаем sessionKey
-				// stompClient.send('/app/sayHello', {}, name);
+				// stompClient.send('/app/sayHello', {}, userName);
 			});
 		}
 
@@ -212,14 +244,6 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 			console.log('disconnect function called');
 			stompClient.disconnect();
 		}
-
-		// if ($rootScope.customUserIsChanged === true) {
-		// 	console.log('disconnect');
-		// 	disconnect();
-		// 	connect();
-		// } else {
-		// 	console.log('connect');
-		// }
 		connect();
 
 		//Получение списка статусов
@@ -298,7 +322,7 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 			'ng-click="grid.appScope.openOperBySrez(row.entity)" ' +
 			'ng-hide="row.treeLevel==0 || row.treeLevel == 1 || row.entity.statusCode == 0 || row.entity.statusCode == 6" ' +
 			'type="button" class="btn btn-primary"> Операция со срезами ' +
-			"</button> </div>";
+			"</button> </div> ";
 
 			$scope.gridOptions = {
 			enableColumnMenus        : false,
@@ -358,12 +382,25 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 					width: "*",
 					cellTemplate: '<div class="indentInline">{{row.entity.region}}</div>',
 				},
-			],
+				{
+					name: "percentComplete",
+					displayName: "Прогресс",
+					cellTemplate: '<div ng-hide="row.treeLevel==0 || row.treeLevel == 1" ng-if="row.entity.statusCode == 0" style="padding: 13px" class="col-sm-12"><div class="meter">\n' +
+						'    <div ng-style="{\'width\' : row.entity.percentComplete + \'%\' }"><span style="text-align: center; padding: 2px; font-weight: 600" class="progress">{{row.entity.percentComplete}}%</span></div>\n' +
+						'</div></div>'
+				}
+			]
 		};
 		$scope.gridOptions.onRegisterApi = function (gridApi) {
 			$scope.gridApi = gridApi;
 
+
+
 			$scope.gridApi.treeBase.on.rowExpanded($scope, function (row) {
+				$scope.rowExpandedByIndexOfGroup = $scope.gridOptions.data.findIndex(x => x.$$hashKey === row.entity.$$hashKey);
+				console.log($scope.rowExpandedByIndexOfGroup)
+
+
 				if (row.entity.$$treeLevel !== 0 && !row.isSlicesLoaded) {
 					$scope.preloaderByStatus = true;
 					var groupCode = row.entity.groupCode,
@@ -385,12 +422,14 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 					}).then(
 						function (value) {
 							$scope.showGrid = value.data;
-							var expandedRowStatusIndex = $scope.gridOptions.data.findIndex(x => x.$$hashKey === row.entity.$$hashKey);
+							$scope.sliceList = value.data;
+							$scope.rowExpandedByIndexOfStatus = $scope.gridOptions.data.findIndex(x => x.$$hashKey === row.entity.$$hashKey);
+							console.log($scope.rowExpandedByIndexOfStatus)
 
 							$scope.showGrid.forEach(function (element, index) {
 								element.id_period = "№" + element.id + " период " + element.period;
 								//todo here need to equal two object for expandRow
-								$scope.gridOptions.data.splice(expandedRowStatusIndex + 1 + index, 0, element);
+								$scope.gridOptions.data.splice($scope.rowExpandedByIndexOfStatus + 1 + index, 0, element);
 							});
 							row.isSlicesLoaded = true;
 							$scope.preloaderByStatus = false;
@@ -431,6 +470,7 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 		var url = "";
 		$scope.loader = false;
 		$scope.getSliceGroups = function (check) {
+
 			$scope.loader = true;
 			if (check) {
 				url = CONFIGS.URL + "slices/parents?deleted=true";
@@ -446,8 +486,7 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 				headers: {
 					sessionKey: $rootScope.authUser,
 				},
-			}).then(
-				function (response) {
+			}).then(function (response) {
 					$scope.loader = false;
 					$scope.showGrid = response.data;
 					$scope.showGrid.forEach(function (data, index) {
@@ -461,7 +500,25 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 
 
 						$scope.groupList = dataSet;
+
 					});
+
+
+
+					console.log($scope.groupList)
+
+				/*angular.forEach($scope.groupList, function (groupList, index) {
+					if ($scope.rowExpandedByIndexOfGroup === index){
+						console.log('asdasdasdasd')
+						$scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[$scope.rowExpandedByIndexOfGroup]);
+						$scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
+
+						// $scope.expandedRowGroup  = 	$scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[$scope.rowExpandedByIndexOfGroup]);
+
+					}
+				})*/
+
+
 				},
 				function (reason) {
 					if (reason.data) {
@@ -474,6 +531,12 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 
 		$scope.getSliceGroups();
 
+
+		$scope.toggleRowGroup = function(){
+			$scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[$scope.rowExpandedByIndexOfGroup]);
+		};
+
+
 		//date by default
 		var timestampDefault = 1546322400;
 		$scope.dateFrom = new Date(timestampDefault * 1000);
@@ -482,28 +545,18 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 		$scope.user = [];
 		$scope.orderSrez = function (user, dateFrom, dateTo) {
 
-				var dFrom = dateFrom;
-				var dd = ("0" + dFrom.getDate()).slice(-2);
-				var mm = ("0" + (dFrom.getMonth() + 1)).slice(-2);
-				var yy = dFrom.getFullYear();
+			var dFrom = dateFrom;
+			var dd = ("0" + dFrom.getDate()).slice(-2);
+			var mm = ("0" + (dFrom.getMonth() + 1)).slice(-2);
+			var yy = dFrom.getFullYear();
 
-				var dateFromInput = dd + '.' + mm + '.' + yy;
+			var dateFromInput = dd + '.' + mm + '.' + yy;
 
-				console.log(dateFromInput)
-
-
-
-				var dTo = dateTo;
-				var dd = ("0" + dTo.getDate()).slice(-2);
-				var mm = ("0" + (dTo.getMonth() + 1)).slice(-2);
-				var yy = dTo.getFullYear();
-				var dateToInput = dd + '.' + mm + '.' + yy;
-
-				console.log(dateToInput)
-
-
-
-
+			var dTo = dateTo;
+			var dd = ("0" + dTo.getDate()).slice(-2);
+			var mm = ("0" + (dTo.getMonth() + 1)).slice(-2);
+			var yy = dTo.getFullYear();
+			var dateToInput = dd + '.' + mm + '.' + yy;
 
 			var changeTab = function () {
 				$('.nav-tabs a[href="#home"]').tab("show");
@@ -623,9 +676,6 @@ app.controller("modalOperBySrezCtrl", function ($scope, $uibModal, $rootScope, C
 	};
 });
 
-/**
- *  ModalContentCtrl
- */
 app.controller("ModalContentCtrl", [
 	"$scope",
 	"$http",
@@ -959,7 +1009,6 @@ app.controller("ModalContentCtrl", [
 
 		/*=====  Get and save current reports's name, code ======*/
 		$scope.getCurrentReportTab = function (name, code) {
-			console.log('asd');
 			// $scope.toggleRegionsGridRow(1);
 			$scope.isCatalogTab = false;
 			$scope.isReportsSelected = false;

@@ -1072,19 +1072,13 @@ app.controller("ModalContentCtrl", [
 		$scope.getReports = function () {
 			var selectedLang = "";
 
-			if (
-				$scope.reportLangs.ru.isSelected === false &&
-				$scope.reportLangs.kz.isSelected === false
-			) {
+			if ($scope.reportLangs.ru.isSelected === false && $scope.reportLangs.kz.isSelected === false) {
 				alert("Выберите язык отчета");
 				return false;
 			}
 			$scope.isReadyReportsLoaded = false;
 
-			if (
-				$scope.reportLangs.ru.isSelected === true &&
-				$scope.reportLangs.kz.isSelected === true
-			) {
+			if ($scope.reportLangs.ru.isSelected === true && $scope.reportLangs.kz.isSelected === true) {
 				selectedLang = "all";
 			} else if ($scope.reportLangs.kz.isSelected === true) {
 				selectedLang = "kz";
@@ -1092,76 +1086,93 @@ app.controller("ModalContentCtrl", [
 				selectedLang = "ru";
 			}
 
-			if (
-				$scope.requestedReportsQuery != undefined &&
-				$scope.requestedReportsQuery.length > 0
-			) {
+			if ($scope.requestedReportsQuery != undefined && $scope.requestedReportsQuery.length > 0) {
+
+				console.log($scope.requestedReportsQuery);
+				console.log($scope.requestedReportsQuery.length);
+				
+				var items = [];
+				getReportsSlices();
+				function getReportsSlices() {
+					items = $scope.requestedReportsQuery.splice(0, 5);
+					generateReports(items);
+					console.log(items);
+					console.log('sliced');
+				}
+				
+				console.log(items);
+				
 				$scope.readyReports = [];
-				$http({
-					method: "POST",
-					url:
-						CONFIGS.URL +
-						"slices/reports/createReports?repLang=" +
-						selectedLang,
-					headers: {
-						sessionKey: $rootScope.authUser,
-					},
-					data: $scope.requestedReportsQuery,
-				}).then(
-					function (response) {
-						$scope.isReadyReportsLoaded = true;
-						var reportValues = response.data,
-							counter             = 0,
-							counterKz           = 0,
-							reportDownloadUrl   = "",
-							reportDownloadName  = "",
-							reportErrMsgMissing = "Отсутствует шаблон отчета",
-							reportErrMsg        = "Ошибка при формировании данного отчета";
-
-						reportValues.forEach(function (element) {
-							if (element.value == -1) {
-								reportDownloadUrl = "#";
-								reportDownloadName = reportErrMsgMissing;
-							} else if (element.value == -2) {
-								console.error(element.errMsg);
-								reportDownloadUrl = "#";
-								reportDownloadName = reportErrMsg;
-							} else {
-								if (element.lang === "RU") {
-									reportDownloadUrl =
-										CONFIGS.URL +
-										"slices/reports/" +
-										element.value +
-										"/download";
-									reportDownloadName = $scope.requestedReports[counter];
-									counter++;
-								} else if (element.lang === "KZ") {
-									reportDownloadUrl =
-										CONFIGS.URL +
-										"slices/reports/" +
-										element.value +
-										"/download";
-									reportDownloadName =
-										$scope.requestedReports[counterKz] + " - [kaz]";
-									counterKz++;
-								}
-							}
-
-							var readyReportItem = {
-								url: reportDownloadUrl,
-								name: reportDownloadName,
-							};
-							$scope.readyReports.push(readyReportItem);
-						});
-					},
-					function (reason) {
-						if (reason.data) {
-							$scope.isReadyReportsLoaded = true;
-							$rootScope.serverErr(reason);
-						}
-						console.log(reason);
+				function generateReports(dataArray) {
+					if (dataArray.length === 0) {
+						return false;
 					}
-				);
+					$http({
+						method: "POST",
+						url:
+							CONFIGS.URL + "slices/reports/createReports?repLang=" + selectedLang,
+						headers: {
+							sessionKey: $rootScope.authUser,
+						},
+						data: dataArray,
+					}).then(
+						function (response) {
+							console.log(response);
+							$scope.isReadyReportsLoaded = true;
+							var reportValues = response.data,
+								counter             = 0,
+								counterKz           = 0,
+								reportDownloadUrl   = "",
+								reportDownloadName  = "",
+								reportErrMsgMissing = "Отсутствует шаблон отчета",
+								reportErrMsg        = "Ошибка при формировании данного отчета";
+
+							reportValues.forEach(function (element) {
+								if (element.value == -1) {
+									reportDownloadUrl = "#";
+									reportDownloadName = reportErrMsgMissing;
+								} else if (element.value == -2) {
+									console.error(element.errMsg);
+									reportDownloadUrl = "#";
+									reportDownloadName = reportErrMsg;
+								} else {
+									if (element.lang === "RU") {
+										reportDownloadUrl =
+											CONFIGS.URL +
+											"slices/reports/" +
+											element.value +
+											"/download";
+										reportDownloadName = $scope.requestedReports[counter];
+										counter++;
+									} else if (element.lang === "KZ") {
+										reportDownloadUrl =
+											CONFIGS.URL +
+											"slices/reports/" +
+											element.value +
+											"/download";
+										reportDownloadName =
+											$scope.requestedReports[counterKz] + " - [kaz]";
+										counterKz++;
+									}
+								}
+
+								var readyReportItem = {
+									url: reportDownloadUrl,
+									name: reportDownloadName,
+								};
+								$scope.readyReports.push(readyReportItem);
+							});
+							getReportsSlices();
+						},
+						function (reason) {
+							if (reason.data) {
+								$scope.isReadyReportsLoaded = true;
+								$rootScope.serverErr(reason);
+							}
+							console.log(reason);
+						}
+					);
+				}
 			}
 		};
 		/*=====  Get reports end ======*/

@@ -1087,23 +1087,19 @@ app.controller("ModalContentCtrl", [
 			}
 
 			if ($scope.requestedReportsQuery != undefined && $scope.requestedReportsQuery.length > 0) {
+				var reportSlices = [],
+						countFrom = 0,
+						sliceSize = 5;
 
-				console.log($scope.requestedReportsQuery);
-				console.log($scope.requestedReportsQuery.length);
-				
-				var items = [];
 				getReportsSlices();
 				function getReportsSlices() {
-					items = $scope.requestedReportsQuery.splice(0, 5);
-					generateReports(items);
-					console.log(items);
-					console.log('sliced');
+					reportSlices = $scope.requestedReportsQuery.splice(0, sliceSize);
+					generateReports(reportSlices, countFrom);
+					countFrom += sliceSize;
 				}
 				
-				console.log(items);
-				
 				$scope.readyReports = [];
-				function generateReports(dataArray) {
+				function generateReports(dataArray, countFrom) {
 					if (dataArray.length === 0) {
 						return false;
 					}
@@ -1117,15 +1113,15 @@ app.controller("ModalContentCtrl", [
 						data: dataArray,
 					}).then(
 						function (response) {
-							console.log(response);
+		
 							$scope.isReadyReportsLoaded = true;
-							var reportValues = response.data,
-								counter             = 0,
-								counterKz           = 0,
-								reportDownloadUrl   = "",
-								reportDownloadName  = "",
-								reportErrMsgMissing = "Отсутствует шаблон отчета",
-								reportErrMsg        = "Ошибка при формировании данного отчета";
+							var reportValues 				= response.data,
+									counter             = countFrom,
+									counterKz           = countFrom,
+									reportDownloadUrl   = "",
+									reportDownloadName  = "",
+									reportErrMsgMissing = "Отсутствует шаблон отчета",
+									reportErrMsg        = "Ошибка при формировании данного отчета";
 
 							reportValues.forEach(function (element) {
 								if (element.value == -1) {
@@ -1137,21 +1133,12 @@ app.controller("ModalContentCtrl", [
 									reportDownloadName = reportErrMsg;
 								} else {
 									if (element.lang === "RU") {
-										reportDownloadUrl =
-											CONFIGS.URL +
-											"slices/reports/" +
-											element.value +
-											"/download";
+										reportDownloadUrl = CONFIGS.URL + "slices/reports/" + element.value + "/download";
 										reportDownloadName = $scope.requestedReports[counter];
 										counter++;
 									} else if (element.lang === "KZ") {
-										reportDownloadUrl =
-											CONFIGS.URL +
-											"slices/reports/" +
-											element.value +
-											"/download";
-										reportDownloadName =
-											$scope.requestedReports[counterKz] + " - [kaz]";
+										reportDownloadUrl = CONFIGS.URL + "slices/reports/" + element.value + "/download";
+										reportDownloadName = $scope.requestedReports[counterKz] + " - [kaz]";
 										counterKz++;
 									}
 								}

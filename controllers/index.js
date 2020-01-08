@@ -535,7 +535,6 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 
           //todo open treeView which has opened before
 					if ($scope.rowExpandedTreeLvlZero){ // if first row (treeLvl = 0) has already expanded before.
-						// console.log($scope.rowEntityGroup)
 						
 						angular.forEach($scope.groupList, function (groupList, groupIndex) {
 							if ($scope.rowEntityGroup.code === groupList.code){

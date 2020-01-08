@@ -612,10 +612,10 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 			$scope.group = user;
 
 			var dataObj = {
-				startDate: dateFromInput,
-				endDate: dateToInput,
-				maxRecNum: $scope.sliceMax,
-				groups: $scope.group,
+				startDate : dateFromInput,
+				endDate   : dateToInput,
+				maxRecNum : $scope.sliceMax,
+				groups    : $scope.group,
 			};
 
 			$http({
@@ -701,12 +701,12 @@ app.controller("modalOperBySrezCtrl", function ($scope, $uibModal, $rootScope, C
 		$scope.dataSendByModal = rowEntity;
 
 		var modalInstance = $uibModal.open({
-			templateUrl: "modalOperBySrez.html",
-			controller: "modalContentOperBySrezCtrl",
-			size: "xlg",
-			keyboard: false,
-			backdrop: "static",
-			windowTopClass: "getReportModal",
+			templateUrl    : "modalOperBySrez.html",
+			controller     : "modalContentOperBySrezCtrl",
+			size           : "xlg",
+			keyboard       : false,
+			backdrop       : "static",
+			windowTopClass : "getReportModal",
 			resolve: {
 				value: function () {
 					return $scope.dataSendByModal;
@@ -720,6 +720,9 @@ app.controller("modalOperBySrezCtrl", function ($scope, $uibModal, $rootScope, C
 	};
 });
 
+/**
+ *  ModalContentCtrl
+ */
 app.controller("ModalContentCtrl", [
 	"$scope",
 	"$http",
@@ -737,12 +740,12 @@ app.controller("ModalContentCtrl", [
 		$timeout,
 		CONFIGS
 	) {
-		$scope.statSliceNum = value.id;
-		$scope.statSlicePeriod = value.period;
-		$scope.isTabsLoaded = false;
-		$scope.isReportsSelected = false;
+		$scope.statSliceNum         = value.id;
+		$scope.statSlicePeriod      = value.period;
+		$scope.isTabsLoaded         = false;
+		$scope.isReportsSelected    = false;
 		$scope.isReadyReportsLoaded = true;
-		$scope.isGroup100 = false;
+		$scope.isGroup100           = false;
 
 		if (value.groupCode == 100) $scope.isGroup100 = true;
 
@@ -820,16 +823,16 @@ app.controller("ModalContentCtrl", [
 					writeoutNodeReportCorpus(responseDataset, 0, $scope.reportCorpusData);
 
 					$scope.reportCorpus = {
-						data: $scope.reportCorpusData,
-						showGridFooter: false,
-						enableColumnMenus: false,
-						showTreeExpandNoChildren: true,
-						enableHiding: false,
-						enableSorting: false,
-						enableFiltering: true,
-						enableRowSelection: true,
-						enableSelectAll: true,
-						multiSelect: true,
+						data                     : $scope.reportCorpusData,
+						showGridFooter           : false,
+						enableColumnMenus        : false,
+						showTreeExpandNoChildren : true,
+						enableHiding             : false,
+						enableSorting            : false,
+						enableFiltering          : true,
+						enableRowSelection       : true,
+						enableSelectAll          : true,
+						multiSelect              : true,
 						columnDefs: [
 							{
 								name: "searchPattern",
@@ -925,16 +928,16 @@ app.controller("ModalContentCtrl", [
 						// Each function through reports with orgs
 						$scope.reports_n_deps.forEach(function (item, index) {
 							$scope.gridOptionsDep = {
-								data: item.orgs,
-								showGridFooter: false,
-								enableColumnMenus: false,
-								showTreeExpandNoChildren: false,
-								enableHiding: false,
-								enableSorting: false,
-								enableFiltering: false,
-								enableRowSelection: true,
-								enableSelectAll: true,
-								multiSelect: true,
+								data                     : item.orgs,
+								showGridFooter           : false,
+								enableColumnMenus        : false,
+								showTreeExpandNoChildren : false,
+								enableHiding             : false,
+								enableSorting            : false,
+								enableFiltering          : false,
+								enableRowSelection       : true,
+								enableSelectAll          : true,
+								multiSelect              : true,
 								columnDefs: [
 									{ name: "code", width: "20%", displayName: "и/н" },
 									{ name: "name", width: "70%", displayName: "Ведомство" },
@@ -944,18 +947,18 @@ app.controller("ModalContentCtrl", [
 							item.gridDataset = $scope.gridOptionsDep;
 							// Инициализация onRegisterApi для обработки событий grid Departments
 							$scope.gridOptionsRegion = {
-								data: $scope.regionsDataset,
-								enableColumnMenus: false,
-								showTreeExpandNoChildren: false,
-								enableHiding: false,
-								enableSorting: false,
-								enableFiltering: false,
-								enableRowSelection: true,
-								enableSelectAll: false,
-								selectionRowHeaderWidth: 35,
-								rowHeight: 35,
-								treeIndent: 7,
-								multiSelect: true,
+								data                     : $scope.regionsDataset,
+								enableColumnMenus        : false,
+								showTreeExpandNoChildren : false,
+								enableHiding             : false,
+								enableSorting            : false,
+								enableFiltering          : false,
+								enableRowSelection       : true,
+								enableSelectAll          : false,
+								selectionRowHeaderWidth  : 35,
+								rowHeight                : 35,
+								treeIndent               : 7,
+								multiSelect              : true,
 								columnDefs: [
 									{
 										name: "code",
@@ -1054,9 +1057,9 @@ app.controller("ModalContentCtrl", [
 		/*=====  Get and save current reports's name, code ======*/
 		$scope.getCurrentReportTab = function (name, code) {
 			// $scope.toggleRegionsGridRow(1);
-			$scope.isCatalogTab = false;
+			$scope.isCatalogTab      = false;
 			$scope.isReportsSelected = false;
-			$scope.currentReportTab = {
+			$scope.currentReportTab  = {
 				name: name,
 				code: code,
 			};
@@ -1080,8 +1083,8 @@ app.controller("ModalContentCtrl", [
 
 		/*=====  Generate and get requested reports ======*/
 		$scope.getRequestedReports = function () {
-			$scope.isCatalogTab = true;
-			$scope.requestedReports = [];
+			$scope.isCatalogTab          = true;
+			$scope.requestedReports      = [];
 			$scope.requestedReportsQuery = [];
 			var reportInfo,
 				counter = 0;
@@ -1172,19 +1175,13 @@ app.controller("ModalContentCtrl", [
 		$scope.getReports = function () {
 			var selectedLang = "";
 
-			if (
-				$scope.reportLangs.ru.isSelected === false &&
-				$scope.reportLangs.kz.isSelected === false
-			) {
+			if ($scope.reportLangs.ru.isSelected === false && $scope.reportLangs.kz.isSelected === false) {
 				alert("Выберите язык отчета");
 				return false;
 			}
 			$scope.isReadyReportsLoaded = false;
 
-			if (
-				$scope.reportLangs.ru.isSelected === true &&
-				$scope.reportLangs.kz.isSelected === true
-			) {
+			if ($scope.reportLangs.ru.isSelected === true && $scope.reportLangs.kz.isSelected === true) {
 				selectedLang = "all";
 			} else if ($scope.reportLangs.kz.isSelected === true) {
 				selectedLang = "kz";
@@ -1192,76 +1189,80 @@ app.controller("ModalContentCtrl", [
 				selectedLang = "ru";
 			}
 
-			if (
-				$scope.requestedReportsQuery != undefined &&
-				$scope.requestedReportsQuery.length > 0
-			) {
+			if ($scope.requestedReportsQuery != undefined && $scope.requestedReportsQuery.length > 0) {
+				var reportSlices = [],
+						countFrom = 0,
+						sliceSize = 5;
+
+				getReportsSlices();
+				function getReportsSlices() {
+					reportSlices = $scope.requestedReportsQuery.splice(0, sliceSize);
+					generateReports(reportSlices, countFrom);
+					countFrom += sliceSize;
+				}
+				
 				$scope.readyReports = [];
-				$http({
-					method: "POST",
-					url:
-						CONFIGS.URL +
-						"slices/reports/createReports?repLang=" +
-						selectedLang,
-					headers: {
-						sessionKey: $rootScope.authUser,
-					},
-					data: $scope.requestedReportsQuery,
-				}).then(
-					function (response) {
-						$scope.isReadyReportsLoaded = true;
-						var reportValues = response.data,
-							counter = 0,
-							counterKz = 0,
-							reportDownloadUrl = "",
-							reportDownloadName = "",
-							reportErrMsgMissing = "Отсутствует шаблон отчета",
-							reportErrMsg = "Ошибка при формировании данного отчета";
-
-						reportValues.forEach(function (element) {
-							if (element.value == -1) {
-								reportDownloadUrl = "#";
-								reportDownloadName = reportErrMsgMissing;
-							} else if (element.value == -2) {
-								console.error(element.errMsg);
-								reportDownloadUrl = "#";
-								reportDownloadName = reportErrMsg;
-							} else {
-								if (element.lang === "RU") {
-									reportDownloadUrl =
-										CONFIGS.URL +
-										"slices/reports/" +
-										element.value +
-										"/download";
-									reportDownloadName = $scope.requestedReports[counter];
-									counter++;
-								} else if (element.lang === "KZ") {
-									reportDownloadUrl =
-										CONFIGS.URL +
-										"slices/reports/" +
-										element.value +
-										"/download";
-									reportDownloadName =
-										$scope.requestedReports[counterKz] + " - [kaz]";
-									counterKz++;
-								}
-							}
-
-							var readyReportItem = {
-								url: reportDownloadUrl,
-								name: reportDownloadName,
-							};
-							$scope.readyReports.push(readyReportItem);
-						});
-					},
-					function (reason) {
-						if (reason.data) {
-							$scope.isReadyReportsLoaded = true;
-							$rootScope.serverErr(reason);
-						}
-						console.log(reason);
+				function generateReports(dataArray, countFrom) {
+					if (dataArray.length === 0) {
+						return false;
 					}
-				);
+					$http({
+						method: "POST",
+						url:
+							CONFIGS.URL + "slices/reports/createReports?repLang=" + selectedLang,
+						headers: {
+							sessionKey: $rootScope.authUser,
+						},
+						data: dataArray,
+					}).then(
+						function (response) {
+		
+							$scope.isReadyReportsLoaded = true;
+							var reportValues 				= response.data,
+									counter             = countFrom,
+									counterKz           = countFrom,
+									reportDownloadUrl   = "",
+									reportDownloadName  = "",
+									reportErrMsgMissing = "Отсутствует шаблон отчета",
+									reportErrMsg        = "Ошибка при формировании данного отчета";
+
+							reportValues.forEach(function (element) {
+								if (element.value == -1) {
+									reportDownloadUrl = "#";
+									reportDownloadName = reportErrMsgMissing;
+								} else if (element.value == -2) {
+									console.error(element.errMsg);
+									reportDownloadUrl = "#";
+									reportDownloadName = reportErrMsg;
+								} else {
+									if (element.lang === "RU") {
+										reportDownloadUrl = CONFIGS.URL + "slices/reports/" + element.value + "/download";
+										reportDownloadName = $scope.requestedReports[counter];
+										counter++;
+									} else if (element.lang === "KZ") {
+										reportDownloadUrl = CONFIGS.URL + "slices/reports/" + element.value + "/download";
+										reportDownloadName = $scope.requestedReports[counterKz] + " - [kaz]";
+										counterKz++;
+									}
+								}
+
+								var readyReportItem = {
+									url: reportDownloadUrl,
+									name: reportDownloadName,
+								};
+								$scope.readyReports.push(readyReportItem);
+							});
+							getReportsSlices();
+						},
+						function (reason) {
+							if (reason.data) {
+								$scope.isReadyReportsLoaded = true;
+								$rootScope.serverErr(reason);
+							}
+							console.log(reason);
+						}
+					);
+				}
 			}
 		};
 		/*=====  Get reports end ======*/
@@ -1276,13 +1277,13 @@ app.controller("ModalContentCtrl", [
 
 app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalInstance, value, STATUS_CODES, USER_ROLES, BUTTONS, $uibModal, $timeout, $rootScope, CONFIGS) {
 	/*=====  Получение данных ======*/
-	$scope.statusInfoData = [];
-	$scope.srezNo = value.id;
-	$scope.period = value.period;
-	$scope.srezToNum = value.maxRecNum;
+	$scope.statusInfoData      = [];
+	$scope.srezNo              = value.id;
+	$scope.period              = value.period;
+	$scope.srezToNum           = value.maxRecNum;
 	$scope.isHistoryTreeLoaded = false;
 	$scope.rowEntityStatusCode = value.statusCode; // Получаем код статуса со строки - row.entity
-	$scope.statusCode = value.statusCode;
+	$scope.statusCode          = value.statusCode;
 
 	if ($rootScope.userRole === "19000090") {
 		$scope.userRole = USER_ROLES.ONE;
@@ -1359,16 +1360,16 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 						// }
 
 						$scope.gridOptionsAgreement = {
-							data: response.data,
-							showGridFooter: false,
-							enableColumnMenus: false,
-							showTreeExpandNoChildren: false,
-							enableHiding: false,
-							enableSorting: false,
-							enableFiltering: false,
-							enableRowSelection: true,
-							enableSelectAll: false,
-							rowHeight: 35,
+							data                     : response.data,
+							showGridFooter           : false,
+							enableColumnMenus        : false,
+							showTreeExpandNoChildren : false,
+							enableHiding             : false,
+							enableSorting            : false,
+							enableFiltering          : false,
+							enableRowSelection       : true,
+							enableSelectAll          : false,
+							rowHeight                : 35,
 							columnDefs: [
 								{
 									name: "territoryName",
@@ -1408,9 +1409,9 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 		/*=====  Сравниваем полученный код статуса и меняем URL HTTP запроса ======*/
 		switch ($scope.statusCode) {
 			case STATUS_CODES.FORMED_WITH_ERROR: // Сформирован с ошибкой
-				selectedStatus.created = value.created;
+				selectedStatus.created   = value.created;
 				selectedStatus.completed = value.completed;
-				$scope.statusInfo = selectedStatus;
+				$scope.statusInfo        = selectedStatus;
 				break;
 
 			case STATUS_CODES.APPROVED: // Окончательный
@@ -1420,7 +1421,7 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 			case STATUS_CODES.PRELIMINARY:
 
 				if (selectedStatus === $scope.lastElementOfHistory) {
-					selectedStatus.created = value.created;
+					selectedStatus.created   = value.created;
 					selectedStatus.completed = value.completed;
 
 					$scope.hideStatusDate = true;

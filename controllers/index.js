@@ -11,7 +11,8 @@ var app = angular.module("app", [
 	"ui.grid.resizeColumns",
 	"ui.grid.treeView",
 	"ui-notification",
-  'ngResource'
+  'ngResource',
+	'ui.grid.saveState'
 ]);
 
 app
@@ -325,6 +326,8 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 			"</button> </div> ";
 
 			$scope.gridOptions = {
+
+
 			enableColumnMenus        : false,
 			showTreeExpandNoChildren : true,
 			enableHiding             : false,
@@ -395,11 +398,23 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 			$scope.gridApi = gridApi;
 
 
+			$scope.state = {};
+
+			$scope.saveState = function() {
+				$scope.state = $scope.gridApi.saveState.save();
+			};
+
+			$scope.restoreState = function() {
+				$scope.gridApi.saveState.restore( $scope, $scope.state );
+			};
+
+
 			$scope.gridApi.treeBase.on.rowExpanded($scope, function (row) {
 
 
 
 				if (row.entity.$$treeLevel === 0 && !row.isSlicesLoaded){
+					console.log(row.entity)
 					$scope.rowEntityGroup = row.entity;
 					$scope.rowExpandedTreeLvlZero = true;
 
@@ -499,6 +514,7 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 
 		var url = "";
 		$scope.loader = false;
+		// $scope.saveState();
 		$scope.getSliceGroups = function (check) {
 
 			$scope.loader = true;
@@ -533,9 +549,13 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 
 					});
 
+
+
+					// $scope.restoreState();
+
           //todo open treeView which has opened before
 					if ($scope.rowExpandedTreeLvlZero){ // if first row (treeLvl = 0) has already expanded before.
-						
+
 						angular.forEach($scope.groupList, function (groupList, groupIndex) {
 							if ($scope.rowEntityGroup.code === groupList.code){
 								// console.log(groupIndex)

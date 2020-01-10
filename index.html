@@ -43,6 +43,7 @@
 	<script src="js/angular-resource.min.js"></script>
 	<script src="js/angular-touch.js"></script>
 	<script src="js/angular-animate.js"></script>
+  <!-- <script src="js//angular-sanitize.js"></script> -->
 	<script src="js/angular-aria.js"></script>
 	<script src="js/csv.js"></script>
 	<script src="js/vfs_fonts.js"></script>
@@ -60,6 +61,7 @@
 	<script src="js/ui-grid/ui-grid.tree-view.min.js"></script>
 	<script src="js/ui-grid/ui-grid.grouping.min.js"></script>
 	<script src="js/ui-grid/ui-grid.selection.min.js"></script>
+	<script src="js/ui-grid/ui-grid.saveState.min.js"></script>
 
 	<script src="Scripts/jquery-2.2.1.js"></script>
 	<script src="Scripts/angular-route.js"></script>
@@ -132,7 +134,7 @@
 							<div class="row" ng-if="showGrid">
 								<div class="col-md-6">
 									<div class="pull-left">
-										<button title="Обновить таблицу" ng-click="getSliceGroups(checkboxModel.value); toggleRowGroup()"
+										<button title="Обновить таблицу" ng-click="getSliceGroups(checkboxModel.value);"
 											class="btn btn-primary">
 											<i class="fas fa-sync"></i>
 										</button>
@@ -149,7 +151,6 @@
 									</div>
 								</div>
 							</div>
-
 							<div class="row">
 								<div class="col-md-12" style="padding-bottom: 25px; padding-top: 10px">
 									<div style="height: 5px; width: 100%; background: transparent">
@@ -157,7 +158,7 @@
 											<div class="bar"></div>
 										</div>
 									</div>
-									<div ng-if="showGrid" style="width: 100%" id="grid1" ui-grid="gridOptions" ui-grid-grouping
+									<div ng-if="showGrid" style="width: 100%" id="grid1" ui-grid="gridOptions" ui-grid-save-state ui-grid-grouping
 										ui-grid-resize-columns ui-grid-expandable class="grid"></div>
 								</div>
 							</div>

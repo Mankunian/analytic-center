@@ -218,7 +218,7 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 
 										// element.percentComplete = value;
 										// $scope.type = type;
-										element.percentComplete = item.percent +50;
+										element.percentComplete = item.percent;
 
 										// console.log(value);
 										console.log(element.percentComplete)

@@ -216,16 +216,8 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 									// $scope.max = 200;
 
 									$scope.random = function() {
-										// var value = Math.floor(Math.random() * 100 + 1);
-										// var type;
-
-										// element.percentComplete = value;
-										// $scope.type = type;
-										element.percentComplete = item.percent +50;
-
-										// console.log(value);
+										element.percentComplete = item.percent;
 										console.log(element.percentComplete)
-
 									};
 
 									$scope.random();
@@ -458,14 +450,10 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 							sessionKey: $rootScope.authUser,
 						},
 					}).then(
-						function (value) {
-
-
-					
+						function (value) {					
 							$scope.showGrid = value.data;
 							$scope.activeSliceList = value.data;
 							$scope.rowExpandedByIndexOfStatus = $scope.gridOptions.data.findIndex(x => x.$$hashKey === row.entity.$$hashKey);
-
 
               $scope.activeSliceList.forEach(function (element, index) {
 								element.max = 100;
@@ -473,15 +461,6 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
                 //todo here need to equal two object for expandRow
                 $scope.gridOptions.data.splice($scope.rowExpandedByIndexOfStatus + 1 + index, 0, element);
 							});
-							
-							console.log($scope.activeSliceList)
-
-
-
-
-
-							console.log($scope.gridOptions.data);
-
 							$scope.testForExpand = $scope.gridOptions.data;
 							row.isSlicesLoaded = true;
 							$scope.preloaderByStatus = false;
@@ -561,42 +540,6 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 						$scope.groupList = dataSet;
 
 					});
-
-
-
-					// $scope.restoreState();
-
-          //todo open treeView which has opened before
-					// if ($scope.rowExpandedTreeLvlZero){
-
-					// 	angular.forEach($scope.groupList, function (groupList, groupIndex) {
-					// 		if ($scope.rowEntityGroup.code === groupList.code){
-					// 			// console.log(groupIndex)
-					// 			$scope.groupIndex = groupIndex;
-					// 			$scope.gridApi.grid.registerDataChangeCallback(function() {
-					// 				$scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[groupIndex]);
-					// 			});
-					// 		}
-					// 	});
-
-
-
-
-					// 	console.log($scope.rowEntityGroup.children)
-					// 	angular.forEach($scope.rowEntityGroup.children, function (statusList, statusIndex) {
-					// 			if ($scope.rowEntityStatus === statusList){
-					// 				console.log($scope.rowExpandedByIndexGroup)
-
-
-					// 				console.log($scope.rowExpandedByIndexGroup + statusIndex + 1)
-					// 			}
-					// 	})
-					// }
-
-
-
-
-
 				},
 				function (reason) {
 					if (reason.data) {
@@ -612,8 +555,9 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 
 
     //date by default
-		var timestampDefault = 1546322400;
+		var timestampDefault = 1577887986;
 		$scope.dateFrom = new Date(timestampDefault * 1000);
+		console.log($scope.dateFrom)
 		$scope.dateTo = new Date();
 
 		$scope.user = [];

@@ -519,7 +519,7 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 					currSliceStatusCode = $scope.objectByOrderSrez[0]['statusCode'];
 					
 					/* ВРЕМЕННОЕ решение, неправильно приходит год среза с базы*/
-					currSliceStatusYear += 1;
+					// currSliceStatusYear += 1;
 					/* ВРЕМЕННОЕ решение, неправильно приходит год среза с базы*/
 			
 					var currSliceGroupIndex = $scope.groupList.findIndex(x => x.code === currSliceGroupCode);

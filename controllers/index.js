@@ -211,25 +211,13 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 							$scope.progressBarPercentList.forEach(function (item, i) {
 
 								if (item.sliceId === element.id){
-									// $scope.max = 200;
-									$scope.random = function() {
-										// var value = Math.floor(Math.random() * 100 + 1);
-										// var type;
-
-										// element.percentComplete = value;
-										// $scope.type = type;
+									$scope.changePercentValue = function() {
 										element.percentComplete = item.percent;
-
-										// console.log(value);
-										console.log(element.percentComplete)
-
 									};
 
-									$scope.random();
+									$scope.changePercentValue();
 									$scope.gridApi.core.refresh();
 								
-								} else {
-									// console.log(false)
 								}
 							})
 						})
@@ -253,12 +241,6 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 			stompClient.disconnect();
 		}
 		connect();
-
-
-
- 
-	
-
 
 		//Получение списка статусов
 		$scope.getStatus = function () {
@@ -432,15 +414,11 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 							sessionKey: $rootScope.authUser,
 						},
 					}).then(
-						function (value) {
-
-
-					
+						function (value) {					
 							$scope.showGrid = value.data;
 							$scope.activeSliceList = value.data;
 							$scope.rowExpandedByIndexOfStatus = $scope.gridOptions.data.findIndex(x => x.$$hashKey === row.entity.$$hashKey);
 							console.log($scope.rowExpandedByIndexOfStatus)
-
 
               $scope.activeSliceList.forEach(function (element, index) {
 								element.max = 100;
@@ -460,9 +438,6 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 					);
 				}
 			});
-
-
-
 		};
 		
 		var id = 0;
@@ -483,9 +458,6 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 		$scope.checkboxModel = {
 			value: false,
 		};
-
-
-		
 
 		var url = "";
 		$scope.loader = false;
@@ -547,7 +519,7 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 					currSliceStatusCode = $scope.objectByOrderSrez[0]['statusCode'];
 					
 					/* ВРЕМЕННОЕ решение, неправильно приходит год среза с базы*/
-					currSliceStatusYear += 1;
+					// currSliceStatusYear += 1;
 					/* ВРЕМЕННОЕ решение, неправильно приходит год среза с базы*/
 			
 					var currSliceGroupIndex = $scope.groupList.findIndex(x => x.code === currSliceGroupCode);
@@ -563,10 +535,12 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 			});
 		}
 
-		//date by default
-		var timestampDefault = 1546322400;
-		$scope.dateFrom      = new Date(timestampDefault * 1000);
-		$scope.dateTo        = new Date();
+
+    //date by default
+		var timestampDefault = 1577887986;
+		$scope.dateFrom = new Date(timestampDefault * 1000);
+		console.log($scope.dateFrom)
+		$scope.dateTo = new Date();
 
 		$scope.user = [];
 		$scope.orderSrez = function (user, dateFrom, dateTo) {

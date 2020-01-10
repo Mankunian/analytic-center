@@ -11,8 +11,8 @@ var app = angular.module("app", [
 	"ui.grid.resizeColumns",
 	"ui.grid.treeView",
 	"ui-notification",
-  'ngResource',
-	'ui.grid.saveState'
+	'ngResource',
+	'ngAnimate'
 ]);
 
 app
@@ -212,12 +212,25 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 							$scope.progressBarPercentList.forEach(function (item, i) {
 
 								if (item.sliceId === element.id){
-									// console.log(true)
-									element.percentComplete = item.percent;
-									// $scope.getSliceGroups()
-									//todo need to refresh progressbar after get socket to update % value
-									// $scope.toggleRow();
 
+									// $scope.max = 200;
+
+									$scope.random = function() {
+										// var value = Math.floor(Math.random() * 100 + 1);
+										// var type;
+
+										// element.percentComplete = value;
+										// $scope.type = type;
+										element.percentComplete = item.percent +50;
+
+										// console.log(value);
+										console.log(element.percentComplete)
+
+									};
+
+									$scope.random();
+									$scope.gridApi.core.refresh();
+								
 								} else {
 									// console.log(false)
 								}
@@ -246,6 +259,12 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 			stompClient.disconnect();
 		}
 		connect();
+
+
+
+ 
+	
+
 
 		//Получение списка статусов
 		$scope.getStatus = function () {
@@ -388,27 +407,12 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 				{
 					name: "percentComplete",
 					displayName: "Прогресс",
-					cellTemplate: '<div ng-hide="row.treeLevel==0 || row.treeLevel == 1" ng-if="row.entity.statusCode == 0" style="padding: 13px" class="col-sm-12"><div class="meter">\n' +
-						'    <div ng-style="{\'width\' : row.entity.percentComplete + \'%\' }"><span style="text-align: center; padding: 2px; font-weight: 600" class="progress">{{row.entity.percentComplete}}%</span></div>\n' +
-						'</div></div>'
+					cellTemplate: '<div ng-hide="row.treeLevel == 0 || row.treeLevel == 1" ng-if="row.entity.statusCode == 0" style="padding: 13px" class="col-sm-12"><uib-progressbar max="100" value="row.entity.percentComplete"><span style="color:white; white-space:nowrap;">{{row.entity.percentComplete}} / {{row.entity.max}}</span></uib-progressbar> </div></div>'
 				}
 			]
 		};
 		$scope.gridOptions.onRegisterApi = function (gridApi) {
 			$scope.gridApi = gridApi;
-
-
-			$scope.state = {};
-
-			$scope.saveState = function() {
-				$scope.state = $scope.gridApi.saveState.save();
-			};
-
-			$scope.restoreState = function() {
-				$scope.gridApi.saveState.restore( $scope, $scope.state );
-			};
-
-
 			$scope.gridApi.treeBase.on.rowExpanded($scope, function (row) {
 
 
@@ -455,16 +459,22 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 						},
 					}).then(
 						function (value) {
+
+
+					
 							$scope.showGrid = value.data;
 							$scope.activeSliceList = value.data;
 							$scope.rowExpandedByIndexOfStatus = $scope.gridOptions.data.findIndex(x => x.$$hashKey === row.entity.$$hashKey);
 
 
               $scope.activeSliceList.forEach(function (element, index) {
+								element.max = 100;
               	element.id_period = "№" + element.id + " период " + element.period;
                 //todo here need to equal two object for expandRow
                 $scope.gridOptions.data.splice($scope.rowExpandedByIndexOfStatus + 1 + index, 0, element);
-              });
+							});
+							
+							console.log($scope.activeSliceList)
 
 
 
@@ -512,6 +522,9 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 			value: false,
 		};
 
+
+		
+
 		var url = "";
 		$scope.loader = false;
 		// $scope.saveState();
@@ -554,34 +567,31 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 					// $scope.restoreState();
 
           //todo open treeView which has opened before
-					if ($scope.rowExpandedTreeLvlZero){ // if first row (treeLvl = 0) has already expanded before.
+					// if ($scope.rowExpandedTreeLvlZero){
 
-						angular.forEach($scope.groupList, function (groupList, groupIndex) {
-							if ($scope.rowEntityGroup.code === groupList.code){
-								// console.log(groupIndex)
-								$scope.groupIndex = groupIndex;
-								$scope.gridApi.grid.registerDataChangeCallback(function() {
-									$scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[groupIndex]);
-								});
-							}
-						});
-
-
+					// 	angular.forEach($scope.groupList, function (groupList, groupIndex) {
+					// 		if ($scope.rowEntityGroup.code === groupList.code){
+					// 			// console.log(groupIndex)
+					// 			$scope.groupIndex = groupIndex;
+					// 			$scope.gridApi.grid.registerDataChangeCallback(function() {
+					// 				$scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[groupIndex]);
+					// 			});
+					// 		}
+					// 	});
 
 
-						console.log($scope.rowEntityGroup.children)
-						angular.forEach($scope.rowEntityGroup.children, function (statusList, statusIndex) {
-								if ($scope.rowEntityStatus === statusList){
-									console.log($scope.rowExpandedByIndexGroup)
 
 
-									console.log($scope.rowExpandedByIndexGroup + statusIndex + 1)
-									/*$scope.gridApi.grid.registerDataChangeCallback(function() {
-										$scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[$scope.rowExpandedByIndexGroup + statusIndex + 1]);
-									});*/
-								}
-						})
-					}
+					// 	console.log($scope.rowEntityGroup.children)
+					// 	angular.forEach($scope.rowEntityGroup.children, function (statusList, statusIndex) {
+					// 			if ($scope.rowEntityStatus === statusList){
+					// 				console.log($scope.rowExpandedByIndexGroup)
+
+
+					// 				console.log($scope.rowExpandedByIndexGroup + statusIndex + 1)
+					// 			}
+					// 	})
+					// }
 
 
 

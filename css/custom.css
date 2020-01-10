@@ -594,7 +594,7 @@ growl-notifications growl-notification {
 
 .progress {
   overflow: visible;
-  background-color: #1975C0;
+  /* background-color: #1975C0; */
   color: #fff;
   -webkit-animation: progressBar 2s ease-in-out;
   -webkit-animation-fill-mode:both;

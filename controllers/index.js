@@ -160,8 +160,8 @@ app.controller('translationCtrl',['$scope', 'translationService',
 
 	}]);
 
-app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingConstants", "uiGridTreeViewConstants", 'uiGridTreeBaseService', "$interval", "CONFIGS", 'Notification',
-	function ($scope, $http, $rootScope, uiGridGroupingConstants, uiGridTreeViewConstants, uiGridTreeBaseService, $interval, CONFIGS, Notification) {
+app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingConstants", "uiGridTreeViewConstants", 'uiGridTreeBaseService', "$interval", "CONFIGS", 'Notification', "$timeout",
+	function ($scope, $http, $rootScope, uiGridGroupingConstants, uiGridTreeViewConstants, uiGridTreeBaseService, $interval, CONFIGS, Notification, $timeout) {
 
 		let stompClient = null;
 
@@ -199,7 +199,6 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 					Notification.primary(message.body);
 				});
 
-
 				stompClient.subscribe('/topic/sliceCompletion', function(message) {
 					$scope.progressBarPercentList = JSON.parse(message.body);
 					console.log($scope.progressBarPercentList);
@@ -212,26 +211,17 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 							$scope.progressBarPercentList.forEach(function (item, i) {
 
 								if (item.sliceId === element.id){
-
-									// $scope.max = 200;
-
-									$scope.random = function() {
+									$scope.changePercentValue = function() {
 										element.percentComplete = item.percent;
-										console.log(element.percentComplete)
 									};
 
-									$scope.random();
+									$scope.changePercentValue();
 									$scope.gridApi.core.refresh();
 								
-								} else {
-									// console.log(false)
 								}
 							})
 						})
 					}
-
-
-
 				});
 
 				//Если хотим получить приветственное уведомление вызываем сервис sayHello, которому передаем sessionKey
@@ -251,12 +241,6 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 			stompClient.disconnect();
 		}
 		connect();
-
-
-
- 
-	
-
 
 		//Получение списка статусов
 		$scope.getStatus = function () {
@@ -403,35 +387,15 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 				}
 			]
 		};
+
 		$scope.gridOptions.onRegisterApi = function (gridApi) {
 			$scope.gridApi = gridApi;
+
 			$scope.gridApi.treeBase.on.rowExpanded($scope, function (row) {
-
-
-
-				if (row.entity.$$treeLevel === 0 && !row.isSlicesLoaded){
-					console.log(row.entity)
-					$scope.rowEntityGroup = row.entity;
-					$scope.rowExpandedTreeLvlZero = true;
-
-					//Получаем индекс по группам
-					$scope.rowExpandedByIndexGroup = $scope.gridOptions.data.findIndex(x => x.$$hashKey === row.entity.$$hashKey);
-					console.log($scope.rowExpandedByIndexGroup)
-				}
-
+				$scope.rowExpandedByIndexOfGroup = $scope.gridOptions.data.findIndex(x => x.$$hashKey === row.entity.$$hashKey);
+				console.log($scope.rowExpandedByIndexOfGroup)
 
 				if (row.entity.$$treeLevel !== 0 && !row.isSlicesLoaded) {
-					$scope.rowEntityStatus = row.entity;
-					console.log($scope.rowEntityStatus)
-					$scope.rowExpandedTreeLvlOne = true;
-
-
-					//Получаем индекс по статусам
-					$scope.rowExpandedByIndexStatus = $scope.gridOptions.data.findIndex(x => x.$$hashKey === row.entity.$$hashKey);
-					console.log($scope.rowExpandedByIndexStatus)
-
-
-
 					$scope.preloaderByStatus = true;
 					var groupCode = row.entity.groupCode,
 						statusCode = row.entity.code,
@@ -454,6 +418,7 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 							$scope.showGrid = value.data;
 							$scope.activeSliceList = value.data;
 							$scope.rowExpandedByIndexOfStatus = $scope.gridOptions.data.findIndex(x => x.$$hashKey === row.entity.$$hashKey);
+							console.log($scope.rowExpandedByIndexOfStatus)
 
               $scope.activeSliceList.forEach(function (element, index) {
 								element.max = 100;
@@ -461,7 +426,6 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
                 //todo here need to equal two object for expandRow
                 $scope.gridOptions.data.splice($scope.rowExpandedByIndexOfStatus + 1 + index, 0, element);
 							});
-							$scope.testForExpand = $scope.gridOptions.data;
 							row.isSlicesLoaded = true;
 							$scope.preloaderByStatus = false;
 						},
@@ -474,22 +438,16 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 					);
 				}
 			});
-
-
-
 		};
-
+		
 		var id = 0;
 		var writeoutNode = function (childArray, currentLevel, dataArray) {
 			childArray.forEach(function (childNode) {
 				if (childNode.children.length > 0) {
 					childNode.$$treeLevel = currentLevel;
 				} else {
-					if (
-						id !== childNode.parentCategoryId ||
-						childNode.categoryId === childNode.parentCategoryId
-					) {
-						childNode.$$treeLevel = currentLevel;
+					if (id !== childNode.parentCategoryId || childNode.categoryId === childNode.parentCategoryId) {
+							childNode.$$treeLevel = currentLevel;
 					}
 				}
 				dataArray.push(childNode);
@@ -501,14 +459,11 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 			value: false,
 		};
 
-
-		
-
 		var url = "";
 		$scope.loader = false;
 		// $scope.saveState();
 		$scope.getSliceGroups = function (check) {
-
+			console.log('start');
 			$scope.loader = true;
 			if (check) {
 				url = CONFIGS.URL + "slices/parents?deleted=true";
@@ -536,10 +491,15 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 						$scope.gridOptions.data = [];
 						writeoutNode(dataSet, 0, $scope.gridOptions.data);
 
-
 						$scope.groupList = dataSet;
-
+						$scope.isGridLoaded = true;
 					});
+					console.log($scope.groupList);
+					if ($scope.isGridLoaded) {
+						console.log('gird is loaded');
+						$scope.showCurrentSlice();
+					}
+					
 				},
 				function (reason) {
 					if (reason.data) {
@@ -552,6 +512,28 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 
 		$scope.getSliceGroups();
 
+		$scope.showCurrentSlice = function () {
+			let currSliceNumber 	  = $scope.objectByOrderSrez[0]['id'],
+					currSliceGroupCode  = $scope.objectByOrderSrez[0]['groupCode'],
+					currSliceStatusYear = $scope.objectByOrderSrez[0]['year'],
+					currSliceStatusCode = $scope.objectByOrderSrez[0]['statusCode'];
+					
+					/* ВРЕМЕННОЕ решение, неправильно приходит год среза с базы*/
+					currSliceStatusYear += 1;
+					/* ВРЕМЕННОЕ решение, неправильно приходит год среза с базы*/
+			
+					var currSliceGroupIndex = $scope.groupList.findIndex(x => x.code === currSliceGroupCode);
+			$timeout(function(){
+				$scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[currSliceGroupIndex]);
+			}, 50).then(function () {
+				$timeout(function () {
+					var currSliceStatusIndex = $scope.groupList[currSliceGroupIndex].children.findIndex(function(item){
+						return item.code == currSliceStatusCode && item.statusYear == currSliceStatusYear;
+					});
+					$scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[currSliceGroupIndex + currSliceStatusIndex + 1]);
+				}, 100);
+			});
+		}
 
 
     //date by default
@@ -563,18 +545,18 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 		$scope.user = [];
 		$scope.orderSrez = function (user, dateFrom, dateTo) {
 
-			var dFrom = dateFrom;
-			var dd = ("0" + dFrom.getDate()).slice(-2);
-			var mm = ("0" + (dFrom.getMonth() + 1)).slice(-2);
-			var yy = dFrom.getFullYear();
+			var dFrom = dateFrom,
+					dd = ("0" + dFrom.getDate()).slice(-2),
+					mm = ("0" + (dFrom.getMonth() + 1)).slice(-2),
+					yy = dFrom.getFullYear();
 
 			var dateFromInput = dd + '.' + mm + '.' + yy;
 
-			var dTo = dateTo;
-			var dd = ("0" + dTo.getDate()).slice(-2);
-			var mm = ("0" + (dTo.getMonth() + 1)).slice(-2);
-			var yy = dTo.getFullYear();
-			var dateToInput = dd + '.' + mm + '.' + yy;
+			var dTo = dateTo,
+					dd = ("0" + dTo.getDate()).slice(-2),
+					mm = ("0" + (dTo.getMonth() + 1)).slice(-2),
+					yy = dTo.getFullYear(),
+					dateToInput = dd + '.' + mm + '.' + yy;
 
 			var changeTab = function () {
 				$('.nav-tabs a[href="#home"]').tab("show");
@@ -604,28 +586,13 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 					$scope.user.length = 0;
 					$scope.showGrid = response.data;
 					$scope.objectByOrderSrez = response.data;
-
-					angular.forEach($scope.objectByOrderSrez, function (value) {
-						console.log(value);
-						$scope.sliceNumber = value.id;
-						// alert("Будет сформирован срез №" + $scope.sliceNumber + " период " + dateFromInput + " по " + dateToInput);
-						/*angular.forEach($scope.groupList, function (groupList, index) {
-							if (value.groupCode === groupList.code) {
-								//expand definite grouping by index after order slice
-								$scope.expandedRowGroup  = 	$scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[index]);
-							}
-						})*/
-					});
+					console.log($scope.objectByOrderSrez);
 
 					var timestampDefault = 1546322400;
 					$scope.dateFrom = new Date(timestampDefault * 1000);
 					$scope.dateTo = new Date();
 
 					$scope.getSliceGroups();
-
-
-
-
 				},
 				function (reason) {
 					if (reason.data) $rootScope.serverErr(reason);
@@ -633,7 +600,6 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 				}
 			);
 		};
-
 
 	},
 ]);
@@ -887,11 +853,7 @@ app.controller("ModalContentCtrl", [
 				/*=====  Deps grid - get data from backend ======*/
 				$http({
 					method: "GET",
-					url:
-						CONFIGS.URL +
-						"slices/reports?sliceId=" +
-						$scope.statSliceNum +
-						"&withOrgs=true",
+					url: CONFIGS.URL + "slices/reports?sliceId=" + $scope.statSliceNum + "&withOrgs=true",
 					headers: {
 						sessionKey: $rootScope.authUser,
 					},

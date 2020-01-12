@@ -461,9 +461,7 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 
 		var url = "";
 		$scope.loader = false;
-		// $scope.saveState();
 		$scope.getSliceGroups = function (check) {
-			console.log('start');
 			$scope.loader = true;
 			if (check) {
 				url = CONFIGS.URL + "slices/parents?deleted=true";
@@ -496,7 +494,6 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 					});
 					console.log($scope.groupList);
 					if ($scope.isGridLoaded) {
-						console.log('gird is loaded');
 						$scope.showCurrentSlice();
 					}
 					
@@ -513,16 +510,11 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 		$scope.getSliceGroups();
 
 		$scope.showCurrentSlice = function () {
-			let currSliceNumber 	  = $scope.objectByOrderSrez[0]['id'],
-					currSliceGroupCode  = $scope.objectByOrderSrez[0]['groupCode'],
+			let currSliceGroupCode  = $scope.objectByOrderSrez[0]['groupCode'],
 					currSliceStatusYear = $scope.objectByOrderSrez[0]['year'],
 					currSliceStatusCode = $scope.objectByOrderSrez[0]['statusCode'];
-					
-					/* ВРЕМЕННОЕ решение, неправильно приходит год среза с базы*/
-					// currSliceStatusYear += 1;
-					/* ВРЕМЕННОЕ решение, неправильно приходит год среза с базы*/
 			
-					var currSliceGroupIndex = $scope.groupList.findIndex(x => x.code === currSliceGroupCode);
+			var currSliceGroupIndex = $scope.groupList.findIndex(x => x.code === currSliceGroupCode);
 			$timeout(function(){
 				$scope.gridApi.treeBase.toggleRowTreeState($scope.gridApi.grid.renderContainers.body.visibleRowCache[currSliceGroupIndex]);
 			}, 50).then(function () {
@@ -535,28 +527,25 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 			});
 		}
 
-
     //date by default
 		var timestampDefault = 1577887986;
 		$scope.dateFrom = new Date(timestampDefault * 1000);
-		console.log($scope.dateFrom)
 		$scope.dateTo = new Date();
 
 		$scope.user = [];
 		$scope.orderSrez = function (user, dateFrom, dateTo) {
 
 			var dFrom = dateFrom,
-					dd = ("0" + dFrom.getDate()).slice(-2),
-					mm = ("0" + (dFrom.getMonth() + 1)).slice(-2),
-					yy = dFrom.getFullYear();
-
+						 dd = ("0" + dFrom.getDate()).slice(-2),
+						 mm = ("0" + (dFrom.getMonth() + 1)).slice(-2),
+						 yy = dFrom.getFullYear();
 			var dateFromInput = dd + '.' + mm + '.' + yy;
 
 			var dTo = dateTo,
-					dd = ("0" + dTo.getDate()).slice(-2),
-					mm = ("0" + (dTo.getMonth() + 1)).slice(-2),
-					yy = dTo.getFullYear(),
-					dateToInput = dd + '.' + mm + '.' + yy;
+					 dd = ("0" + dTo.getDate()).slice(-2),
+					 mm = ("0" + (dTo.getMonth() + 1)).slice(-2),
+					 yy = dTo.getFullYear();
+			var	dateToInput = dd + '.' + mm + '.' + yy;
 
 			var changeTab = function () {
 				$('.nav-tabs a[href="#home"]').tab("show");

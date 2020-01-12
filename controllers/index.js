@@ -1109,6 +1109,8 @@ app.controller("ModalContentCtrl", [
 
 		/*=====  Get reports ======*/
 		$scope.getReports = function () {
+			$scope.reportValuesLength = 0;
+			$scope.showDigitalPreloader = true;
 			var selectedLang = "";
 
 			if ($scope.reportLangs.ru.isSelected === false && $scope.reportLangs.kz.isSelected === false) {
@@ -1128,7 +1130,7 @@ app.controller("ModalContentCtrl", [
 			if ($scope.requestedReportsQuery != undefined && $scope.requestedReportsQuery.length > 0) {
 				var reportSlices = [],
 						countFrom = 0,
-						sliceSize = 5;
+						sliceSize = 2;
 
 				getReportsSlices();
 				function getReportsSlices() {
@@ -1152,7 +1154,6 @@ app.controller("ModalContentCtrl", [
 						data: dataArray,
 					}).then(
 						function (response) {
-		
 							$scope.isReadyReportsLoaded = true;
 							var reportValues 				= response.data,
 									counter             = countFrom,
@@ -1161,6 +1162,7 @@ app.controller("ModalContentCtrl", [
 									reportDownloadName  = "",
 									reportErrMsgMissing = "Отсутствует шаблон отчета",
 									reportErrMsg        = "Ошибка при формировании данного отчета";
+									$scope.reportValuesLength += reportValues.length;
 
 							reportValues.forEach(function (element) {
 								if (element.value == -1) {

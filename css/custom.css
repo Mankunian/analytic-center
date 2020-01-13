@@ -597,9 +597,9 @@ growl-notifications growl-notification {
 	
   background-color: #f3f3f3;
   color: #fff;
-  -webkit-animation: progressBar 2s ease-in-out;
+  -webkit-animation: progressBar 2s ease-in;
   -webkit-animation-fill-mode:both;
-  -moz-animation: progressBar 2s ease-in-out;
+  -moz-animation: progressBar 2s ease-in;
 	-moz-animation-fill-mode:both;
 	border: 1px solid #777;
 	margin-bottom: 0;

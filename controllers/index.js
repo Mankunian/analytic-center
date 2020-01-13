@@ -384,7 +384,7 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 					name: "percentComplete",
 					// sort: { direction: uiGridConstants.ASC, priority: 2 },
 					displayName: "Прогресс",
-					cellTemplate: '<div ng-hide="row.treeLevel == 0 || row.treeLevel == 1" ng-if="row.entity.statusCode == 0" style="padding: 13px" class="col-sm-12"><uib-progressbar max="100" value="row.entity.percentComplete"><span style="color:white; white-space:nowrap;">{{row.entity.percentComplete}} / {{row.entity.max}}</span></uib-progressbar> </div></div>'
+					cellTemplate: '<div ng-hide="row.treeLevel == 0 || row.treeLevel == 1" ng-if="row.entity.statusCode == 0 || row.entity.statusCode == 6" style="padding: 13px" class="col-sm-12"><uib-progressbar max="100" value="row.entity.percentComplete"><span style="color:white; white-space:nowrap;">{{row.entity.percentComplete}} / {{row.entity.max}}</span></uib-progressbar> </div></div>'
 				}
 			]
 		};
@@ -423,7 +423,10 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 
               $scope.activeSliceList.forEach(function (element, index) {
 								element.max = 100;
-              	element.id_period = "№" + element.id + " период " + element.period;
+								element.id_period = "№" + element.id + " период " + element.period;
+								// if (element.percentComplete == null) {
+								// 	element.percentComplete == 0;
+								// }
                 //todo here need to equal two object for expandRow
                 $scope.gridOptions.data.splice($scope.rowExpandedByIndexOfStatus + 1 + index, 0, element);
 							});

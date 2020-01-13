@@ -599,11 +599,19 @@ growl-notifications growl-notification {
   color: #fff;
   -webkit-animation: progressBar 2s ease-in;
   -webkit-animation-fill-mode:both;
-  -moz-animation: progressBar 2s ease-in;
+  /* -moz-animation: progressBar 2s ease-in; */
 	-moz-animation-fill-mode:both;
 	border: 1px solid #777;
 	margin-bottom: 0;
+	position: relative;
 }
+
+.progress span {
+        position: absolute;
+        display: block;
+        width: 100%;
+        color: black;
+     }
 
 @-webkit-keyframes progressBar {
   0% { width: 0; }

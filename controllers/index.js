@@ -160,8 +160,8 @@ app.controller('translationCtrl',['$scope', 'translationService',
 
 	}]);
 
-app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingConstants", "uiGridTreeViewConstants", 'uiGridTreeBaseService', "$interval", "CONFIGS", 'Notification', "$timeout",
-	function ($scope, $http, $rootScope, uiGridGroupingConstants, uiGridTreeViewConstants, uiGridTreeBaseService, $interval, CONFIGS, Notification, $timeout) {
+app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingConstants", "uiGridTreeViewConstants", 'uiGridTreeBaseService', "$interval", "CONFIGS", 'Notification', "$timeout", "uiGridConstants",
+	function ($scope, $http, $rootScope, uiGridGroupingConstants, uiGridTreeViewConstants, uiGridTreeBaseService, $interval, CONFIGS, Notification, $timeout, uiGridConstants) {
 
 		let stompClient = null;
 
@@ -382,8 +382,9 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 				},
 				{
 					name: "percentComplete",
+					// sort: { direction: uiGridConstants.ASC, priority: 2 },
 					displayName: "Прогресс",
-					cellTemplate: '<div ng-hide="row.treeLevel == 0 || row.treeLevel == 1" ng-if="row.entity.statusCode == 0" style="padding: 13px" class="col-sm-12"><uib-progressbar max="100" value="row.entity.percentComplete"><span style="color:white; white-space:nowrap;">{{row.entity.percentComplete}} / {{row.entity.max}}</span></uib-progressbar> </div></div>'
+					cellTemplate: '<div ng-hide="row.treeLevel == 0 || row.treeLevel == 1" ng-if="row.entity.statusCode == 0 || row.entity.statusCode == 6" style="padding: 13px" class="col-sm-12"><uib-progressbar max="100" value="row.entity.percentComplete"><span  style="color:#000; white-space:nowrap;">{{row.entity.percentComplete}}</span></uib-progressbar>  </div></div> '
 				}
 			]
 		};
@@ -425,7 +426,11 @@ app.controller("MainCtrl", ["$scope", "$http", '$rootScope', "uiGridGroupingCons
 
               $scope.activeSliceList.forEach(function (element, index) {
 								element.max = 100;
-              	element.id_period = "№" + element.id + " период " + element.period;
+								element.id_period = "№" + element.id + " период " + element.period;
+								if (element.percentComplete == null) {
+									element.percentComplete = 0;
+									console.log(element.percentComplete)
+								}
                 //todo here need to equal two object for expandRow
                 $scope.gridOptions.data.splice($scope.rowExpandedByIndexOfStatus + 1 + index, 0, element);
 							});
@@ -1118,6 +1123,8 @@ app.controller("ModalContentCtrl", [
 
 		/*=====  Get reports ======*/
 		$scope.getReports = function () {
+			$scope.reportValuesLength = 0;
+			$scope.showDigitalPreloader = true;
 			var selectedLang = "";
 
 			if ($scope.reportLangs.ru.isSelected === false && $scope.reportLangs.kz.isSelected === false) {
@@ -1137,7 +1144,7 @@ app.controller("ModalContentCtrl", [
 			if ($scope.requestedReportsQuery != undefined && $scope.requestedReportsQuery.length > 0) {
 				var reportSlices = [],
 						countFrom = 0,
-						sliceSize = 5;
+						sliceSize = 2;
 
 				getReportsSlices();
 				function getReportsSlices() {
@@ -1161,7 +1168,6 @@ app.controller("ModalContentCtrl", [
 						data: dataArray,
 					}).then(
 						function (response) {
-		
 							$scope.isReadyReportsLoaded = true;
 							var reportValues 				= response.data,
 									counter             = countFrom,
@@ -1170,6 +1176,7 @@ app.controller("ModalContentCtrl", [
 									reportDownloadName  = "",
 									reportErrMsgMissing = "Отсутствует шаблон отчета",
 									reportErrMsg        = "Ошибка при формировании данного отчета";
+									$scope.reportValuesLength += reportValues.length;
 
 							reportValues.forEach(function (element) {
 								if (element.value == -1) {

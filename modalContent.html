@@ -49,9 +49,17 @@
         </div>
         <div class="col-md-6">
           <div class="ready-reports">
-            <h4>Отчеты</h4>
+						<h4>Отчеты <span ng-if="showDigitalPreloader" style="float: right;">Получено {{ reportValuesLength }} из {{requestedReports.length}}</span></h4>
+						<!-- <div ng-if="showDigitalPreloader">
+						 <uib-progressbar max="requestedReports.length" value="reportValuesLength"><span style="color:white; white-space:nowrap;">Получено {{reportValuesLength}} / {{requestedReports.length}}</span></uib-progressbar>
+						</div> -->
             <div class="preloader-block ready-reports" ng-if="!isReadyReportsLoaded">
-              <div class="lds-ring-readyReports"><div></div><div></div><div></div><div></div></div>
+              <div class="lds-ring-readyReports">
+								<div></div>
+								<div></div>
+								<div></div>
+								<div></div>
+							</div>
             </div>
             <ul ng-if="isReadyReportsLoaded">
               <li ng-repeat="item in readyReports">

@@ -162,16 +162,39 @@
             <h1 class="h-title">{{translation.STAT_SREZ}}</h1>
           </div>
           <div class="col-md-3">
-            <div class="lang-switcher" style="float: right; display: b">
-              <h5 style="margin: 5px 0">{{translation.CHOOSE_LANG}}:</h5>
+            <div class="lang-switcher" style="float: right; display: block">
+              <!-- <h5 style="margin: 5px 0">{{translation.CHOOSE_LANG}}:</h5>
               <select
                 style="float: right; width: 105px; padding: 5px"
                 ng-change="translate()"
-                ng-model="selectedLanguage"
-              >
+                ng-model="selectedLanguage">
                 <option value="kz">Қазақша</option>
                 <option value="ru">Русский</option>
-              </select>
+							</select> -->
+              <div class="switch-field">
+                <input
+                  type="radio"
+                  id="radio-three"
+                  name="switch-two"
+                  value="yes"
+                  checked
+                />
+                <label for="radio-three">RUS</label>
+                <input
+                  type="radio"
+                  id="radio-four"
+                  name="switch-two"
+                  value="maybe"
+                />
+                <label for="radio-four">KAZ</label>
+                <input
+                  type="radio"
+                  id="radio-five"
+                  name="switch-two"
+                  value="no"
+                />
+                <label for="radio-five">QAZ</label>
+              </div>
             </div>
           </div>
         </div>

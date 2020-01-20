@@ -173,27 +173,30 @@
 							</select> -->
               <div class="switch-field">
                 <input
+                  ng-model="selectedLanguage"
+                  ng-change="translate()"
                   type="radio"
                   id="radio-three"
                   name="switch-two"
-                  value="yes"
+                  value="ru"
                   checked
-                />
-                <label for="radio-three">RUS</label>
+                /><label for="radio-three">RUS</label>
                 <input
+                  ng-model="selectedLanguage"
+                  ng-change="translate()"
                   type="radio"
                   id="radio-four"
                   name="switch-two"
-                  value="maybe"
-                />
-                <label for="radio-four">KAZ</label>
+                  value="kz"
+                /><label for="radio-four">KAZ</label>
                 <input
+                  ng-model="selectedLanguage"
+                  ng-change="translate()"
                   type="radio"
                   id="radio-five"
                   name="switch-two"
-                  value="no"
-                />
-                <label for="radio-five">QAZ</label>
+                  value="qaz"
+                /><label for="radio-five">QAZ</label>
               </div>
             </div>
           </div>

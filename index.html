@@ -1,243 +1,388 @@
 <!DOCTYPE html>
 <html lang="eng" ng-app="app">
+  <head>
+    <title>Статистические срезы</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
 
-<head>
-	<title>Статистические срезы</title>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link rel="stylesheet" href="css/fonts/fa/all.css" />
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
 
-	<link rel="stylesheet" href="css/fonts/fa/all.css" />
-	<link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/ui-select/select.min.css" />
+    <link rel="stylesheet" href="css/ui-select/select2.css" />
+    <link rel="stylesheet" href="css/ui-select/selectize.default.css" />
 
-	<link rel="stylesheet" href="css/ui-select/select.min.css" />
-	<link rel="stylesheet" href="css/ui-select/select2.css" />
-	<link rel="stylesheet" href="css/ui-select/selectize.default.css" />
+    <link rel="stylesheet" href="css/ui-grid.css" type="text/css" />
+    <link rel="stylesheet" href="css/ui-grid-blue.css" type="text/css" />
 
-	<link rel="stylesheet" href="css/ui-grid.css" type="text/css" />
-	<link rel="stylesheet" href="css/ui-grid-blue.css" type="text/css" />
+    <link
+      rel="stylesheet"
+      href="Scripts/angular-ui-notification.min.css"
+      type="text/css"
+    />
 
-	<link rel="stylesheet" href="Scripts/angular-ui-notification.min.css" type="text/css" />
+    <link rel="stylesheet" href="css/index.css" type="text/css" />
+    <link rel="stylesheet" href="css/custom.css" type="text/css" />
 
-	<link rel="stylesheet" href="css/index.css" type="text/css" />
-	<link rel="stylesheet" href="css/custom.css" type="text/css" />
+    <link
+      rel="apple-touch-icon"
+      sizes="57x57"
+      href="/img/favicon/apple-icon-57x57.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="60x60"
+      href="/img/favicon/apple-icon-60x60.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="72x72"
+      href="/img/favicon/apple-icon-72x72.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="76x76"
+      href="/img/favicon/apple-icon-76x76.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="114x114"
+      href="/img/favicon/apple-icon-114x114.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="120x120"
+      href="/img/favicon/apple-icon-120x120.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="144x144"
+      href="/img/favicon/apple-icon-144x144.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="152x152"
+      href="/img/favicon/apple-icon-152x152.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/img/favicon/apple-icon-180x180.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="/img/favicon/android-icon-192x192.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./img/favicon/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="96x96"
+      href="./img/favicon/favicon-96x96.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="./img/favicon/favicon-16x16.png"
+    />
+    <link rel="manifest" href="./img/favicon/manifest.json" />
+    <meta name="msapplication-TileColor" content="#ffffff" />
+    <meta
+      name="msapplication-TileImage"
+      content="/img/favicon/ms-icon-144x144.png"
+    />
+    <meta name="theme-color" content="#ffffff" />
 
-	<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png" />
-	<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png" />
-	<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png" />
-	<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png" />
-	<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png" />
-	<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png" />
-	<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png" />
-	<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png" />
-	<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png" />
-	<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png" />
-	<link rel="icon" type="image/png" sizes="32x32" href="./img/favicon/favicon-32x32.png" />
-	<link rel="icon" type="image/png" sizes="96x96" href="./img/favicon/favicon-96x96.png" />
-	<link rel="icon" type="image/png" sizes="16x16" href="./img/favicon/favicon-16x16.png" />
-	<link rel="manifest" href="./img/favicon/manifest.json" />
-	<meta name="msapplication-TileColor" content="#ffffff" />
-	<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png" />
-	<meta name="theme-color" content="#ffffff" />
+    <script src="js/angular.js"></script>
+    <script src="js/angular-resource.min.js"></script>
+    <script src="js/angular-touch.js"></script>
+    <script src="js/angular-animate.js"></script>
+    <!-- <script src="js//angular-sanitize.js"></script> -->
+    <script src="js/angular-aria.js"></script>
+    <script src="js/csv.js"></script>
+    <script src="js/vfs_fonts.js"></script>
+    <script src="js/lodash.min.js"></script>
+    <script src="js/jszip.min.js"></script>
+    <script src="js/excel-builder.dist.js"></script>
+    <script src="js/ui-grid.js"></script>
+    <script src="Scripts/ui-bootstrap.js"></script>
+    <script src="Scripts/ui-select/select.min.js"></script>
 
-	<script src="js/angular.js"></script>
-	<script src="js/angular-resource.min.js"></script>
-	<script src="js/angular-touch.js"></script>
-	<script src="js/angular-animate.js"></script>
-  <!-- <script src="js//angular-sanitize.js"></script> -->
-	<script src="js/angular-aria.js"></script>
-	<script src="js/csv.js"></script>
-	<script src="js/vfs_fonts.js"></script>
-	<script src="js/lodash.min.js"></script>
-	<script src="js/jszip.min.js"></script>
-	<script src="js/excel-builder.dist.js"></script>
-	<script src="js/ui-grid.js"></script>
-	<script src="Scripts/ui-bootstrap.js"></script>
-	<script src="Scripts/ui-select/select.min.js"></script>
+    <!-- UI Grid -->
+    <script src="js/ui-grid/ui-grid.core.min.js"></script>
+    <script src="js/ui-grid/ui-grid.expandable.min.js"></script>
+    <script src="js/ui-grid/ui-grid.tree-base.min.js"></script>
+    <script src="js/ui-grid/ui-grid.tree-view.min.js"></script>
+    <script src="js/ui-grid/ui-grid.grouping.min.js"></script>
+    <script src="js/ui-grid/ui-grid.selection.min.js"></script>
+    <script src="js/ui-grid/ui-grid.saveState.min.js"></script>
 
-	<!-- UI Grid -->
-	<script src="js/ui-grid/ui-grid.core.min.js"></script>
-	<script src="js/ui-grid/ui-grid.expandable.min.js"></script>
-	<script src="js/ui-grid/ui-grid.tree-base.min.js"></script>
-	<script src="js/ui-grid/ui-grid.tree-view.min.js"></script>
-	<script src="js/ui-grid/ui-grid.grouping.min.js"></script>
-	<script src="js/ui-grid/ui-grid.selection.min.js"></script>
-	<script src="js/ui-grid/ui-grid.saveState.min.js"></script>
+    <script src="Scripts/jquery-2.2.1.js"></script>
+    <script src="Scripts/angular-route.js"></script>
 
-	<script src="Scripts/jquery-2.2.1.js"></script>
-	<script src="Scripts/angular-route.js"></script>
+    <script src="Scripts/angular-dropdown-multiselect.js"></script>
 
-	<script src="Scripts/angular-dropdown-multiselect.js"></script>
+    <script src="js/angular-treeview.js"></script>
+    <script src="js/checklist-model.js"></script>
+    <script src="Scripts/sockjs.js"></script>
+    <script src="Scripts/stomp.js"></script>
+    <script src="Scripts/angular-ui-notification.min.js"></script>
+    <script
+      data-require="ui-bootstrap@*"
+      data-semver="2.5.0"
+      src="js/ui-bootstrap-tpls-2.5.0.js"
+    ></script>
+  </head>
+  <!--Translation controller-->
+  <body ng-controller="translationCtrl">
+    <header>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-5">
+            <a href="#" class="logo"
+              ><img src="img/logo.jpg" alt="" class="img-responsive"
+            /></a>
+            <span class="logo-text"
+              >{{translation.PROJECT_TITLE1}}<br />
+              {{translation.PROJECT_TITLE2}}</span
+            >
+          </div>
+          <div class="col-md-4">
+            <h1 class="h-title">{{translation.STAT_SREZ}}</h1>
+          </div>
+          <div class="col-md-3">
+            <div class="lang-switcher" style="float: right; display: b">
+              <h5 style="margin: 5px 0">{{translation.CHOOSE_LANG}}:</h5>
+              <select
+                style="float: right; width: 105px; padding: 5px"
+                ng-change="translate()"
+                ng-model="selectedLanguage"
+              >
+                <option value="kz">Қазақша</option>
+                <option value="ru">Русский</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <nav class="main-navigation" ng-controller="userCtrl">
+      <span>{{translation.STAT_SREZ}}</span>
 
-	<script src="js/angular-treeview.js"></script>
-	<script src="js/checklist-model.js"></script>
-	<script src="Scripts/sockjs.js"></script>
-	<script src="Scripts/stomp.js"></script>
-	<script src="Scripts/angular-ui-notification.min.js"></script>
-	<script data-require="ui-bootstrap@*" data-semver="2.5.0" src="js/ui-bootstrap-tpls-2.5.0.js"></script>
-</head>
-<!--Translation controller-->
-<body ng-controller="translationCtrl">
-	<header>
-		<div class="container-fluid">
-			<div class="row">
-				<div class="col-md-4">
-					<a href="#" class="logo"><img src="img/logo.jpg" alt="" class="img-responsive" /></a>
-					<span class="logo-text">КОМИТЕТ ПРАВОВОЙ СТАТИСТИКИ И СПЕЦИАЛЬНЫМ УЧЕТАМ<br />
-						ГЕНЕРАЛЬНОЙ ПРОКУРАТУРЫ РЕСПУБЛИКИ КАЗАХСТАН</span>
-				</div>
-				<div class="col-md-4">
-					<h1 class="h-title">{{translation.STAT_SREZ}}</h1>
-				</div>
-				<div class="col-md-4">
-					<div class="lang-switcher" style="float: right; display: none">
-						<h5 style="margin: 5px 0">{{translation.CHOOSE_LANG}}:</h5>
-						<select style="float: right; width: 105px; padding: 5px" ng-change="translate()" ng-model="selectedLanguage">
-							<option value="kz">Қазақша</option>
-							<option value="ru">Русский</option>
-						</select>
-					</div>
-				</div>
-			</div>
-		</div>
-	</header>
-	<nav class="main-navigation" ng-controller="userCtrl">
-		<span>{{translation.STAT_SREZ}}</span>
+      <div style="float: right; margin: 3px">
+        <select
+          ng-if="roleList"
+          class="form-control userRoleCombobox"
+          ng-change="roleSelected(userRole)"
+          ng-model="userRole"
+        >
+          <!--<option value="" disabled selected style='display:none;'>Выберите роль из списка</option>-->
+          <option ng-repeat="role in roleList" value="{{role.code}}"
+            >{{role.name}}</option
+          >
+        </select>
+      </div>
+    </nav>
+    <div ng-controller="MainCtrl">
+      <div class="container-fluid main">
+        <div class="row">
+          <div class="col-sm-12" style="margin: 20px 0">
+            <ul class="nav nav-tabs main-tabs">
+              <li class="active changeClass">
+                <a data-toggle="tab" href="#home">{{translation.SLICES}}</a>
+              </li>
+              <li class="changeClass">
+                <a data-toggle="tab" href="#menu1">{{translation.TO_FORM}}</a>
+              </li>
+            </ul>
+            <div style="height: 5px; width: 100%; background: transparent">
+              <div ng-if="loader" class="loader">
+                <div class="bar"></div>
+              </div>
+            </div>
 
-		<div style="float: right; margin: 3px">
-			<select ng-if="roleList" class="form-control userRoleCombobox" ng-change="roleSelected(userRole)"
-				ng-model="userRole">
-				<!--<option value="" disabled selected style='display:none;'>Выберите роль из списка</option>-->
-				<option ng-repeat="role in roleList" value="{{role.code}}">{{role.name}}</option>
-			</select>
-		</div>
-	</nav>
-	<div ng-controller="MainCtrl">
-		<div class="container-fluid main">
-			<div class="row">
-				<div class="col-sm-12" style="margin: 20px 0">
-					<ul class="nav nav-tabs main-tabs">
-						<li class="active changeClass">
-							<a data-toggle="tab" href="#home">{{translation.SLICES}}</a>
-						</li>
-						<li class="changeClass">
-							<a data-toggle="tab" href="#menu1">{{translation.TO_FORM}}</a>
-						</li>
-					</ul>
-					<div style="height: 5px; width: 100%; background: transparent">
-						<div ng-if="loader" class="loader">
-							<div class="bar"></div>
-						</div>
-					</div>
+            <div class="tab-content">
+              <div id="home" class="tab-pane fade in active">
+                <div class="row" ng-if="showGrid">
+                  <div class="col-md-6">
+                    <div class="pull-left">
+                      <button
+                        title="Обновить таблицу"
+                        ng-click="getSliceGroups(checkboxModel.value, true);"
+                        class="btn btn-primary"
+                      >
+                        <i class="fas fa-sync"></i>
+                      </button>
+                    </div>
+                  </div>
 
-					<div class="tab-content">
-						<div id="home" class="tab-pane fade in active">
-							<div class="row" ng-if="showGrid">
-								<div class="col-md-6">
-									<div class="pull-left">
-										<button title="Обновить таблицу" ng-click="getSliceGroups(checkboxModel.value, true);"
-											class="btn btn-primary">
-											<i class="fas fa-sync"></i>
-										</button>
-									</div>
-								</div>
+                  <div class="col-md-6 col-xs-6">
+                    <div class="pull-right">
+                      <label class="containerLabel">
+                        <input
+                          ng-model="checkboxModel.value"
+                          ng-change="getSliceGroups(checkboxModel.value)"
+                          type="checkbox"
+                        />{{translation.SHOW_DELETED}}
+                        <span class="checkmark"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div
+                    class="col-md-12"
+                    style="padding-bottom: 25px; padding-top: 10px"
+                  >
+                    <div
+                      style="height: 5px; width: 100%; background: transparent"
+                    >
+                      <div ng-if="preloaderByStatus" class="loader">
+                        <div class="bar"></div>
+                      </div>
+                    </div>
+                    <div
+                      ng-if="showGrid"
+                      style="width: 100%"
+                      id="grid1"
+                      ui-grid="gridOptions"
+                      ui-grid-save-state
+                      ui-grid-grouping
+                      ui-grid-resize-columns
+                      ui-grid-expandable
+                      class="grid"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+              <div id="menu1" class="tab-pane fade">
+                <div class="container">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div
+                        class="col-md-12"
+                        style="padding: 15px; text-align: center"
+                      >
+                        <p class="title">Сформировать срез</p>
+                      </div>
+                    </div>
+                  </div>
 
-								<div class="col-md-6 col-xs-6">
-									<div class="pull-right">
-										<label class="containerLabel">
-											<input ng-model="checkboxModel.value" ng-change="getSliceGroups(checkboxModel.value)"
-												type="checkbox" />{{translation.SHOW_DELETED}}
-											<span class="checkmark"></span>
-										</label>
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-md-12" style="padding-bottom: 25px; padding-top: 10px">
-									<div style="height: 5px; width: 100%; background: transparent">
-										<div ng-if="preloaderByStatus" class="loader">
-											<div class="bar"></div>
-										</div>
-									</div>
-									<div ng-if="showGrid" style="width: 100%" id="grid1" ui-grid="gridOptions" ui-grid-save-state ui-grid-grouping
-										ui-grid-resize-columns ui-grid-expandable class="grid"></div>
-								</div>
-							</div>
-						</div>
-						<div id="menu1" class="tab-pane fade">
-							<div class="container">
-								<div class="row">
-									<div class="col-md-12">
-										<div class="col-md-12" style="padding: 15px; text-align: center">
-											<p class="title">Сформировать срез</p>
-										</div>
-									</div>
-								</div>
+                  <form>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="col-lg-6 col-md-12">
+                          <div class="box">
+                            <label
+                              class="containerLabel"
+                              ng-repeat="group in groups"
+                            >
+                              <input
+                                ng-disabled="group.disabled"
+                                ng-checked="vChecked"
+                                type="checkbox"
+                                checklist-model="user"
+                                checklist-value="group.code"
+                              />{{group.name}}
+                              <span
+                                ng-class="{'disabled-group': group.status == 2}"
+                                class="checkmark"
+                              ></span>
+                            </label>
+                          </div>
+                        </div>
 
-								<form>
-									<div class="row">
-										<div class="col-md-12">
-											<div class="col-lg-6 col-md-12">
-												<div class="box">
-													<label class="containerLabel" ng-repeat="group in groups">
-														<input ng-disabled="group.disabled" ng-checked="vChecked" type="checkbox"
-															checklist-model="user" checklist-value="group.code" />{{group.name}}
-														<span ng-class="{'disabled-group': group.status == 2}" class="checkmark"></span>
-													</label>
-												</div>
-											</div>
+                        <div class="col-lg-6">
+                          <div class="col-lg-12">
+                            <label
+                              >Дата начала отчета
+                              <span class="required">*</span></label
+                            >
+                            <input
+                              class="form-control"
+                              data-format="dd.MM.yyyy"
+                              ng-model="dateFrom"
+                              type="date"
+                              required
+                            />
+                            <br />
+                          </div>
 
-											<div class="col-lg-6">
-												<div class="col-lg-12">
-													<label>Дата начала отчета
-														<span class="required">*</span></label>
-													<input class="form-control" data-format="dd.MM.yyyy" ng-model="dateFrom" type="date"
-														required />
-													<br />
-												</div>
+                          <div class="col-lg-12">
+                            <label
+                              >Дата окончания отчета
+                              <span class="required">*</span></label
+                            >
+                            <input
+                              class="form-control"
+                              data-format="dd.MM.yyyy"
+                              ng-model="dateTo"
+                              type="date"
+                              required
+                            />
+                            <br />
+                          </div>
 
-												<div class="col-lg-12">
-													<label>Дата окончания отчета
-														<span class="required">*</span></label>
-													<input class="form-control" data-format="dd.MM.yyyy" ng-model="dateTo" type="date" required />
-													<br />
-												</div>
+                          <div class="col-lg-10 col-xs-10">
+                            <label
+                              >Статсрез на №
+                              <span class="required">*</span></label
+                            >
+                            <input
+                              ng-model="sliceMax"
+                              type="number"
+                              class="form-control"
+                            />
+                            <br />
+                          </div>
+                          <div class="col-lg-2">
+                            <button
+                              style="margin-top: 27px; width: 100%"
+                              title="Обновить статсрез"
+                              ng-click="getStatSrez()"
+                              class="btn"
+                            >
+                              <i class="fas fa-sync"></i>
+                            </button>
+                          </div>
+                          <br />
 
-												<div class="col-lg-10 col-xs-10">
-													<label>Статсрез на №
-														<span class="required">*</span></label>
-													<input ng-model="sliceMax" type="number" class="form-control" />
-													<br />
-												</div>
-												<div class="col-lg-2">
-													<button style="margin-top: 27px; width: 100%" title="Обновить статсрез"
-														ng-click="getStatSrez()" class="btn">
-														<i class="fas fa-sync"></i>
-													</button>
-												</div>
-												<br />
+                          <div class="col-lg-12">
+                            <br />
+                            <button
+                              style="width: 100%"
+                              ng-disabled="user.length == 0"
+                              class="btn"
+                              ng-click="orderSrez(user, dateFrom, dateTo)"
+                            >
+                              Сформировать
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-												<div class="col-lg-12">
-													<br />
-													<button style="width: 100%" ng-disabled="user.length == 0" class="btn"
-														ng-click="orderSrez(user, dateFrom, dateTo)">
-														Сформировать
-													</button>
-												</div>
-											</div>
-										</div>
-									</div>
-								</form>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<script src="controllers/index.js"></script>
-	<script src="controllers/angularTranslationService.js"></script>
-	<script src="Scripts/bootstrap.min.js"></script>
-</body>
-
+    <script src="controllers/index.js"></script>
+    <script src="controllers/angularTranslationService.js"></script>
+    <script src="Scripts/bootstrap.min.js"></script>
+  </body>
 </html>

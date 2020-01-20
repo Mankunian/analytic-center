@@ -1,16 +1,31 @@
 @font-face {
   font-family: Roboto;
-  src: url('../fonts/Roboto/Roboto-Regular.ttf');
+  src: url("../fonts/Roboto/Roboto-Regular.ttf");
 }
 
-html,body {
-  font-family: 'Roboto', sans-serif;
+html,
+body {
+  font-family: "Roboto", sans-serif;
   max-width: 1920px;
   margin: 0 auto;
 }
 header {
   padding: 13px 20px;
 }
+
+.lang-switcher {
+  margin: 25px 0 0;
+}
+
+.lang-switcher a {
+  border: 1px solid;
+  padding: 10px;
+}
+
+.lang-switcher a:checked {
+  background: #fc0;
+}
+
 .logo {
   width: 70px;
   display: inline-block;
@@ -20,7 +35,7 @@ header {
 .logo-text {
   display: inline-block;
   vertical-align: middle;
-  color: #2B6AB9;
+  color: #2b6ab9;
   font-size: 12px;
   font-weight: 700;
 }
@@ -29,7 +44,7 @@ header h1 {
   text-transform: uppercase;
   font-weight: 900;
   font-size: 30px;
-  text-align: center;
+  text-align: left;
 }
 
 .remove-icon {
@@ -48,7 +63,8 @@ header h1 {
   width: 100%;
   height: 150px;
 }
-.left-nav, .right-nav {
+.left-nav,
+.right-nav {
   float: left;
 }
 
@@ -83,7 +99,7 @@ form.tab-form-demo .tab-pane {
   font-size: 14px;
   min-width: 130px;
   margin-right: 10px;
-  color: #315C92;
+  color: #315c92;
   font-weight: 400;
 }
 
@@ -91,46 +107,46 @@ form.tab-form-demo .tab-pane {
   margin-bottom: 10px;
 }
 .requested-reports .box {
-	border: none;
+  border: none;
 }
 .requested-reports {
   min-height: 100px;
 }
 .requested-reports ul {
-	list-style: none;
+  list-style: none;
   max-height: 250px;
   overflow-y: auto;
 }
 .requested-reports ul li {
-	float: none;
+  float: none;
   min-height: 22px;
   margin-bottom: 10px;
 }
 .ready-reports {
-	min-height: 100px;
+  min-height: 100px;
   position: relative;
 }
 .ready-reports ul {
-	list-style: square;
-	padding-left: 20px;
+  list-style: square;
+  padding-left: 20px;
   max-height: 250px;
   overflow-y: auto;
 }
 .ready-reports ul li {
-	float: none;
+  float: none;
   margin-bottom: 10px;
   min-height: 22px;
 }
 .ready-reports ul li a {
-	display: block;
-	padding: 0;
+  display: block;
+  padding: 0;
   color: #000;
   text-decoration: none;
   text-align: left;
 }
 .ready-reports ul li a:hover {
   color: #000;
-  text-decoration:  underline;
+  text-decoration: underline;
   background: none;
 }
 .requested-reports h4,
@@ -200,7 +216,7 @@ form.tab-form-demo .tab-pane {
   display: -ms-flexbox;
   display: -webkit-flex;
   display: flex;
-  color: #003F59;
+  color: #003f59;
   text-decoration: none;
   cursor: default;
   font-size: 12px;
@@ -330,7 +346,7 @@ form.tab-form-demo .tab-pane {
   animation-timing-function: ease-in-out;
 }
 
-.indentInline{
+.indentInline {
   margin: 10px 15px;
 }
 #grid1 .ui-grid-icon-plus-squared {
@@ -349,39 +365,46 @@ content:'\f07b';
 font-family: 'FontAwesome';
 content:'\f07c';
 }*/
-#grid1 .grid1575272482506 .ui-grid-pinned-container-left, #grid1  .grid1575272482506 .ui-grid-pinned-container-left .ui-grid-render-container-left .ui-grid-viewport {
+#grid1 .grid1575272482506 .ui-grid-pinned-container-left,
+#grid1
+  .grid1575272482506
+  .ui-grid-pinned-container-left
+  .ui-grid-render-container-left
+  .ui-grid-viewport {
   width: 55px;
 }
 
 /* #grid1 .ui-grid-render-container{
   margin-left: 0 !important;
 } */
-.ui-grid-row .ui-grid-cell.ui-grid-row-header-cell{
+.ui-grid-row .ui-grid-cell.ui-grid-row-header-cell {
   background: none;
 }
 .slice-date-input-group {
   margin-left: 25px;
 }
-.nav-tabs>li>a {
+.nav-tabs > li > a {
   border-radius: 0;
 }
 .main-tabs {
-  border-bottom: 10px #EAEBED solid;
+  border-bottom: 10px #eaebed solid;
 }
-.main-tabs.nav-tabs>li>a {
+.main-tabs.nav-tabs > li > a {
   margin-right: 0;
-  color: #A8A8A9;
+  color: #a8a8a9;
   text-transform: uppercase;
-  background-color: #F2F3F4;
+  background-color: #f2f3f4;
   font-weight: 700;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
 }
-.main-tabs.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
-  color: #2A5B98;
-  background-color: #EAEBED;
+.main-tabs.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:focus,
+.nav-tabs > li.active > a:hover {
+  color: #2a5b98;
+  background-color: #eaebed;
 }
 button.btn {
-  background-color: #2E86CD;
+  background-color: #2e86cd;
   border-radius: 0;
   border: none;
   min-width: 100px;
@@ -422,29 +445,31 @@ input.form-control {
   border-radius: 0;
 }
 .blue-title {
-  color: #315C92;
+  color: #315c92;
 }
 .report-modal {
   padding: 0 0 15px 0;
   min-height: 577px;
 }
 .report-modal .nav-tabs {
-  background-color: #E8EDED;
+  background-color: #e8eded;
   padding: 15px 15px 0 15px;
 }
-.report-modal .nav-tabs>li>a {
+.report-modal .nav-tabs > li > a {
   margin-right: 5px;
   border-radius: 5px 5px 0 0;
-  color: #264B7B;
-  background-color: #D4DDE1;
-  font-family: 'Roboto', sans-serif;
+  color: #264b7b;
+  background-color: #d4dde1;
+  font-family: "Roboto", sans-serif;
 }
-.report-modal .nav-tabs>li.active>a, .report-modal .nav-tabs>li.active>a:focus, .report-modal .nav-tabs>li.active>a:hover {
-  color: #264B7B;
+.report-modal .nav-tabs > li.active > a,
+.report-modal .nav-tabs > li.active > a:focus,
+.report-modal .nav-tabs > li.active > a:hover {
+  color: #264b7b;
   background-color: #fff;
 }
 .report-modal .form-inline .form-control {
-  background: #E8EDED;
+  background: #e8eded;
   border: none;
   box-shadow: none;
 }
@@ -457,7 +482,7 @@ input.form-control {
   position: relative;
 }
 .main-navigation span {
-  background: #1975C0;
+  background: #1975c0;
   position: absolute;
   bottom: 0;
   color: #fff;
@@ -481,40 +506,43 @@ input.form-control {
   top: 50%;
   transform: translateY(-50%);
 }
-.linePreloader{
-  width:100%;
-  height:4px;
-  background:linear-gradient(to right,#214878,#214878);
+.linePreloader {
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(to right, #214878, #214878);
   z-index: 990;
-  margin:auto;
-  border-radius:4px;
-  background-size:20%;
-  background-repeat:repeat-y;
-  background-position:-25% 0;
-  animation:scroll 1.2s ease-in-out infinite;
-
+  margin: auto;
+  border-radius: 4px;
+  background-size: 20%;
+  background-repeat: repeat-y;
+  background-position: -25% 0;
+  animation: scroll 1.2s ease-in-out infinite;
 }
 .linePreloader.isVisible {
   visibility: visible;
 }
 
-.disabled-group{
+.disabled-group {
   background-color: #8a8f94;
 }
 
-@keyframes scroll{
-  50%{background-size:80%}
-  100%{background-position:125% 0;}
+@keyframes scroll {
+  50% {
+    background-size: 80%;
+  }
+  100% {
+    background-position: 125% 0;
+  }
 }
 .ui-grid-cell-contents.collapsed-row,
 .ui-grid-cell-contents.expanded-row {
   position: relative;
 }
-.expanded-row-0>span,
-.expanded-row-1>span,
-.collapsed-row-0>span,
-.collapsed-row-1>span {
-  content: '';
+.expanded-row-0 > span,
+.expanded-row-1 > span,
+.collapsed-row-0 > span,
+.collapsed-row-1 > span {
+  content: "";
   position: static;
   display: inline-block;
   vertical-align: middle;
@@ -524,25 +552,25 @@ input.form-control {
   -webkit-background-size: contain;
   background-size: contain;
 }
-.expanded-row-0>span,
-.expanded-row-1>span {
+.expanded-row-0 > span,
+.expanded-row-1 > span {
   background-image: url(../img/folder-op.png);
 }
-.collapsed-row-0>span,
-.collapsed-row-1>span {
+.collapsed-row-0 > span,
+.collapsed-row-1 > span {
   background-image: url(../img/folder-cl.png);
 }
-.form-control.userRoleCombobox{
-	border-radius: 0;
-	border: 1px solid #1975C0;
-	color: #fff;
-	background: #1975C0;
-	height: 50px;
-	position: absolute;
-	display: block;
-	width: auto;
-	bottom: 0;
-	right: 50px;
+.form-control.userRoleCombobox {
+  border-radius: 0;
+  border: 1px solid #1975c0;
+  color: #fff;
+  background: #1975c0;
+  height: 50px;
+  position: absolute;
+  display: block;
+  width: auto;
+  bottom: 0;
+  right: 50px;
 }
 /* growl-notifications{
   position: fixed;
@@ -558,33 +586,32 @@ growl-notification{
 	min-height: 350px;
 } */
 growl-notifications {
-	position: fixed;
-	top: 150px;
-	right: 20px;
-	z-index: 1000;
+  position: fixed;
+  top: 150px;
+  right: 20px;
+  z-index: 1000;
 }
 
 growl-notifications growl-notification {
-	background: #134179;
-	color: white;
-	width: 200px;
-	display: block;
-	border-radius: 0px;
-	margin-top: 15px;
+  background: #134179;
+  color: white;
+  width: 200px;
+  display: block;
+  border-radius: 0px;
+  margin-top: 15px;
 }
 .ui-notification {
-	width: 350px;
-	padding: 10px 20px;
-	min-height: 50px;
-	margin: 0;
+  width: 350px;
+  padding: 10px 20px;
+  min-height: 50px;
+  margin: 0;
 }
 
 .meter {
-
   position: relative;
   background: #f3efe6;
   overflow: hidden;
-  height: 25px
+  height: 25px;
 }
 
 .meter span {
@@ -593,32 +620,79 @@ growl-notifications growl-notification {
 }
 
 .progress {
-	overflow: visible;
-	
+  overflow: visible;
+
   background-color: #f3f3f3;
   color: #fff;
   -webkit-animation: progressBar 2s ease-in;
-  -webkit-animation-fill-mode:both;
+  -webkit-animation-fill-mode: both;
   /* -moz-animation: progressBar 2s ease-in; */
-	-moz-animation-fill-mode:both;
-	border: 1px solid #777;
-	margin-bottom: 0;
-	position: relative;
+  -moz-animation-fill-mode: both;
+  border: 1px solid #777;
+  margin-bottom: 0;
+  position: relative;
 }
 
 .progress span {
-        position: absolute;
-        display: block;
-        width: 100%;
-        color: black;
-     }
+  position: absolute;
+  display: block;
+  width: 100%;
+  color: black;
+}
 
 @-webkit-keyframes progressBar {
-  0% { width: 0; }
-  100% { width: 100%; }
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
 }
 
 @-moz-keyframes progressBar {
-  0% { width: 0; }
-  100% { width: 100%; }
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+/* change lang custom radio button */
+
+.switch-field {
+  display: flex;
+  margin-bottom: 36px;
+  overflow: hidden;
+}
+
+.switch-field input {
+  position: absolute !important;
+  clip: rect(0, 0, 0, 0);
+  height: 1px;
+  width: 1px;
+  border: 0;
+  overflow: hidden;
+}
+
+.switch-field label {
+  /* background-color: #e4e4e4; */
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 14px;
+  line-height: 1;
+  text-align: center;
+  padding: 8px 16px;
+  margin-right: -1px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.1);
+  transition: all 0.1s ease-in-out;
+}
+
+.switch-field label:hover {
+  cursor: pointer;
+}
+
+.switch-field input:checked + label {
+  background-color: #e4e4e4;
+  box-shadow: none;
 }

@@ -1444,9 +1444,9 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 							$scope.getStatusTree();
 						},
 						function (reason) {
-							var errMsg = "Вы уже провели процедуру согласования";
-							if (reason.data) $rootScope.serverErr(errMsg);
-							console.log(reason);
+							var errMessage = reason.data.errDetails;
+									$timeout(alert(errMessage), 1000);
+								
 						}
 					);
 				} else { //Отказать

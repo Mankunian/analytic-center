@@ -1247,6 +1247,7 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 	$scope.activeTabIndex = 0;
 	/*Получаем дерево статусов в зависимости от Номера среза*/
 	$scope.getStatusTree = function () {
+		console.log('get status tree')
 		$scope.isHistoryTreeLoaded = false;
 		$http({
 			method: "GET",
@@ -1402,6 +1403,7 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 
 	$scope.statusAction = function (btnNum, approveCode) {
 		console.log(approveCode)
+		console.log(btnNum)
 		var btnActionUrl = "";
 		switch (btnNum) {
 			case (btnNum = BUTTONS.SEND):
@@ -1415,6 +1417,7 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 				break;
 			case (btnNum = BUTTONS.APPROVE):
 				btnActionUrl = "approve";
+				console.log(approveCode)
 				if (approveCode === 1) {
 					var msg = "";
 					var approveObj = {
@@ -1443,44 +1446,93 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 						}
 					);
 				} else {
-					$scope.isApproveFormVisible = true;
-					$scope.openRejectionReasonModal = true;
-					$scope.sendReason = function (msg) {
-						var rejectObj = {
-							historyId: $scope.historyObj.id,
-							approveCode: approveCode,
-							territoryCode: $rootScope.userRole * 1,
-							msg: msg,
-						};
+					console.log($scope.historyObj)
+					$rootScope.historyObjModal = $scope.historyObj
+					$uibModal.open({
+						templateUrl: "editReason.html",
+						controller: function ($scope, $uibModalInstance) {
+							$scope.userRole = USER_ROLES.ZERO;
+							$scope.isApproveFormVisible = true;
+							console.log($rootScope.historyObjModal)
+							
 
-						$http({
-							method: "PUT",
-							url: CONFIGS.URL + "slices/" + $scope.srezNo + "/" + btnActionUrl,
-							data: rejectObj,
-							headers: {
-								sessionKey: $rootScope.authUser,
-							},
-						}).then(
-							function (response) {
-								console.log(response);
-								$scope.approveBtnDisabled = true;
-								$timeout(alert("Операция успешно совершена"), 2000);
-								$scope.isApproveFormVisible = false;
+							$scope.okReason = function (msg) {
+								var rejectObj = {
+										historyId: $rootScope.historyObjModal.id,
+										approveCode: approveCode,
+										territoryCode: $rootScope.userRole * 1,
+										msg: msg,
+								}
+								console.log(rejectObj)
 
-								$scope.getStatusTree();
-							},
-							function (reason) {
-								var errMsg = "Вы уже провели процедуру согласования";
-								if (reason.data) $rootScope.serverErr(errMsg);
-								console.log(reason);
-								$scope.isApproveFormVisible = false;
+								$http({
+									method: "PUT",
+									url: CONFIGS.URL + "slices/" + $rootScope.historyObjModal.sliceId + "/" + btnActionUrl,
+									data: rejectObj,
+									headers: {
+										sessionKey: $rootScope.authUser,
+									},
+								}).then(
+									function (response) {
+										console.log(response);
+										$scope.approveBtnDisabled = true;
+										$timeout(alert("Операция успешно совершена"), 2000);
+										$scope.isApproveFormVisible = false;
+										$scope.getStatusTree();
+									},
+									function (reason) {
+										var errMsg = "Вы уже провели процедуру согласования";
+										console.log(reason.data)
+										if (reason.data) $rootScope.serverErr(errMsg);
+										console.log(reason);
+										$scope.isApproveFormVisible = false;
+									}
+								);
 							}
-						);
-					};
+					
+							// $scope.openRejectionReasonModal = true;
+							
+							// $scope.sendReason = function (msg) {
+							// 	var rejectObj = {
+							// 		historyId: $scope.historyObj.id,
+							// 		approveCode: approveCode,
+							// 		territoryCode: $rootScope.userRole * 1,
+							// 		msg: msg,
+							// 	};
 
-					$scope.cancelReasonModal = function () {
-						$scope.isApproveFormVisible = false;
-					};
+							// 	$http({
+							// 		method: "PUT",
+							// 		url: CONFIGS.URL + "slices/" + $scope.srezNo + "/" + btnActionUrl,
+							// 		data: rejectObj,
+							// 		headers: {
+							// 			sessionKey: $rootScope.authUser,
+							// 		},
+							// 	}).then(
+							// 		function (response) {
+							// 			console.log(response);
+							// 			$scope.approveBtnDisabled = true;
+							// 			$timeout(alert("Операция успешно совершена"), 2000);
+							// 			$scope.isApproveFormVisible = false;
+
+							// 			$scope.getStatusTree();
+							// 		},
+							// 		function (reason) {
+							// 			var errMsg = "Вы уже провели процедуру согласования";
+							// 			if (reason.data) $rootScope.serverErr(errMsg);
+							// 			console.log(reason);
+							// 			$scope.isApproveFormVisible = false;
+							// 		}
+							// 	);
+							// };
+
+							$scope.cancelReasonModal = function () {
+								$scope.isApproveFormVisible = false;
+							};
+						},
+					});
+
+
+					
 				}
 				break;
 			case (btnNum = BUTTONS.DELETE):

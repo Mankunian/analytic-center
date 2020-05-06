@@ -18,7 +18,7 @@ var app = angular.module("app", [
 app
 	.constant("CONFIGS", {
 		// URL: 'http://192.168.210.10:8081/api/v1/RU/',
-		URL: "https://analytic-centre.tk:8081/api/v1/RU/", // DEV URL
+		URL: "https://anal-centre.tk:8081/api/v1/RU/", // DEV URL
 		// SOCKET_URL: "http://192.168.210.10:8081", // IP PROD
 		SOCKET_URL: "https://18.140.232.52:8081", // IP TEST
 		INTERFACE_LANG: "ru",
@@ -1401,6 +1401,7 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 	};
 
 	$scope.statusAction = function (btnNum, approveCode) {
+		console.log(approveCode)
 		var btnActionUrl = "";
 		switch (btnNum) {
 			case (btnNum = BUTTONS.SEND):
@@ -1443,7 +1444,7 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 					);
 				} else {
 					$scope.isApproveFormVisible = true;
-					// $scope.openRejectionReasonModal = true;
+					$scope.openRejectionReasonModal = true;
 					$scope.sendReason = function (msg) {
 						var rejectObj = {
 							historyId: $scope.historyObj.id,

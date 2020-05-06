@@ -1250,7 +1250,7 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 
 	$scope.activeTabIndex = 0;
 	/*Получаем дерево статусов в зависимости от Номера среза*/
-	$scope.getStatusTree = function () {
+	$rootScope.getStatusTree = function () {
 		console.log('get status tree')
 		$scope.isHistoryTreeLoaded = false;
 		$http({
@@ -1278,7 +1278,7 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 			}
 		);
 	};
-	$scope.getStatusTree();
+	$rootScope.getStatusTree();
 	/*Получаем дерево статусов в зависимости от Номера среза END*/
 
 	/*=====  Получаем код статуса после клика на статус
@@ -1441,7 +1441,7 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 						function (response) {
 							$scope.approveBtnDisabled = true;
 							$timeout(alert("Операция успешно совершена"), 2000);
-							$scope.getStatusTree();
+							$rootScope.getStatusTree();
 						},
 						function (reason) {
 							var errMessage = reason.data.errDetails;
@@ -1476,6 +1476,10 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 									},
 								}).then(function(response){
 									console.log(response)
+									$scope.approveBtnDisabled = true;
+									$timeout(alert("Операция успешно совершена"), 2000);
+									$uibModalInstance.close();
+									$rootScope.getStatusTree();
 								}, function(reason){
 									var errMessage = reason.data.errDetails;
 									$timeout(alert(errMessage), 1000);
@@ -1557,7 +1561,7 @@ app.controller("modalContentOperBySrezCtrl", function ($scope, $http, $uibModalI
 					$timeout(alert("Операция успешно совершена"), 2000);
 					$scope.historyStatus = true;
 					$scope.showUiGridInAgreement = false;
-					$scope.getStatusTree();
+					$rootScope.getStatusTree();
 				},
 				function (reason) {
 					if (reason.data) $rootScope.serverErr(reason);

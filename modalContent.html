@@ -1,59 +1,99 @@
 <div class="modal-header">
   <button type="button" class="close" data-dismiss="modal" ng-click="cancel()" >×</button>
-  <h3>Получение отчетов</h3>
+  <h3 class="modal-heading">Получение отчетов</h3>
 </div>
-<div class="modal-body">
-	<uib-tabset active="active">
-   <uib-tab index="0" heading="Каталог">
-   	<div class="row">
-   		<div class="col-md-6">
-		   	
-		   	<form class="form-inline">
-		   		<div class="form-group">
-			   		<label for="statSliceNum">Статсрез на №</label>
-			 			<input type="text" name="statSliceNum" id="statSliceNum" ng-model="statSliceNum" class="form-control" disabled>
-		   		</div>
-		   		<div class="form-group">
-			   		<label for="reportDatePeriod">Отчетный период</label>
-			 			<input type="text" name="reportDatePeriod" id="reportDatePeriod" ng-model="reportDatePeriod" class="form-control" disabled>
-		   		</div>
-		   		<div class="form-group" ng-controller="langDropdownCtrl">
-			   		<label for="langSelect">Язык отчета</label>
-				    <select name="langSelect" id="langSelect"
-				      ng-options="option.name for option in data.langs track by option.id"
-				      ng-model="data.selectedOption" class="form-control"></select>
-						</select>
-		   		</div>
-		   		<div class="btn-submit">
-		   			<button class="btn btn-primary btn-md" type="submit" ng-click="getReports()">Получить</button>
-		   		</div>
-		   	</form>   			
-
-   		</div>
-   		<div class="col-md-6">
-   			
-   		</div>
-   	</div>
-   	<div class="row">
-   		<div class="requested-reports" ng-controller="requestedReportsCtrl"></div>
-   	</div>
-   	<div class="row">
-   		<div class="request-status" ng-controller="requestStatusCtrl"></div>
-   	</div>
-   </uib-tab>
-   <uib-tab index="1" heading="1-М">
-   	
-   </uib-tab>
-   <uib-tab index="3" heading="3-К">Long Labeled Justified content3</uib-tab>
-   <uib-tab index="4" heading="1-Н">Long Labeled Justified content4</uib-tab>
-   <uib-tab index="5" heading="СНГ-3">Long Labeled Justified content55</uib-tab>
-   <uib-tab index="6" heading="СНГ-1">Long Labeled Justified conten666t</uib-tab>
-   <uib-tab index="7" heading="СНГ-ОП">Long Labeled Justified content777</uib-tab>
-   <uib-tab index="8" heading="1-ЭТ">Long Labeled Justified conten888t</uib-tab>
-   <uib-tab index="9" heading="МПС">Long Labeled Justified conten9999t</uib-tab>
- </uib-tabset>
+<div class="modal-body report-modal" ng-class="{'isTabsLoaded' : isTabsLoaded, 'modalCorpus': isGroup100, 'modalReport' : !isGroup100}">
+  <div class="preloader-block" ng-if="!isTabsLoaded">
+    <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+  </div>
+  <uib-tabset active="active" ng-if="isTabsLoaded">
+    <uib-tab  heading="Каталог" index="0"  select="getRequestedReports()">
+      <div class="row">
+        <form class="form-inline">
+          <div class="col-md-12">
+            <div class="form-group slice-name-input-group">
+              <label for="statSliceNum" class="blue-title">Статсрез на №</label>
+              <input type="text" name="statSliceNum" id="statSliceNum" class="form-control" disabled value="{{statSliceNum}}">
+            </div>
+            <div class="form-group slice-date-input-group">
+              <label for="reportDatePeriod">Отчетный период</label>
+              <input type="text" name="reportDatePeriod" id="reportDatePeriod" class="form-control" disabled value="{{statSlicePeriod}}">
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="form-group langs-checkboxes">
+              <label for="langSelect">Язык отчета</label>
+              <label class="containerLabel">
+                <input type="checkbox" ng-model="reportLangs.ru.isSelected" ng-checked="reportLangs.ru.isInterfaceLang">{{reportLangs.ru.name}}
+                <span class="checkmark"></span>
+              </label>
+              <label class="containerLabel">
+                <input type="checkbox" ng-model="reportLangs.kz.isSelected" ng-checked="reportLangs.kz.isInterfaceLang">{{reportLangs.kz.name}}
+                <span class="checkmark"></span>
+              </label>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="row" style="border-top: 1px solid #e5e5e5; padding-top: 15px;">
+        <div class="col-md-6">
+          <div class="requested-reports">
+            <h4>Запрошенные отчеты</h4>
+            <ul>
+              <li ng-repeat="(key, item) in requestedReports track by key">
+                <span class="remove-icon glyphicon glyphicon-remove-circle" ng-click="removeSelectedReport(key)"></span>
+                <span class="requested-report-item">{{item | limitTo: 55}}{{item.length > 55 ? '&hellip;' : ''}}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="ready-reports">
+						<h4>Отчеты <span ng-if="showDigitalPreloader" style="float: right;">Получено {{ reportValuesLength }} из {{requestedReports.length}}</span></h4>
+						<!-- <div ng-if="showDigitalPreloader">
+						 <uib-progressbar max="requestedReports.length" value="reportValuesLength"><span style="color:white; white-space:nowrap;">Получено {{reportValuesLength}} / {{requestedReports.length}}</span></uib-progressbar>
+						</div> -->
+            <div class="preloader-block ready-reports" ng-if="!isReadyReportsLoaded">
+              <div class="lds-ring-readyReports">
+								<div></div>
+								<div></div>
+								<div></div>
+								<div></div>
+							</div>
+            </div>
+            <ul ng-if="isReadyReportsLoaded">
+              <li ng-repeat="item in readyReports">
+                <a href="{{item.url}}">{{item.name | limitTo: 55}}{{item.name.length > 55 ? '&hellip;' : ''}}</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </uib-tab>
+    <!-- Group code 100 -->
+    <uib-tab ng-if="isGroup100" heading="{{ reportCorpus.tabInfo.name }}" select="getCurrentReportTab(reportCorpus.tabInfo.name, reportCorpus.tabInfo.code)">
+			<div ng-if="reportCorpusDataLoaded" class="linePreloader"></div>
+      <div class="row">
+				<div class="col-md-12">
+					<div id="gridOrgans" ui-grid="reportCorpus" ng-if="isTabsLoaded" ui-grid-selection ui-grid-auto-resize ui-grid-tree-view class="grid report-corpus-grid-modal"></div>
+        </div>
+      </div>
+    </uib-tab>
+    <!-- Group code 100 -->
+    <uib-tab ng-if="!isGroup100" ng-repeat="item in reports_n_deps track by $index" heading="{{ item.name }}" select="getCurrentReportTab(item.name, item.code)">
+      <div class="row">
+        <div class="col-md-6">
+          <div id="gridRegions" ui-grid="item.gridRegionsDataset" ui-grid-selection ui-grid-grouping ui-grid-auto-resize class="grid request-report-grid-modal"></div>
+        </div>
+        <div class="col-md-6">
+          <div id="{{grid-$index}}" ui-grid="item.gridDataset" ui-grid-selection ui-grid-cellnav ui-grid-auto-resize ui-grid-grouping class="grid request-report-grid-modal"></div>
+        </div>
+      </div>
+    </uib-tab>
+  </uib-tabset>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-primary" ng-click="ok()">OK</button>
-    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+  <button class="btn btn-md" type="submit" ng-disabled="!isReportsSelected || !isReadyReportsLoaded" ng-click="getReports()" ng-show="isCatalogTab">Получить</button>
+	<!-- <button class="btn" ng-click="active = 1" ng-show="!isCatalogTab">Получить</button> -->
+  <button class="btn" ng-click="cancel()">Отмена</button>
 </div>

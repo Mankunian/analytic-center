@@ -1,0 +1,163 @@
+<link rel="stylesheet" href="css/operBySrez.css" type="text/css">
+
+<div ng-controller="modalOperBySrezCtrl">
+  <div class="modal-inner-content" ng-class="{'isApproveFormVisible': isApproveFormVisible}">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" ng-click="cancel()">×</button>
+      <h4 class="modal-heading">Операции со срезами</h4>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="col-md-12">
+            <a ng-if="showUiGridInAgreement" ng-click="backToHistoryStatus()"><span class="glyphicon glyphicon-menu-left"></span>  Назад к истории</a>
+          </div>
+
+          <div class="col-md-12">
+
+            <div style="float: left">
+              <h5><b>№ среза:</b> {{srezNo}}</h5>
+            </div>
+            <div style="float: right">
+              <h5><b>Период:</b> {{period}}</h5>
+            </div>
+
+          </div>
+
+          <div class="preloader-block ready-reports statusTree-preloader col-md-12" ng-if="!isHistoryTreeLoaded">
+            <div class="lds-ring-readyReports">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          </div>
+
+          <div ng-class="{'showTimeline': historyStatus, 'hideGridInAgreement': showUiGridInAgreement }"
+            class="col-md-12 fade-in"
+            style="background: #E6E6E6; overflow-y: scroll; height: 450px" ng-if="isHistoryTreeLoaded">
+            <ul class="timeline">
+              <li ng-repeat="status in history">
+                <div ng-class="{'direction-r': $odd, 'direction-l': $even}">
+                  <div ng-click="getStatusInfo(status, $index)" class="flag-wrapper">
+                    <span ng-style="is(status.id) && {'background-color': '#337ab7', 'color': '#fff'}" class="flag">{{status.statusName}}</span>
+                    <span class="time-wrapper"><span class="time">статус</span></span>
+                  </div>
+                  <div class="desc" id="statusInfo" ng-show="is(status.id)">
+                    <h5>
+                      <b
+                        ng-if="status.statusCode == STATUS_CODES.FORMED_WITH_ERROR || status.statusCode == STATUS_CODES.PRELIMINARY">Задачу выставил: </b>
+                      <b ng-if="status.statusCode == STATUS_CODES.DELETED">Срез удалил:</b>
+                      <b ng-if="status.statusCode == STATUS_CODES.IN_AGREEMENT">Срез отправил на согласование:</b>
+                      <b ng-if="status.statusCode == STATUS_CODES.APPROVED">Срез утвердил:</b>
+                      {{status.personName}}
+                    </h5>
+                    <h5 ng-class="{'hideStatusDateOnFirstPreliminary': hideStatusDate}">
+                      <b
+                        ng-if="status.statusCode == STATUS_CODES.FORMED_WITH_ERROR || status.statusCode == STATUS_CODES.PRELIMINARY">Время выставления задачи:</b>
+                      <b ng-if="status.statusCode == STATUS_CODES.DELETED">Время удаления среза:</b>
+                      <b ng-if="status.statusCode == STATUS_CODES.IN_AGREEMENT">Время отправки на согласование
+                        среза:</b>
+                      <b ng-if="status.statusCode == STATUS_CODES.APPROVED">Время утверждения среза:</b>
+                      {{status.statusDate}}
+                    </h5>
+
+
+                    <div>
+                      <h5 ng-if="statusInfo.created"><b>Время начала формирования: </b>{{statusInfo.created}}</h5>
+                      <h5 ng-if="statusInfo.completed"><b>Время окончания формирования: </b>{{statusInfo.completed}}</h5>
+                    </div>
+                  </div>
+                </div>
+              </li>
+
+            </ul>
+          </div>
+
+          <div ng-if="gridOptionsAgreement" ng-class="{'showTimeline': !historyStatus, 'hideGridInAgreement': !showUiGridInAgreement}" class="col-md-12 fade-in">
+            <div style="background: #C1C1C1; width: 100%; height: auto; padding: 10px">
+              <span style="margin: 0 50px">
+                <b>Срез отправил на согласование:</b>
+                {{statusInfo.personName}}
+              </span>
+              <span style="margin: 0 50px">
+                <b>Время отправки на согласование
+                  среза:</b>
+                {{statusInfo.statusDate}}
+              </span>
+            </div>
+            <div id="gridInAgreement" ui-grid="gridOptionsAgreement"  ui-grid-cellnav
+                 class="grid"></div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div style="float: left">
+        <div ng-if="userRole == USER_ROLES.ONE">
+
+
+          <button ng-click="statusAction(BUTTONS.SEND)" class="btn" ng-if="
+                rowEntityStatusCode == STATUS_CODES.PRELIMINARY">На согласование
+          </button>
+
+
+          <button ng-click="statusAction(BUTTONS.PRELIMINARY)" class="btn" ng-if="
+                rowEntityStatusCode == STATUS_CODES.APPROVED">Перевести в Предварительный
+          </button>
+
+
+          <button class="btn" ng-if="
+                rowEntityStatusCode == STATUS_CODES.FORMED_WITH_ERROR
+                || rowEntityStatusCode == STATUS_CODES.PRELIMINARY
+                || rowEntityStatusCode == STATUS_CODES.IN_AGREEMENT" ng-click="statusAction(BUTTONS.DELETE)">Удалить
+          </button>
+
+
+          <button ng-click="statusAction(BUTTONS.CONFIRM)" class="btn" ng-if="
+                rowEntityStatusCode == STATUS_CODES.PRELIMINARY || rowEntityStatusCode == STATUS_CODES.IN_AGREEMENT">
+            Утвердить
+          </button>
+        </div>
+
+        <div ng-if="userRole == USER_ROLES.ZERO" ng-hide="isApproved">
+          <button ng-disabled="approveBtnDisabled || isApproved" ng-click="statusAction(BUTTONS.APPROVE, 1) "
+                  class="btn" ng-if="
+                rowEntityStatusCode == STATUS_CODES.IN_AGREEMENT">Согласовать
+          </button>
+
+          <button ng-disabled="approveBtnDisabled" id="rejectionReasonBtn"
+                  ng-click="statusAction(BUTTONS.APPROVE, 2)" class="btn" ng-if="
+                rowEntityStatusCode == STATUS_CODES.IN_AGREEMENT">Отказать
+          </button>
+        </div>
+      </div>
+      <button class="btn btn-danger" ng-click="cancel()">Отмена</button>
+    </div>
+  </div>
+
+  <div ng-if="isApproveFormVisible" class="inner">
+    <div class="inner-header">
+      <button type="button" class="close" ng-click="cancelReasonModal()">&times;</button>
+      <h4>Причина отказа в согласовании</h4>
+    </div>
+    <div class="inner-body">
+      <textarea ng-model="msg" rows="3" style="width: 100%; padding: 10px"
+                placeholder="Напишите причину отказа"></textarea>
+    </div>
+    <div class="inner-footer">
+      <button ng-click="sendReason(msg)" type="button" class="btn btn-default">Сохранить</button>
+      <button ng-click="cancelReasonModal()" type="button" class="btn btn-default">Вернуться</button>
+    </div>
+  </div>
+
+</div>
+
+
+
+
+
+
+

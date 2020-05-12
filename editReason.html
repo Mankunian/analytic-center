@@ -1,0 +1,36 @@
+<style>
+	.rejection .modal-body {
+		background: none;
+	}
+
+	.rejection .modal-content {
+		border-radius: 0;
+	}
+
+	.rejection .modal-header {
+		background: #224879;
+		padding: 0;
+		text-align: center;
+	}
+
+	.rejection .modal-title {
+		color: #fff;
+	}
+</style>
+
+<div class="rejection">
+	<div class="modal-header">
+		<h3 class="modal-title">Причина отказа в согласовании(ред.)</h3>
+	</div>
+
+	<div class="modal-body">
+		<textarea ng-model="msg" rows="3" style="width: 100%; padding: 10px"
+			placeholder="Напишите причину отказа"></textarea>
+	</div>
+
+	<div class="modal-footer">
+		<button class="btn btn-default" type="button" ng-click="cancelReason()">Вернуться</button>
+		<button ng-disabled="userRole === USER_ROLES.ONE" class="btn btn-primary" type="button"
+			ng-click="okReason(msg)">Сохранить</button>
+	</div>
+</div>

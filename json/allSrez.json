@@ -1,0 +1,57 @@
+[
+  {
+    "groupCode": "007",
+    "groupName": "Группа отчетов о дорожно транспортных происшествиях",
+    "children": [
+      {
+        "statusCode": "0",
+        "statusName": "В обработке 2019",
+        "children": [
+          {
+            "id": 7,
+            "groupName": "Группа отчетов о преступности",
+            "statusName": "В обработке 2015",
+            "period": "01.01.2015 - 31.05.2015",
+            "region": "19",
+            "groupCode": "001",
+            "statusCode": "0",
+            "startDate": "01.01.2015",
+            "endDate": "31.05.2015",
+            "maxRecNum": 6231155,
+            "created": "19.11.2019 17:29:12",
+            "completed": null,
+            "year": 2015,
+            "children" : []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "groupCode": "001",
+    "groupName": "Группа отчетов о преступности",
+    "children": [
+      {
+        "statusCode": "0",
+        "statusName": "В обработке 2019",
+        "children": [
+          {
+            "id": 7,
+            "groupName": "Группа отчетов о преступности",
+            "statusName": "В обработке 2015",
+            "period": "01.01.2015 - 31.05.2015",
+            "region": "19",
+            "groupCode": "001",
+            "statusCode": "0",
+            "startDate": "01.01.2015",
+            "endDate": "31.05.2015",
+            "maxRecNum": 6231155,
+            "created": "19.11.2019 17:29:12",
+            "completed": null,
+            "year": 2015
+          }
+        ]
+      }
+    ]
+  }
+]

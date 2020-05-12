@@ -66,7 +66,7 @@ app
 			}
 			
 			// var data = JSON.parse(event.data);
-			// console.log(data);
+			
 			// window.localStorage[data.key] = data.data;
 		}
 
